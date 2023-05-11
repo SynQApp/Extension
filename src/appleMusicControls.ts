@@ -49,7 +49,15 @@ const setVolume = (volume: number) => {
     }
 }
 
-const playSelectedSong = () => {
+const queueSong = (albumId:number, songId: number ) => {
+    const url = new URL(`https://music.apple.com/us/album/album/${albumId}?i=${songId}`);
+    history.pushState({}, "", url);
+    history.back();
+}
+
+
+const playnextSong = () => {
+    history.forward();
     const selectedSongContainer = document.querySelector('.songs-list-row--selected');
     const playButton = selectedSongContainer.querySelector('.play-button') as HTMLButtonElement;
     playButton.click();
