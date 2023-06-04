@@ -1,47 +1,61 @@
+import type { SynQWindow } from '~types/Window';
+
 import type { IController } from './IController';
 
+// Allows us to access the MusicKit instance from the window object
+// declare let window: SynQWindow;
+
 export class AppleMusicController implements IController {
+  private get _player() {
+    return (window as any).MusicKit.getInstance();
+  }
+
   play(): void {
-    throw new Error('Method not implemented.');
+    this._player.play();
   }
 
   playPause(): void {
-    throw new Error('Method not implemented.');
+    if (this._player.isPlaying) {
+      this._player.pause();
+    } else {
+      this._player.play();
+    }
   }
 
   pause(): void {
-    throw new Error('Method not implemented.');
+    this._player.pause();
   }
 
   next(): void {
-    throw new Error('Method not implemented.');
+    this._player.skipToNextItem();
   }
 
   previous(): void {
+    this._player.skipToPreviousItem();
+  }
+
+  toggleShuffle(): void {
+    this._player.shuffle = !this._player.shuffle;
+  }
+
+  toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
-  setShuffle(shuffle: boolean): void {
-    throw new Error('Method not implemented.');
-  }
-
-  like(): void {
-    throw new Error('Method not implemented.');
-  }
-
-  dislike(): void {
+  toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
 
   setVolume(volume: number): void {
-    throw new Error('Method not implemented.');
+    this._player.volume = volume / 100;
   }
 
   seekTo(time: number): void {
-    throw new Error('Method not implemented.');
+    this._player.seekToTime(time);
   }
 
-  startTrack(trackId: string): void {
-    throw new Error('Method not implemented.');
+  async startTrack(trackId: string): Promise<void> {
+    await this._player.playLater({ song: trackId }); // Loads the song in the player
+    await this._player.changeToMediaItem(trackId);
   }
 }

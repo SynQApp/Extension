@@ -21,15 +21,15 @@ export class AmazonMusicController implements IController {
     throw new Error('Method not implemented.');
   }
 
-  setShuffle(shuffle: boolean): void {
+  toggleShuffle(): void {
     throw new Error('Method not implemented.');
   }
 
-  like(): void {
+  toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
-  dislike(): void {
+  toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
 
