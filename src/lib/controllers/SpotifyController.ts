@@ -1,6 +1,9 @@
 import type { IController } from './IController';
 
 export class SpotifyController implements IController {
+  prepareForSession(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   play(): void {
     throw new Error('Method not implemented.');
   }

@@ -107,6 +107,13 @@ const Popup = () => {
     });
   };
 
+  const handlePrepareForSession = async () => {
+    const musicTab = await tabs.getMusicServiceTab();
+    chrome.tabs.sendMessage(musicTab.id, {
+      type: ControllerMessageType.PREPARE_FOR_SESSION
+    });
+  };
+
   return (
     <Container>
       <Button onClick={handlePlay}>Play</Button>
@@ -118,6 +125,7 @@ const Popup = () => {
       <Button onClick={handleToggleDislike}>Toggle Dislike</Button>
       <Button onClick={handleSeekTo10s}>Seek To 10s</Button>
       <Button onClick={handleSetVolumeTo50}>Set Volume to 50%</Button>
+      <Button onClick={handlePrepareForSession}>Prepare For Session</Button>
       <label htmlFor="track-id">Track ID: </label>
       <input
         id="track-id"

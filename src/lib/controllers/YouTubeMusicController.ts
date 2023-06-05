@@ -1,5 +1,6 @@
 import type { SynQWindow } from '~types/Window';
 import { YouTubeMusicPlayerState } from '~types/YouTubeMusicPlayerState';
+import { onDocumentReady } from '~util/onDocumentReady';
 
 import type { IController } from './IController';
 
@@ -10,9 +11,56 @@ const exampleIds = ['DZhNgVyIrHw', 'lYBUbBu4W08'];
 export class YouTubeMusicController implements IController {
   private _mode = 'navigation';
   private _navigationRequestInstance: any;
+  private _intervalRef: any;
+  private _shouldPlayOnNavigation = true;
 
   constructor() {
     this._initialize();
+  }
+
+  public async prepareForSession() {
+    if (!this._navigationRequestInstance) {
+      await this._forceNavigationToCaptureInstance();
+    }
+  }
+
+  private async _forceNavigationToCaptureInstance() {
+    return new Promise((resolve, reject) => {
+      this._shouldPlayOnNavigation = false;
+      this._ytmApp.navigate_('FEmusic_explore');
+
+      let popstateHandler = () => {
+        window.removeEventListener('popstate', popstateHandler);
+        onDocumentReady(() => {
+          console.log('Completed');
+          resolve(void 0);
+        });
+      };
+
+      let intervalHandler = () => {
+        console.log('Waiting...');
+        if (location.pathname !== '/explore') {
+          return;
+        }
+
+        let item = document
+          .querySelector(
+            '#items > ytmusic-responsive-list-item-renderer:nth-child(1)'
+          )
+          ?.querySelector('ytmusic-play-button-renderer') as HTMLElement;
+
+        if (item) {
+          clearInterval(this._intervalRef);
+          item.click();
+
+          history.back();
+
+          window.addEventListener('popstate', popstateHandler);
+        }
+      };
+
+      this._intervalRef = setInterval(intervalHandler, 200);
+    });
   }
 
   private _initialize() {
@@ -31,9 +79,15 @@ export class YouTubeMusicController implements IController {
 
           this._ytmApp.navigator_.navigate =
             this._ytmApp.navigator_.originalNavigate;
+
+          if (!this._shouldPlayOnNavigation) {
+            return;
+          }
         }
 
         return this._ytmApp.navigator_.originalNavigate(navigationEvent);
+
+        return;
       };
     }
   }

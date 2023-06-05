@@ -2,7 +2,7 @@ import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
 
 export const registerControllerHandler = (controller: IController) => {
-  window.addEventListener('SynQEvent:Receive', (event: CustomEvent) => {
+  window.addEventListener('SynQEvent:Receive', async (event: CustomEvent) => {
     const message = event.detail.message;
 
     console.log('Received message', message);
@@ -61,6 +61,11 @@ export const registerControllerHandler = (controller: IController) => {
       case ControllerMessageType.START_TRACK:
         console.log('startTrack');
         controller.startTrack(message.body.trackId);
+        break;
+
+      case ControllerMessageType.PREPARE_FOR_SESSION:
+        console.log('prepareForSession');
+        await controller.prepareForSession();
         break;
 
       default:

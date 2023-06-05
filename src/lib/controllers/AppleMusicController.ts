@@ -6,6 +6,9 @@ import type { IController } from './IController';
 // declare let window: SynQWindow;
 
 export class AppleMusicController implements IController {
+  prepareForSession(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   private get _player() {
     return (window as any).MusicKit.getInstance();
   }

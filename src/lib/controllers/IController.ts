@@ -53,4 +53,9 @@ export interface IController {
    * Start the specified track.
    */
   startTrack(trackId: string): void;
+
+  /**
+   * Prepare the controller for use in a session.
+   */
+  prepareForSession(): Promise<void>;
 }
