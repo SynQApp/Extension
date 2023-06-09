@@ -5,6 +5,7 @@ import './index.css';
 import { useState } from 'react';
 
 import { ControllerMessageType } from '~types/ControllerMessageType';
+import { RepeatMode } from '~types/RepeatMode';
 import tabs from '~util/tabs';
 
 const Container = styled.div`
@@ -26,6 +27,8 @@ const Button = styled.button`
 
 const Popup = () => {
   const [trackId, setTrackId] = useState('');
+  const [albumId, setAlbumId] = useState('');
+  const [repeatMode, setRepeatMode] = useState(RepeatMode.NO_REPEAT);
 
   const handlePlay = async () => {
     const musicTab = await tabs.getMusicServiceTab();
@@ -97,13 +100,19 @@ const Popup = () => {
     });
   };
 
-  const handleSetTrack = async () => {
+  const handleStartTrack = async () => {
     const musicTab = await tabs.getMusicServiceTab();
+    const body = {
+      trackId
+    } as any;
+
+    if (albumId) {
+      body.albumId = albumId;
+    }
+
     chrome.tabs.sendMessage(musicTab.id, {
       type: ControllerMessageType.START_TRACK,
-      body: {
-        trackId
-      }
+      body
     });
   };
 
@@ -112,6 +121,25 @@ const Popup = () => {
     chrome.tabs.sendMessage(musicTab.id, {
       type: ControllerMessageType.PREPARE_FOR_SESSION
     });
+  };
+
+  const handleToggleRepeat = async () => {
+    const musicTab = await tabs.getMusicServiceTab();
+    const newRepeatMode =
+      repeatMode === RepeatMode.NO_REPEAT
+        ? RepeatMode.REPEAT_ONE
+        : repeatMode === RepeatMode.REPEAT_ONE
+        ? RepeatMode.REPEAT_ALL
+        : RepeatMode.NO_REPEAT;
+
+    chrome.tabs.sendMessage(musicTab.id, {
+      type: ControllerMessageType.SET_REPEAT_MODE,
+      body: {
+        repeatMode: newRepeatMode
+      }
+    });
+
+    setRepeatMode(newRepeatMode);
   };
 
   return (
@@ -126,6 +154,9 @@ const Popup = () => {
       <Button onClick={handleSeekTo10s}>Seek To 10s</Button>
       <Button onClick={handleSetVolumeTo50}>Set Volume to 50%</Button>
       <Button onClick={handlePrepareForSession}>Prepare For Session</Button>
+      <Button onClick={handleToggleRepeat}>
+        Toggle Repeat (None, One, All)
+      </Button>
       <label htmlFor="track-id">Track ID: </label>
       <input
         id="track-id"
@@ -133,7 +164,14 @@ const Popup = () => {
         value={trackId}
         onChange={(e) => setTrackId(e.target.value)}
       />
-      <Button onClick={handleSetTrack}>Set Track</Button>
+      <label htmlFor="track-id">Album ID: </label>
+      <input
+        id="album-id"
+        type="text"
+        value={albumId}
+        onChange={(e) => setAlbumId(e.target.value)}
+      />
+      <Button onClick={handleStartTrack}>Start Track</Button>
     </Container>
   );
 };

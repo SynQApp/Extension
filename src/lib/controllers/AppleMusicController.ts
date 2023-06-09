@@ -1,3 +1,4 @@
+import { RepeatMode } from '~types/RepeatMode';
 import type { SynQWindow } from '~types/Window';
 
 import type { IController } from './IController';
@@ -5,10 +6,13 @@ import type { IController } from './IController';
 // Allows us to access the MusicKit instance from the window object
 // declare let window: SynQWindow;
 
+const REPEAT_MAP: Record<RepeatMode, number> = {
+  [RepeatMode.NO_REPEAT]: 0,
+  [RepeatMode.REPEAT_ONE]: 1,
+  [RepeatMode.REPEAT_ALL]: 2
+};
+
 export class AppleMusicController implements IController {
-  prepareForSession(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
   private get _player() {
     return (window as any).MusicKit.getInstance();
   }
@@ -37,8 +41,8 @@ export class AppleMusicController implements IController {
     this._player.skipToPreviousItem();
   }
 
-  toggleShuffle(): void {
-    this._player.shuffle = !this._player.shuffle;
+  setRepeatMode(repeatMode: RepeatMode): void {
+    this._player.repeatMode = REPEAT_MAP[repeatMode];
   }
 
   toggleLike(): void {
@@ -60,5 +64,9 @@ export class AppleMusicController implements IController {
   async startTrack(trackId: string): Promise<void> {
     await this._player.playLater({ song: trackId }); // Loads the song in the player
     await this._player.changeToMediaItem(trackId);
+  }
+
+  prepareForSession(): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

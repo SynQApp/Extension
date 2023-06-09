@@ -1,9 +1,8 @@
+import type { RepeatMode } from '~types/RepeatMode';
+
 import type { IController } from './IController';
 
 export class SpotifyController implements IController {
-  prepareForSession(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
   play(): void {
     throw new Error('Method not implemented.');
   }
@@ -24,7 +23,7 @@ export class SpotifyController implements IController {
     throw new Error('Method not implemented.');
   }
 
-  toggleShuffle(): void {
+  setRepeatMode(repeatMode: RepeatMode): void {
     throw new Error('Method not implemented.');
   }
 
@@ -44,7 +43,11 @@ export class SpotifyController implements IController {
     throw new Error('Method not implemented.');
   }
 
-  startTrack(trackId: string): void {
+  startTrack(trackId: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  prepareForSession(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

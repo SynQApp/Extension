@@ -1,5 +1,7 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -12,10 +14,17 @@ export const config: PlasmoCSConfig = {
   all_frames: true
 };
 
+interface SendEventDetail {
+  requestId: string;
+  message: {
+    name: never;
+    body?: never;
+  };
+}
+
 /**
  * Content scripts running in an isolated world can't access the DOM of the page,
  * and scripts running in the page can't access the chrome APIs. This bridge allows
- *
  */
 const initialize = () => {
   // Listen for messages from the background script and dispatch them to the page
@@ -29,17 +38,26 @@ const initialize = () => {
   });
 
   // Listen for messages from the page and dispatch them to the background script
-  window.addEventListener('SynQEvent:Send', async (event: CustomEvent) => {
-    let response = chrome.runtime.sendMessage(event.detail);
+  window.addEventListener(
+    'SynQEvent:Send',
+    async (event: CustomEvent<SendEventDetail>) => {
+      console.log('Received message from page', event.detail.message);
+      let response = await sendToBackground(event.detail.message);
+      console.log('Received response from background', response);
 
-    if (response) {
-      const responseEvent = new CustomEvent('SynQEvent:Response', {
-        detail: response
-      });
+      if (response) {
+        const responseEvent = new CustomEvent('SynQEvent:Response', {
+          detail: {
+            // Include the requestId so the content script can match the response to the request
+            requestId: event.detail.requestId,
+            body: response
+          }
+        });
 
-      window.dispatchEvent(responseEvent);
+        window.dispatchEvent(responseEvent);
+      }
     }
-  });
+  );
 };
 
 onDocumentReady(initialize);

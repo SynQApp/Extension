@@ -1,3 +1,5 @@
+import type { RepeatMode } from '~types/RepeatMode';
+
 export interface IController {
   /**
    * Play the current track.
@@ -25,9 +27,9 @@ export interface IController {
   previous(): void;
 
   /**
-   * Set shuffle.
+   * Set repeat mode.
    */
-  toggleShuffle(): void;
+  setRepeatMode(repeatMode: RepeatMode): void;
 
   /**
    * Like the current track.
@@ -52,7 +54,7 @@ export interface IController {
   /**
    * Start the specified track.
    */
-  startTrack(trackId: string): void;
+  startTrack(trackId: string, albumId?: string): Promise<void>;
 
   /**
    * Prepare the controller for use in a session.

@@ -1,5 +1,6 @@
 import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
+import { RepeatMode } from '~types/RepeatMode';
 
 export const registerControllerHandler = (controller: IController) => {
   window.addEventListener('SynQEvent:Receive', async (event: CustomEvent) => {
@@ -35,7 +36,7 @@ export const registerControllerHandler = (controller: IController) => {
 
       case ControllerMessageType.TOGGLE_SHUFFLE:
         console.log('toggleShuffle');
-        controller.toggleShuffle();
+        controller.setRepeatMode(RepeatMode.NO_REPEAT);
         break;
 
       case ControllerMessageType.TOGGLE_LIKE:
@@ -60,7 +61,12 @@ export const registerControllerHandler = (controller: IController) => {
 
       case ControllerMessageType.START_TRACK:
         console.log('startTrack');
-        controller.startTrack(message.body.trackId);
+        await controller.startTrack(message.body.trackId, message.body.albumId);
+        break;
+
+      case ControllerMessageType.SET_REPEAT_MODE:
+        console.log('setRepeatMode');
+        controller.setRepeatMode(message.body.repeatMode);
         break;
 
       case ControllerMessageType.PREPARE_FOR_SESSION:
