@@ -24,7 +24,10 @@ interface SendEventDetail {
 
 /**
  * Content scripts running in an isolated world can't access the DOM of the page,
- * and scripts running in the page can't access the chrome APIs. This bridge allows
+ * and scripts running in the page can't access the chrome APIs. We need to be able
+ * to send messages between the MAIN world and the chrome runtime, so we use events
+ * on the window object that both the MAIN and ISOLATED worlds have access to in order
+ * to relay messages.
  */
 const initialize = () => {
   // Listen for messages from the background script and dispatch them to the page
