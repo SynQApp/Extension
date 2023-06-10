@@ -10,25 +10,31 @@
     "package": "plasmo package"
   },
   "dependencies": {
-    "plasmo": "0.69.2",
+    "@plasmohq/messaging": "^0.3.3",
+    "plasmo": "0.75.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "redux": "^4.2.1",
+    "styled-components": "^5.3.11"
   },
   "devDependencies": {
+    "@plasmohq/prettier-plugin-sort-imports": "3.6.4",
     "@types/chrome": "0.0.233",
     "@types/node": "18.15.12",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
     "prettier": "2.8.7",
-    "typescript": "5.0.4",
-    "@plasmohq/prettier-plugin-sort-imports": "3.6.4"
+    "typescript": "5.0.4"
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "*://*/*"
     ],
     "permissions": [
-      "tabs"
+      "tabs",
+      "activeTab",
+      "*://*/*"
     ]
   }
 }
