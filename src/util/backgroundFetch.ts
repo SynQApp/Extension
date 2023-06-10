@@ -8,8 +8,6 @@ export const backgroundFetch = async (
   input: RequestInfo | URL,
   init?: RequestInit
 ) => {
-  console.log('Fetching from background', input, init);
-
   return mainWorldToBackground({
     name: 'BACKGROUND_FETCH',
     body: {

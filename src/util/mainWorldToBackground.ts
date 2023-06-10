@@ -13,8 +13,6 @@ export const mainWorldToBackground = (
   // Generate a unique ID for this request
   const requestId = Math.random().toString(36).substring(7);
 
-  console.log('Sending message to background', message, requestId);
-
   return new Promise((resolve) => {
     // Send message to background script via the message relay script
     const event = new CustomEvent('SynQEvent:Send', {
@@ -28,7 +26,6 @@ export const mainWorldToBackground = (
 
     // Listen for the response from the background script
     window.addEventListener('SynQEvent:Response', (event: CustomEvent) => {
-      console.log('Received response from background', event.detail);
       const { body, requestId: resRequestId } = event.detail;
 
       if (requestId === resRequestId) {

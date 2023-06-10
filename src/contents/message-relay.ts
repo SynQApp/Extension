@@ -28,8 +28,7 @@ interface SendEventDetail {
  */
 const initialize = () => {
   // Listen for messages from the background script and dispatch them to the page
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log('Received message from background script', message);
+  chrome.runtime.onMessage.addListener((message) => {
     const event = new CustomEvent('SynQEvent:Receive', {
       detail: { message }
     });

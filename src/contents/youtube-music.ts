@@ -2,7 +2,6 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { YouTubeMusicController } from '~lib/controllers/YouTubeMusicController';
 import { registerControllerHandler } from '~lib/message-handlers/registerControllerHandler';
-import { YouTubeMusicPlayerState } from '~types/YouTubeMusicPlayerState';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -12,7 +11,8 @@ export const config: PlasmoCSConfig = {
 };
 
 const initialize = () => {
-  console.log('Registering YouTube Music controller');
+  console.log('SynQ: Initializing YouTube Music');
+
   const controller = new YouTubeMusicController();
   registerControllerHandler(controller);
 };

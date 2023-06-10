@@ -8,7 +8,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const initialize = () => {
-  console.log('HELLO WORLD FROM SPOTIFY');
+  console.log('SynQ: Initializing Spotify');
 };
 
 onDocumentReady(initialize);

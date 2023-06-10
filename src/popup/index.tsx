@@ -41,7 +41,7 @@ const Popup = () => {
 
   const handlePlayPause = async () => {
     const musicTab = await getMusicServiceTab();
-    console.log({ musicTab });
+
     chrome.tabs.sendMessage(musicTab.id, {
       type: ControllerMessageType.PLAY_PAUSE
     });
