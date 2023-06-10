@@ -1,13 +1,17 @@
+import type { PlayerState, SongInfo } from '~types/PlayerState';
 import type { RepeatMode } from '~types/RepeatMode';
-import type { SynQWindow } from '~types/Window';
-import { YouTubeMusicPlayerState } from '~types/YouTubeMusicPlayerState';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 import type { IController } from './IController';
 
-declare let window: SynQWindow;
-
-const exampleIds = ['DZhNgVyIrHw', 'lYBUbBu4W08'];
+export enum YouTubeMusicPlayerState {
+  UNSTARTED = -1,
+  ENDED = 0,
+  PLAYING = 1,
+  PAUSED = 2,
+  BUFFERING = 3,
+  CUED = 5
+}
 
 export class YouTubeMusicController implements IController {
   /**
@@ -40,62 +44,91 @@ export class YouTubeMusicController implements IController {
     return;
   }
 
-  play(): void {
+  public play(): void {
     this._player.playVideo();
   }
 
-  playPause(): void {
+  public playPause(): void {
     if (this._player.getPlayerState() === YouTubeMusicPlayerState.PLAYING) {
-      this._player.pauseVideo();
+      this.pause();
     } else {
-      this._player.playVideo();
+      this.play();
     }
   }
 
-  pause(): void {
+  public pause(): void {
     this._player.pauseVideo();
   }
 
-  next(): void {
+  public next(): void {
     this._player.nextVideo();
   }
 
-  previous(): void {
+  public previous(): void {
     this._player.previousVideo();
   }
 
-  setRepeatMode(repeatMode: RepeatMode): void {
+  // TODO: Implement
+  public setRepeatMode(repeatMode: RepeatMode): void {
     throw new Error('Method not implemented.');
   }
 
-  toggleLike(): void {
+  // TODO: Implement
+  public toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
-  toggleDislike(): void {
+  // TODO: Implement
+  public toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
 
-  setVolume(volume: number): void {
+  public setVolume(volume: number): void {
     this._player.setVolume(volume);
   }
 
-  seekTo(time: number): void {
+  public seekTo(time: number): void {
     this._player.seekTo(time);
   }
 
+  /**
+   * EXAMPLE IDs:
+   * - DZhNgVyIrHw
+   * - lYBUbBu4W08
+   */
   public async startTrack(trackId: string): Promise<void> {
     if (!this._navigationRequestInstance) {
       throw new Error('No navigation request instance');
     }
 
-    // Clone the event
-    let navigationRequest = Object.assign(
+    const navigationRequest = this._createNavigationRequestInstance(trackId);
+
+    // Trigger the event
+    this._ytmApp.navigator_.navigate(navigationRequest);
+  }
+
+  // TODO: Implement
+  public getPlayerState(): Promise<PlayerState> {
+    throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public getQueue(): Promise<SongInfo[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public isReady(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  private _createNavigationRequestInstance(trackId: string): any {
+    // Clone the navigation request instance
+    const navigationRequest = Object.assign(
       Object.create(Object.getPrototypeOf(this._navigationRequestInstance)),
       this._navigationRequestInstance
     );
 
-    // Update the event
     navigationRequest.data = {
       videoId: trackId,
       watchEndpointMusicSupportedConfigs: {
@@ -105,29 +138,34 @@ export class YouTubeMusicController implements IController {
       }
     };
 
-    // Trigger the event
-    this._ytmApp.navigator_.navigate(navigationRequest);
+    return navigationRequest;
   }
 
+  /**
+   * Forces app the capture a navigation request so we can clone it later. This
+   * is necessary when the user hasn't already clicked on a song and we want to
+   * take programmatic control of the page.
+   *
+   * TODO: Add screenshot "curtain" to hide the navigation
+   */
   private async _forceCaptureNavigationRequest() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._shouldPlayOnNavigation = false;
       this._ytmApp.navigate_('FEmusic_explore');
 
-      let popstateHandler = () => {
+      const popstateHandler = () => {
         window.removeEventListener('popstate', popstateHandler);
         onDocumentReady(() => {
-          console.log('Completed');
           resolve(void 0);
         });
       };
 
-      let intervalHandler = () => {
+      const intervalHandler = () => {
         if (location.pathname !== '/explore') {
           return;
         }
 
-        let item = document
+        const item = document
           .querySelector(
             '#items > ytmusic-responsive-list-item-renderer:nth-child(1)'
           )

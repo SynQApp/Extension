@@ -1,10 +1,11 @@
+import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
-import type { SynQWindow } from '~types/Window';
 
 import type { IController } from './IController';
 
-// Allows us to access the MusicKit instance from the window object
-// declare let window: SynQWindow;
+declare let window: Window & {
+  MusicKit: any;
+};
 
 const REPEAT_MAP: Record<RepeatMode, number> = {
   [RepeatMode.NO_REPEAT]: 0,
@@ -12,61 +13,88 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
   [RepeatMode.REPEAT_ALL]: 2
 };
 
+/**
+ * In general, the strategy for controlling Apple Music is to use the MusicKit instance
+ * already exposed on the window object. Then we can call methods on the instance to
+ * control playback.
+ */
 export class AppleMusicController implements IController {
-  private get _player() {
-    return (window as any).MusicKit.getInstance();
-  }
-
-  play(): void {
+  public play(): void {
     this._player.play();
   }
 
-  playPause(): void {
+  public playPause(): void {
     if (this._player.isPlaying) {
-      this._player.pause();
+      this.pause();
     } else {
-      this._player.play();
+      this.play();
     }
   }
 
-  pause(): void {
+  public pause(): void {
     this._player.pause();
   }
 
-  next(): void {
+  public next(): void {
     this._player.skipToNextItem();
   }
 
-  previous(): void {
+  public previous(): void {
     this._player.skipToPreviousItem();
   }
 
-  setRepeatMode(repeatMode: RepeatMode): void {
+  public setRepeatMode(repeatMode: RepeatMode): void {
     this._player.repeatMode = REPEAT_MAP[repeatMode];
   }
 
-  toggleLike(): void {
+  // TODO: Implement
+  public toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
-  toggleDislike(): void {
+  // TODO: Implement
+  public toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
 
-  setVolume(volume: number): void {
+  public setVolume(volume: number): void {
     this._player.volume = volume / 100;
   }
 
-  seekTo(time: number): void {
+  public seekTo(time: number): void {
     this._player.seekToTime(time);
   }
 
-  async startTrack(trackId: string): Promise<void> {
+  /**
+   * EXAMPLE IDs:
+   * - 388136191
+   * - 560097694
+   */
+  public async startTrack(trackId: string): Promise<void> {
     await this._player.playLater({ song: trackId }); // Loads the song in the player
     await this._player.changeToMediaItem(trackId);
   }
 
-  prepareForSession(): Promise<void> {
+  public prepareForSession(): Promise<void> {
+    return;
+  }
+
+  // TODO: Implement
+  public getPlayerState(): Promise<PlayerState> {
     throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public getQueue(): Promise<SongInfo[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public isReady(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  private get _player() {
+    return (window as any).MusicKit.getInstance();
   }
 }

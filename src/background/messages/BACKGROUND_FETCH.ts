@@ -1,11 +1,13 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 interface BackgroundFetchRequest {
-  // The arguments to pass into fetch
   input: RequestInfo | URL;
   init?: RequestInit;
 }
 
+/**
+ * A handler to perform a fetch from the background script.
+ */
 const handler: PlasmoMessaging.MessageHandler<BackgroundFetchRequest> = async (
   req,
   res

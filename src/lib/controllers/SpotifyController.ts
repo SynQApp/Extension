@@ -1,53 +1,67 @@
+import type { PlayerState, SongInfo } from '~types/PlayerState';
 import type { RepeatMode } from '~types/RepeatMode';
 
 import type { IController } from './IController';
 
+// TODO: Implement the Controller
 export class SpotifyController implements IController {
-  play(): void {
+  public play(): void {
     throw new Error('Method not implemented.');
   }
 
-  playPause(): void {
+  public playPause(): void {
     throw new Error('Method not implemented.');
   }
 
-  pause(): void {
+  public pause(): void {
     throw new Error('Method not implemented.');
   }
 
-  next(): void {
+  public next(): void {
     throw new Error('Method not implemented.');
   }
 
-  previous(): void {
+  public previous(): void {
     throw new Error('Method not implemented.');
   }
 
-  setRepeatMode(repeatMode: RepeatMode): void {
+  public setRepeatMode(repeatMode: RepeatMode): void {
     throw new Error('Method not implemented.');
   }
 
-  toggleLike(): void {
+  public toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
-  toggleDislike(): void {
+  public toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
 
-  setVolume(volume: number): void {
+  public setVolume(volume: number): void {
     throw new Error('Method not implemented.');
   }
 
-  seekTo(time: number): void {
+  public seekTo(time: number): void {
     throw new Error('Method not implemented.');
   }
 
-  startTrack(trackId: string): Promise<void> {
+  public startTrack(trackId: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  prepareForSession(): Promise<void> {
+  public prepareForSession(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  public getPlayerState(): Promise<PlayerState> {
+    throw new Error('Method not implemented.');
+  }
+
+  public getQueue(): Promise<SongInfo[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  public isReady(): boolean {
     throw new Error('Method not implemented.');
   }
 }

@@ -4,7 +4,8 @@ interface BackgroundMessage {
 }
 
 /**
- * A util function to for using the message relay to send a message to the background script from a MAIN world content script.
+ * A util function for using the message relay to send a message to the background script
+ * from a MAIN world content script.
  */
 export const mainWorldToBackground = (
   message: BackgroundMessage

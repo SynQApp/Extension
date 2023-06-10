@@ -1,3 +1,4 @@
+import type { PlayerState, SongInfo } from '~types/PlayerState';
 import type { RepeatMode } from '~types/RepeatMode';
 
 export interface IController {
@@ -60,4 +61,19 @@ export interface IController {
    * Prepare the controller for use in a session.
    */
   prepareForSession(): Promise<void>;
+
+  /**
+   * Get the current player state.
+   */
+  getPlayerState(): Promise<PlayerState>;
+
+  /**
+   *
+   */
+  getQueue(): Promise<SongInfo[]>;
+
+  /**
+   * Check if the controller is ready for use.
+   */
+  isReady(): boolean;
 }

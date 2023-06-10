@@ -1,3 +1,6 @@
+/**
+ * Calls the given function when the document is ready.
+ */
 export const onDocumentReady = (fn: () => void) => {
   if (
     document.readyState === 'complete' ||

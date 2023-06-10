@@ -41,9 +41,7 @@ const initialize = () => {
   window.addEventListener(
     'SynQEvent:Send',
     async (event: CustomEvent<SendEventDetail>) => {
-      console.log('Received message from page', event.detail.message);
-      let response = await sendToBackground(event.detail.message);
-      console.log('Received response from background', response);
+      const response = await sendToBackground(event.detail.message);
 
       if (response) {
         const responseEvent = new CustomEvent('SynQEvent:Response', {

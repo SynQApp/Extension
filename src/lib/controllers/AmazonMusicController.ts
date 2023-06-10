@@ -1,20 +1,9 @@
 import type { Store } from 'redux';
 
-// import { fetchSkyfire, getSkyfireStore } from '~services/skyfire';
+import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 
 import type { IController } from './IController';
-
-const examples = [
-  {
-    trackId: 'B0C546ZZQ5',
-    albumId: 'B0C5485L91'
-  },
-  {
-    trackId: 'B0939X2B44',
-    albumId: 'B093B55MYN'
-  }
-];
 
 declare let window: Window & {
   __REDUX_STORES__: (Store & { name: string })[];
@@ -32,10 +21,8 @@ const REPEAT_MAP: Record<RepeatMode, string> = {
 
 /**
  * In general, the strategy for controlling Amazon Music is to use the DMWebPlayerSkyfire
- * Redux store we exposed in the amazon-music-redux-init content script. Skyfire appears
- * to be an API for controlling the Amazon Music web player where the API returns an
- * array of Redux actions to dispatch. We can call the Amazon Music API and then dispatch
- * the actions it returns to control the player.
+ * Redux store we exposed in the amazon-music-redux-init content script. Then we can
+ * dispatch actions to the store to control playback.
  */
 export class AmazonMusicController implements IController {
   private get _skyfireStore() {
@@ -85,10 +72,12 @@ export class AmazonMusicController implements IController {
     });
   }
 
+  // TODO: Implement
   public toggleLike(): void {
     throw new Error('Method not implemented.');
   }
 
+  // TODO: Implement
   public toggleDislike(): void {
     throw new Error('Method not implemented.');
   }
@@ -111,7 +100,39 @@ export class AmazonMusicController implements IController {
     });
   }
 
-  private _createSkyfireAction(trackId: string, albumId: string) {
+  /**
+   * EXAMPLE IDs:
+   * - trackId: B0C546ZZQ5
+   *   albumId: B0C5485L91
+   *
+   * - trackId: B0939X2B44
+   *   albumId: B093B55MYN
+   */
+  public async startTrack(trackId: string, albumId: string): Promise<void> {
+    const playTrackAction = this._createStartTrackAction(trackId, albumId);
+    this._skyfireStore.dispatch(playTrackAction);
+  }
+
+  public prepareForSession(): Promise<void> {
+    return;
+  }
+
+  // TODO: Implement
+  public getPlayerState(): Promise<PlayerState> {
+    throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public getQueue(): Promise<SongInfo[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  // TODO: Implement
+  public isReady(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  private _createStartTrackAction(trackId: string, albumId: string) {
     return {
       payload: {
         type: 'InteractionInterface.v1_0.InvokeHttpSkillMethod',
@@ -133,14 +154,5 @@ export class AmazonMusicController implements IController {
       },
       type: 'EXECUTE_METHOD'
     };
-  }
-
-  public async startTrack(trackId: string, albumId: string): Promise<void> {
-    const playTrackAction = this._createSkyfireAction(trackId, albumId);
-    this._skyfireStore.dispatch(playTrackAction);
-  }
-
-  public prepareForSession(): Promise<void> {
-    return;
   }
 }

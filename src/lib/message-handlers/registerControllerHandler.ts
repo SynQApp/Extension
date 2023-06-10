@@ -2,11 +2,13 @@ import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
 import { RepeatMode } from '~types/RepeatMode';
 
+/**
+ * Register a controller handler that handles events from other components
+ * in the extension.
+ */
 export const registerControllerHandler = (controller: IController) => {
   window.addEventListener('SynQEvent:Receive', async (event: CustomEvent) => {
     const message = event.detail.message;
-
-    console.log('Received message', message);
 
     switch (message.type) {
       case ControllerMessageType.PLAY:
