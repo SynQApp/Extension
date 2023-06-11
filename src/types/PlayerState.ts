@@ -4,7 +4,6 @@ export interface PlayerState {
   isPlaying: boolean;
   songInfo: SongInfo;
   currentTime: number;
-  duration: number;
   volume: number;
   repeatMode: RepeatMode;
 }
@@ -17,4 +16,5 @@ export interface SongInfo {
   albumCoverUrl: string;
   isLiked: boolean;
   isDisliked: boolean;
+  duration: number;
 }

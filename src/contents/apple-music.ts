@@ -11,7 +11,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const initialize = () => {
-  console.log('SynQ: Initializing Apple Music');
+  console.info('SynQ: Initializing Apple Music');
 
   const controller = new AppleMusicController();
   registerControllerHandler(controller);

@@ -61,7 +61,7 @@ Object.defineProperty(window, '__REDUX_DEVTOOLS_EXTENSION_COMPOSE__', {
      * Preventing Redux Dev Tools from setting the compose function in case a user
      * has it installed and it gets called after our code.
      */
-    console.log(
+    console.info(
       'PREVENTING REDUX DEV TOOLS FROM SETTING COMPOSE. If you want to use Redux Dev Tools, please disable SynQ temporarily.'
     );
   }

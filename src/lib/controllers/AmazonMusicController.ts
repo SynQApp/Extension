@@ -1,5 +1,6 @@
 import type { Store } from 'redux';
 
+import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 
@@ -128,7 +129,7 @@ export class AmazonMusicController implements IController {
   }
 
   // TODO: Implement
-  public isReady(): boolean {
+  public isReady(): true | NotReadyReason {
     throw new Error('Method not implemented.');
   }
 

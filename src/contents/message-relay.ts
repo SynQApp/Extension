@@ -2,6 +2,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
+import { generateRequestId } from '~util/generateRequestId';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -31,28 +32,44 @@ interface SendEventDetail {
  */
 const initialize = () => {
   // Listen for messages from the background script and dispatch them to the page
-  chrome.runtime.onMessage.addListener((message) => {
-    const event = new CustomEvent('SynQEvent:Receive', {
-      detail: { message }
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    const requestId = generateRequestId();
+    const event = new CustomEvent('SynQEvent:ToContent', {
+      detail: {
+        requestId,
+        body: message
+      }
     });
 
+    if (message.body?.awaitResponse) {
+      window.addEventListener(
+        `SynQEvent:FromContent:${requestId}`,
+        (event: CustomEvent) => {
+          sendResponse(event.detail.body);
+        }
+      );
+    }
+
     window.dispatchEvent(event);
+
+    return message.body.awaitResponse;
   });
 
   // Listen for messages from the page and dispatch them to the background script
   window.addEventListener(
-    'SynQEvent:Send',
+    'SynQEvent:ToBackground',
     async (event: CustomEvent<SendEventDetail>) => {
       const response = await sendToBackground(event.detail.message);
 
       if (response) {
-        const responseEvent = new CustomEvent('SynQEvent:Response', {
-          detail: {
-            // Include the requestId so the content script can match the response to the request
-            requestId: event.detail.requestId,
-            body: response
+        const responseEvent = new CustomEvent(
+          `SynQEvent:FromBackground:${event.detail.requestId}`,
+          {
+            detail: {
+              body: response
+            }
           }
-        });
+        );
 
         window.dispatchEvent(responseEvent);
       }
