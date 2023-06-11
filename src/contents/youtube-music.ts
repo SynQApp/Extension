@@ -11,7 +11,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const initialize = () => {
-  console.log('SynQ: Initializing YouTube Music');
+  console.info('SynQ: Initializing YouTube Music');
 
   const controller = new YouTubeMusicController();
   registerControllerHandler(controller);

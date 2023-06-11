@@ -1,14 +1,26 @@
 import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
 import { RepeatMode } from '~types/RepeatMode';
+import { generateRequestId } from '~util/generateRequestId';
+
+const sendResponse = (response: any, requestId: string) => {
+  window.dispatchEvent(
+    new CustomEvent(`SynQEvent:FromContent:${requestId}`, {
+      detail: {
+        requestId: generateRequestId(),
+        body: response
+      }
+    })
+  );
+};
 
 /**
  * Register a controller handler that handles events from other components
  * in the extension.
  */
 export const registerControllerHandler = (controller: IController) => {
-  window.addEventListener('SynQEvent:Receive', async (event: CustomEvent) => {
-    const message = event.detail.message;
+  window.addEventListener('SynQEvent:ToContent', async (event: CustomEvent) => {
+    const message = event.detail.body;
 
     switch (message.type) {
       case ControllerMessageType.PLAY:
@@ -61,6 +73,11 @@ export const registerControllerHandler = (controller: IController) => {
 
       case ControllerMessageType.PREPARE_FOR_SESSION:
         await controller.prepareForSession();
+        break;
+
+      case ControllerMessageType.GET_PLAYER_STATE:
+        const playerState = controller.getPlayerState();
+        sendResponse(playerState, event.detail.requestId);
         break;
 
       default:

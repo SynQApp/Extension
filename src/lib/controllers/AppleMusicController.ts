@@ -47,14 +47,18 @@ export class AppleMusicController implements IController {
     this._player.repeatMode = REPEAT_MAP[repeatMode];
   }
 
-  // TODO: Implement
+  /**
+   * No-op. Apple Music web player doesn't support likes/dislikes.
+   */
   public toggleLike(): void {
-    throw new Error('Method not implemented.');
+    return;
   }
 
-  // TODO: Implement
+  /**
+   * No-op. Apple Music web player doesn't support likes/dislikes.
+   */
   public toggleDislike(): void {
-    throw new Error('Method not implemented.');
+    return;
   }
 
   public setVolume(volume: number): void {
@@ -80,8 +84,38 @@ export class AppleMusicController implements IController {
   }
 
   // TODO: Implement
-  public getPlayerState(): Promise<PlayerState> {
-    throw new Error('Method not implemented.');
+  public getPlayerState(): PlayerState {
+    // Get repeatMode from player and convert to RepeatMode
+    const repeatMode = Object.keys(REPEAT_MAP).find(
+      (key) => REPEAT_MAP[key] === this._player.repeatMode
+    ) as RepeatMode;
+
+    const track = this._player.nowPlayingItem?.attributes;
+
+    if (!track) {
+      return this._emptyPlayerState;
+    }
+
+    const songInfo: SongInfo = {
+      albumCoverUrl: track.artwork.url.replace('{w}x{h}bb', '100x100'),
+      albumName: track.albumName,
+      artistName: track.artistName,
+      trackName: track.name,
+      trackId: track.playParams.id,
+      isLiked: undefined,
+      isDisliked: undefined
+    };
+
+    const playerState: PlayerState = {
+      currentTime: this._player.currentPlaybackTime,
+      duration: this._player.currentPlaybackDuration,
+      isPlaying: this._player.isPlaying,
+      repeatMode: repeatMode,
+      volume: this._player.volume * 100,
+      songInfo: songInfo
+    };
+
+    return playerState;
   }
 
   // TODO: Implement
@@ -96,5 +130,24 @@ export class AppleMusicController implements IController {
 
   private get _player() {
     return (window as any).MusicKit.getInstance();
+  }
+
+  private get _emptyPlayerState(): PlayerState {
+    return {
+      currentTime: 0,
+      duration: 0,
+      isPlaying: false,
+      repeatMode: RepeatMode.NO_REPEAT,
+      volume: 0,
+      songInfo: {
+        albumCoverUrl: '',
+        albumName: '',
+        artistName: '',
+        trackName: '',
+        trackId: '',
+        isLiked: undefined,
+        isDisliked: undefined
+      }
+    };
   }
 }

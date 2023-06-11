@@ -1,2 +1,2 @@
 export {};
-console.log('HELLO WORLD FROM BGSCRIPTS');
+console.info('HELLO WORLD FROM BGSCRIPTS');

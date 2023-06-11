@@ -65,7 +65,7 @@ export interface IController {
   /**
    * Get the current player state.
    */
-  getPlayerState(): Promise<PlayerState>;
+  getPlayerState(): PlayerState | Promise<PlayerState>;
 
   /**
    *

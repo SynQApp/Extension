@@ -11,7 +11,7 @@ export const config: PlasmoCSConfig = {
 };
 
 const initialize = () => {
-  console.log('SynQ: Initializing Amazon Music');
+  console.info('SynQ: Initializing Amazon Music');
 
   const controller = new AmazonMusicController();
   registerControllerHandler(controller);

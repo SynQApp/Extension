@@ -32,59 +32,55 @@ const Popup = () => {
   const [albumId, setAlbumId] = useState('');
   const [repeatMode, setRepeatMode] = useState(RepeatMode.NO_REPEAT);
 
-  const handlePlay = async () => {
+  const sendToTab = async (message: any) => {
     const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    return chrome.tabs.sendMessage(musicTab.id, message);
+  };
+
+  const handlePlay = async () => {
+    await sendToTab({
       type: ControllerMessageType.PLAY
     });
   };
 
   const handlePlayPause = async () => {
-    const musicTab = await getMusicServiceTab();
-
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.PLAY_PAUSE
     });
   };
 
   const handlePause = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.PAUSE
     });
   };
 
   const handleSkip = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.NEXT
     });
   };
 
   const handlePrevious = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.PREVIOUS
     });
   };
 
   const handleToggleLike = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.TOGGLE_LIKE
     });
   };
 
   const handleToggleDislike = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.TOGGLE_DISLIKE
     });
   };
 
   const handleSeekTo10s = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.SEEK_TO,
       body: {
         time: 10
@@ -93,8 +89,7 @@ const Popup = () => {
   };
 
   const handleSetVolumeTo50 = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.SET_VOLUME,
       body: {
         volume: 50
@@ -103,7 +98,6 @@ const Popup = () => {
   };
 
   const handleStartTrack = async () => {
-    const musicTab = await getMusicServiceTab();
     const body = {
       trackId
     } as any;
@@ -112,21 +106,19 @@ const Popup = () => {
       body.albumId = albumId;
     }
 
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.START_TRACK,
       body
     });
   };
 
   const handlePrepareForSession = async () => {
-    const musicTab = await getMusicServiceTab();
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.PREPARE_FOR_SESSION
     });
   };
 
   const handleToggleRepeat = async () => {
-    const musicTab = await getMusicServiceTab();
     const newRepeatMode =
       repeatMode === RepeatMode.NO_REPEAT
         ? RepeatMode.REPEAT_ONE
@@ -134,7 +126,7 @@ const Popup = () => {
         ? RepeatMode.REPEAT_ALL
         : RepeatMode.NO_REPEAT;
 
-    chrome.tabs.sendMessage(musicTab.id, {
+    await sendToTab({
       type: ControllerMessageType.SET_REPEAT_MODE,
       body: {
         repeatMode: newRepeatMode
@@ -142,6 +134,15 @@ const Popup = () => {
     });
 
     setRepeatMode(newRepeatMode);
+  };
+
+  const handleGetPlayerState = async () => {
+    sendToTab({
+      type: ControllerMessageType.GET_PLAYER_STATE,
+      body: {
+        awaitResponse: true
+      }
+    }).then(console.info);
   };
 
   return (
@@ -174,6 +175,7 @@ const Popup = () => {
         onChange={(e) => setAlbumId(e.target.value)}
       />
       <Button onClick={handleStartTrack}>Start Track</Button>
+      <Button onClick={handleGetPlayerState}>Get Player State</Button>
     </Container>
   );
 };

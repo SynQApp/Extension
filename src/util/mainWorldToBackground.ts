@@ -1,3 +1,5 @@
+import { generateRequestId } from './generateRequestId';
+
 interface BackgroundMessage {
   name: any;
   body?: any;
@@ -10,12 +12,11 @@ interface BackgroundMessage {
 export const mainWorldToBackground = (
   message: BackgroundMessage
 ): Promise<string> => {
-  // Generate a unique ID for this request
-  const requestId = Math.random().toString(36).substring(7);
+  const requestId = generateRequestId();
 
   return new Promise((resolve) => {
     // Send message to background script via the message relay script
-    const event = new CustomEvent('SynQEvent:Send', {
+    const event = new CustomEvent('SynQEvent:ToBackground', {
       detail: {
         requestId,
         message
@@ -25,12 +26,13 @@ export const mainWorldToBackground = (
     window.dispatchEvent(event);
 
     // Listen for the response from the background script
-    window.addEventListener('SynQEvent:Response', (event: CustomEvent) => {
-      const { body, requestId: resRequestId } = event.detail;
+    window.addEventListener(
+      `SynQEvent:FromBackground:${requestId}`,
+      (event: CustomEvent) => {
+        const { body, requestId: resRequestId } = event.detail;
 
-      if (requestId === resRequestId) {
         resolve(body as string);
       }
-    });
+    );
   });
 };
