@@ -145,6 +145,15 @@ const Popup = () => {
     }).then(console.info);
   };
 
+  const handleGetQueue = async () => {
+    sendToTab({
+      type: ControllerMessageType.GET_QUEUE,
+      body: {
+        awaitResponse: true
+      }
+    }).then(console.info);
+  };
+
   return (
     <Container>
       <Button onClick={handlePlay}>Play</Button>
@@ -176,6 +185,7 @@ const Popup = () => {
       />
       <Button onClick={handleStartTrack}>Start Track</Button>
       <Button onClick={handleGetPlayerState}>Get Player State</Button>
+      <Button onClick={handleGetQueue}>Get Queue</Button>
     </Container>
   );
 };

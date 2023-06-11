@@ -1,3 +1,4 @@
+import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 
@@ -75,7 +76,8 @@ export class AppleMusicController implements IController {
    * - 560097694
    */
   public async startTrack(trackId: string): Promise<void> {
-    await this._player.playLater({ song: trackId }); // Loads the song in the player
+    // Loads the song in the player which is required to change to it.
+    await this._player.playLater({ song: trackId });
     await this._player.changeToMediaItem(trackId);
   }
 
@@ -83,59 +85,69 @@ export class AppleMusicController implements IController {
     return;
   }
 
-  // TODO: Implement
   public getPlayerState(): PlayerState {
-    // Get repeatMode from player and convert to RepeatMode
+    if (!this._player) {
+      return this._emptyPlayerState;
+    }
+
+    const nowPlayingItem = this._player.nowPlayingItem;
+
+    if (!nowPlayingItem) {
+      return this._emptyPlayerState;
+    }
+
     const repeatMode = Object.keys(REPEAT_MAP).find(
       (key) => REPEAT_MAP[key] === this._player.repeatMode
     ) as RepeatMode;
 
-    const track = this._player.nowPlayingItem?.attributes;
+    const playerState: PlayerState = {
+      currentTime: this._player.currentPlaybackTime,
+      isPlaying: this._player.isPlaying,
+      repeatMode: repeatMode,
+      volume: this._player.volume * 100,
+      songInfo: this._mediaItemToSongInfo(this._player.nowPlayingItem)
+    };
 
-    if (!track) {
-      return this._emptyPlayerState;
+    return playerState;
+  }
+
+  public getQueue(): SongInfo[] {
+    return this._player.queue._queueItems.map((queueItem: any) =>
+      this._mediaItemToSongInfo(queueItem.item)
+    );
+  }
+
+  public isReady(): true | NotReadyReason {
+    if (!this._isPremiumUser()) {
+      return NotReadyReason.NON_PREMIUM_USER;
     }
 
-    const songInfo: SongInfo = {
+    return true;
+  }
+
+  private async _isPremiumUser(): Promise<boolean> {
+    const me = await this._player.me();
+    return me.subscription.active;
+  }
+
+  private _mediaItemToSongInfo(mediaItem: any): SongInfo {
+    const track = mediaItem.attributes;
+
+    return {
       albumCoverUrl: track.artwork.url.replace('{w}x{h}bb', '100x100'),
       albumName: track.albumName,
       artistName: track.artistName,
       trackName: track.name,
       trackId: track.playParams.id,
       isLiked: undefined,
-      isDisliked: undefined
+      isDisliked: undefined,
+      duration: Math.round(track.durationInMillis / 1000)
     };
-
-    const playerState: PlayerState = {
-      currentTime: this._player.currentPlaybackTime,
-      duration: this._player.currentPlaybackDuration,
-      isPlaying: this._player.isPlaying,
-      repeatMode: repeatMode,
-      volume: this._player.volume * 100,
-      songInfo: songInfo
-    };
-
-    return playerState;
-  }
-
-  // TODO: Implement
-  public getQueue(): Promise<SongInfo[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  // TODO: Implement
-  public isReady(): boolean {
-    throw new Error('Method not implemented.');
-  }
-
-  private get _player() {
-    return (window as any).MusicKit.getInstance();
   }
 
   private get _emptyPlayerState(): PlayerState {
     return {
       currentTime: 0,
-      duration: 0,
       isPlaying: false,
       repeatMode: RepeatMode.NO_REPEAT,
       volume: 0,
@@ -146,8 +158,13 @@ export class AppleMusicController implements IController {
         trackName: '',
         trackId: '',
         isLiked: undefined,
-        isDisliked: undefined
+        isDisliked: undefined,
+        duration: 0
       }
     };
+  }
+
+  private get _player() {
+    return (window as any).MusicKit.getInstance();
   }
 }

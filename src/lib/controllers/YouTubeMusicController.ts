@@ -1,3 +1,4 @@
+import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import type { RepeatMode } from '~types/RepeatMode';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -118,7 +119,7 @@ export class YouTubeMusicController implements IController {
   }
 
   // TODO: Implement
-  public isReady(): boolean {
+  public isReady(): true | NotReadyReason {
     throw new Error('Method not implemented.');
   }
 

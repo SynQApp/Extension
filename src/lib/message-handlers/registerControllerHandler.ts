@@ -24,43 +24,43 @@ export const registerControllerHandler = (controller: IController) => {
 
     switch (message.type) {
       case ControllerMessageType.PLAY:
-        controller.play();
+        await controller.play();
         break;
 
       case ControllerMessageType.PLAY_PAUSE:
-        controller.playPause();
+        await controller.playPause();
         break;
 
       case ControllerMessageType.PAUSE:
-        controller.pause();
+        await controller.pause();
         break;
 
       case ControllerMessageType.NEXT:
-        controller.next();
+        await controller.next();
         break;
 
       case ControllerMessageType.PREVIOUS:
-        controller.previous();
+        await controller.previous();
         break;
 
       case ControllerMessageType.TOGGLE_SHUFFLE:
-        controller.setRepeatMode(RepeatMode.NO_REPEAT);
+        await controller.setRepeatMode(RepeatMode.NO_REPEAT);
         break;
 
       case ControllerMessageType.TOGGLE_LIKE:
-        controller.toggleLike();
+        await controller.toggleLike();
         break;
 
       case ControllerMessageType.TOGGLE_DISLIKE:
-        controller.toggleDislike();
+        await controller.toggleDislike();
         break;
 
       case ControllerMessageType.SET_VOLUME:
-        controller.setVolume(message.body.volume);
+        await controller.setVolume(message.body.volume);
         break;
 
       case ControllerMessageType.SEEK_TO:
-        controller.seekTo(message.body.time);
+        await controller.seekTo(message.body.time);
         break;
 
       case ControllerMessageType.START_TRACK:
@@ -68,7 +68,7 @@ export const registerControllerHandler = (controller: IController) => {
         break;
 
       case ControllerMessageType.SET_REPEAT_MODE:
-        controller.setRepeatMode(message.body.repeatMode);
+        await controller.setRepeatMode(message.body.repeatMode);
         break;
 
       case ControllerMessageType.PREPARE_FOR_SESSION:
@@ -76,8 +76,13 @@ export const registerControllerHandler = (controller: IController) => {
         break;
 
       case ControllerMessageType.GET_PLAYER_STATE:
-        const playerState = controller.getPlayerState();
+        const playerState = await controller.getPlayerState();
         sendResponse(playerState, event.detail.requestId);
+        break;
+
+      case ControllerMessageType.GET_QUEUE:
+        const queue = await controller.getQueue();
+        sendResponse(queue, event.detail.requestId);
         break;
 
       default:

@@ -1,79 +1,82 @@
+import type { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import type { RepeatMode } from '~types/RepeatMode';
+
+type ValueOrPromise<T> = T | Promise<T>;
 
 export interface IController {
   /**
    * Play the current track.
    */
-  play(): void;
+  play(): ValueOrPromise<void>;
 
   /**
    * Toggle play/pause.
    */
-  playPause(): void;
+  playPause(): ValueOrPromise<void>;
 
   /**
    * Pause the current track.
    */
-  pause(): void;
+  pause(): ValueOrPromise<void>;
 
   /**
    * Skip to the next track.
    */
-  next(): void;
+  next(): ValueOrPromise<void>;
 
   /**
    * Skip to the previous track.
    */
-  previous(): void;
+  previous(): ValueOrPromise<void>;
 
   /**
    * Set repeat mode.
    */
-  setRepeatMode(repeatMode: RepeatMode): void;
+  setRepeatMode(repeatMode: RepeatMode): ValueOrPromise<void>;
 
   /**
    * Like the current track.
    */
-  toggleLike(): void;
+  toggleLike(): ValueOrPromise<void>;
 
   /**
    * Dislike the current track.
    */
-  toggleDislike(): void;
+  toggleDislike(): ValueOrPromise<void>;
 
   /**
    * Set the volume.
    */
-  setVolume(volume: number): void;
+  setVolume(volume: number): ValueOrPromise<void>;
 
   /**
    * Seek to a time in the current track.
    */
-  seekTo(time: number): void;
+  seekTo(time: number): ValueOrPromise<void>;
 
   /**
    * Start the specified track.
    */
-  startTrack(trackId: string, albumId?: string): Promise<void>;
+  startTrack(trackId: string, albumId?: string): ValueOrPromise<void>;
 
   /**
    * Prepare the controller for use in a session.
    */
-  prepareForSession(): Promise<void>;
+  prepareForSession(): ValueOrPromise<void>;
 
   /**
    * Get the current player state.
    */
-  getPlayerState(): PlayerState | Promise<PlayerState>;
+  getPlayerState(): ValueOrPromise<PlayerState>;
 
   /**
    *
    */
-  getQueue(): Promise<SongInfo[]>;
+  getQueue(): ValueOrPromise<SongInfo[]>;
 
   /**
    * Check if the controller is ready for use.
    */
-  isReady(): boolean;
+  isReady(): ValueOrPromise<true | NotReadyReason>;
 }
