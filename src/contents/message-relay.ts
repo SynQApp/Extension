@@ -52,7 +52,7 @@ const initialize = () => {
 
     window.dispatchEvent(event);
 
-    return message.body.awaitResponse;
+    return message.body?.awaitResponse ?? false;
   });
 
   // Listen for messages from the page and dispatch them to the background script

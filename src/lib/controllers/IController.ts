@@ -33,7 +33,7 @@ export interface IController {
   /**
    * Set repeat mode.
    */
-  setRepeatMode(repeatMode: RepeatMode): ValueOrPromise<void>;
+  toggleRepeatMode(): ValueOrPromise<void>;
 
   /**
    * Like the current track.
@@ -66,9 +66,9 @@ export interface IController {
   prepareForSession(): ValueOrPromise<void>;
 
   /**
-   * Get the current player state.
+   * Get the current player state. Returns undefined if the player is not active.
    */
-  getPlayerState(): ValueOrPromise<PlayerState>;
+  getPlayerState(): ValueOrPromise<PlayerState> | undefined;
 
   /**
    *

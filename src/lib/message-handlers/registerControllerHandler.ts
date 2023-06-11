@@ -43,10 +43,6 @@ export const registerControllerHandler = (controller: IController) => {
         await controller.previous();
         break;
 
-      case ControllerMessageType.TOGGLE_SHUFFLE:
-        await controller.setRepeatMode(RepeatMode.NO_REPEAT);
-        break;
-
       case ControllerMessageType.TOGGLE_LIKE:
         await controller.toggleLike();
         break;
@@ -67,8 +63,8 @@ export const registerControllerHandler = (controller: IController) => {
         await controller.startTrack(message.body.trackId, message.body.albumId);
         break;
 
-      case ControllerMessageType.SET_REPEAT_MODE:
-        await controller.setRepeatMode(message.body.repeatMode);
+      case ControllerMessageType.TOGGLE_REPEAT_MODE:
+        await controller.toggleRepeatMode();
         break;
 
       case ControllerMessageType.PREPARE_FOR_SESSION:
@@ -76,12 +72,16 @@ export const registerControllerHandler = (controller: IController) => {
         break;
 
       case ControllerMessageType.GET_PLAYER_STATE:
+        console.log('GET_PLAYER_STATE');
         const playerState = await controller.getPlayerState();
+        console.log(playerState);
         sendResponse(playerState, event.detail.requestId);
         break;
 
       case ControllerMessageType.GET_QUEUE:
+        console.log('GET_QUEUE');
         const queue = await controller.getQueue();
+        console.log(queue);
         sendResponse(queue, event.detail.requestId);
         break;
 

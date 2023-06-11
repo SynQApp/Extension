@@ -26,7 +26,7 @@ export class SpotifyController implements IController {
     throw new Error('Method not implemented.');
   }
 
-  public setRepeatMode(repeatMode: RepeatMode): void {
+  public toggleRepeatMode(): void {
     throw new Error('Method not implemented.');
   }
 

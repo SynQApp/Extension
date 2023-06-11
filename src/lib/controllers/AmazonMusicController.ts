@@ -14,10 +14,16 @@ declare let window: Window & {
 
 const SKYFIRE_STORE_NAME = 'DMWebPlayerSkyfire';
 
-const REPEAT_MAP: Record<RepeatMode, string> = {
+const REPEAT_ACTIONS_MAP: Record<RepeatMode, string> = {
   [RepeatMode.NO_REPEAT]: 'PlaybackInterface.v1_0.RepeatOffMethod',
   [RepeatMode.REPEAT_ONE]: 'PlaybackInterface.v1_0.RepeatOneMethod',
   [RepeatMode.REPEAT_ALL]: 'PlaybackInterface.v1_0.RepeatAllMethod'
+};
+
+const REPEAT_STATES_MAP: Record<string, string> = {
+  OFF: RepeatMode.NO_REPEAT,
+  ONE: RepeatMode.REPEAT_ONE,
+  ALL: RepeatMode.REPEAT_ALL
 };
 
 /**
@@ -67,9 +73,27 @@ export class AmazonMusicController implements IController {
     });
   }
 
-  public setRepeatMode(repeatMode: RepeatMode): void {
+  public toggleRepeatMode(): void {
+    const prevRepeatMode =
+      REPEAT_STATES_MAP[
+        this._skyfireStore.getState().PlaybackStates.repeat.state
+      ];
+    let newRepeatMode: RepeatMode;
+
+    switch (prevRepeatMode) {
+      case RepeatMode.NO_REPEAT:
+        newRepeatMode = RepeatMode.REPEAT_ALL;
+        break;
+      case RepeatMode.REPEAT_ALL:
+        newRepeatMode = RepeatMode.REPEAT_ONE;
+        break;
+      case RepeatMode.REPEAT_ONE:
+        newRepeatMode = RepeatMode.NO_REPEAT;
+        break;
+    }
+
     this._skyfireStore.dispatch({
-      type: REPEAT_MAP[repeatMode]
+      type: REPEAT_ACTIONS_MAP[newRepeatMode]
     });
   }
 

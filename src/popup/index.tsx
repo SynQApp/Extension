@@ -30,7 +30,6 @@ const Button = styled.button`
 const Popup = () => {
   const [trackId, setTrackId] = useState('');
   const [albumId, setAlbumId] = useState('');
-  const [repeatMode, setRepeatMode] = useState(RepeatMode.NO_REPEAT);
 
   const sendToTab = async (message: any) => {
     const musicTab = await getMusicServiceTab();
@@ -119,21 +118,9 @@ const Popup = () => {
   };
 
   const handleToggleRepeat = async () => {
-    const newRepeatMode =
-      repeatMode === RepeatMode.NO_REPEAT
-        ? RepeatMode.REPEAT_ONE
-        : repeatMode === RepeatMode.REPEAT_ONE
-        ? RepeatMode.REPEAT_ALL
-        : RepeatMode.NO_REPEAT;
-
     await sendToTab({
-      type: ControllerMessageType.SET_REPEAT_MODE,
-      body: {
-        repeatMode: newRepeatMode
-      }
+      type: ControllerMessageType.TOGGLE_REPEAT_MODE
     });
-
-    setRepeatMode(newRepeatMode);
   };
 
   const handleGetPlayerState = async () => {

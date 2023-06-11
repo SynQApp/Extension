@@ -14,7 +14,7 @@ export interface SongInfo {
   artistName: string;
   albumName: string;
   albumCoverUrl: string;
-  isLiked: boolean;
-  isDisliked: boolean;
+  isLiked?: boolean;
+  isDisliked?: boolean;
   duration: number;
 }

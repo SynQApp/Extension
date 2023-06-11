@@ -44,8 +44,18 @@ export class AppleMusicController implements IController {
     this._player.skipToPreviousItem();
   }
 
-  public setRepeatMode(repeatMode: RepeatMode): void {
-    this._player.repeatMode = REPEAT_MAP[repeatMode];
+  public toggleRepeatMode(): void {
+    switch (this._player.repeatMode) {
+      case 0:
+        this._player.repeatMode = 1;
+        break;
+      case 1:
+        this._player.repeatMode = 2;
+        break;
+      case 2:
+        this._player.repeatMode = 0;
+        break;
+    }
   }
 
   /**
@@ -85,15 +95,15 @@ export class AppleMusicController implements IController {
     return;
   }
 
-  public getPlayerState(): PlayerState {
+  public getPlayerState(): PlayerState | undefined {
     if (!this._player) {
-      return this._emptyPlayerState;
+      return undefined;
     }
 
     const nowPlayingItem = this._player.nowPlayingItem;
 
     if (!nowPlayingItem) {
-      return this._emptyPlayerState;
+      return undefined;
     }
 
     const repeatMode = Object.keys(REPEAT_MAP).find(
@@ -139,28 +149,7 @@ export class AppleMusicController implements IController {
       artistName: track.artistName,
       trackName: track.name,
       trackId: track.playParams.id,
-      isLiked: undefined,
-      isDisliked: undefined,
       duration: Math.round(track.durationInMillis / 1000)
-    };
-  }
-
-  private get _emptyPlayerState(): PlayerState {
-    return {
-      currentTime: 0,
-      isPlaying: false,
-      repeatMode: RepeatMode.NO_REPEAT,
-      volume: 0,
-      songInfo: {
-        albumCoverUrl: '',
-        albumName: '',
-        artistName: '',
-        trackName: '',
-        trackId: '',
-        isLiked: undefined,
-        isDisliked: undefined,
-        duration: 0
-      }
     };
   }
 
