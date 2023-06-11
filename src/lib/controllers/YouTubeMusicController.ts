@@ -1,5 +1,3 @@
-import { sendToBackground } from '@plasmohq/messaging';
-
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';

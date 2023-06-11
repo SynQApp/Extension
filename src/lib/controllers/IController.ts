@@ -1,6 +1,5 @@
 import type { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
-import type { RepeatMode } from '~types/RepeatMode';
 
 type ValueOrPromise<T> = T | Promise<T>;
 

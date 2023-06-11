@@ -1,6 +1,5 @@
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
-import type { RepeatMode } from '~types/RepeatMode';
 
 import type { IController } from './IController';
 

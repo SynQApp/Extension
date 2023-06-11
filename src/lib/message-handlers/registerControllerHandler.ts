@@ -1,6 +1,5 @@
 import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
-import { RepeatMode } from '~types/RepeatMode';
 import { generateRequestId } from '~util/generateRequestId';
 
 const sendResponse = (response: any, requestId: string) => {
@@ -72,16 +71,12 @@ export const registerControllerHandler = (controller: IController) => {
         break;
 
       case ControllerMessageType.GET_PLAYER_STATE:
-        console.log('GET_PLAYER_STATE');
         const playerState = await controller.getPlayerState();
-        console.log(playerState);
         sendResponse(playerState, event.detail.requestId);
         break;
 
       case ControllerMessageType.GET_QUEUE:
-        console.log('GET_QUEUE');
         const queue = await controller.getQueue();
-        console.log(queue);
         sendResponse(queue, event.detail.requestId);
         break;
 
