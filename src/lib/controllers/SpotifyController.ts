@@ -1,6 +1,5 @@
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
-import type { RepeatMode } from '~types/RepeatMode';
 
 import type { IController } from './IController';
 
@@ -26,7 +25,7 @@ export class SpotifyController implements IController {
     throw new Error('Method not implemented.');
   }
 
-  public setRepeatMode(repeatMode: RepeatMode): void {
+  public toggleRepeatMode(): void {
     throw new Error('Method not implemented.');
   }
 

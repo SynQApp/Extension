@@ -1,6 +1,5 @@
 import type { IController } from '~lib/controllers/IController';
 import { ControllerMessageType } from '~types/ControllerMessageType';
-import { RepeatMode } from '~types/RepeatMode';
 import { generateRequestId } from '~util/generateRequestId';
 
 const sendResponse = (response: any, requestId: string) => {
@@ -43,10 +42,6 @@ export const registerControllerHandler = (controller: IController) => {
         await controller.previous();
         break;
 
-      case ControllerMessageType.TOGGLE_SHUFFLE:
-        await controller.setRepeatMode(RepeatMode.NO_REPEAT);
-        break;
-
       case ControllerMessageType.TOGGLE_LIKE:
         await controller.toggleLike();
         break;
@@ -67,8 +62,8 @@ export const registerControllerHandler = (controller: IController) => {
         await controller.startTrack(message.body.trackId, message.body.albumId);
         break;
 
-      case ControllerMessageType.SET_REPEAT_MODE:
-        await controller.setRepeatMode(message.body.repeatMode);
+      case ControllerMessageType.TOGGLE_REPEAT_MODE:
+        await controller.toggleRepeatMode();
         break;
 
       case ControllerMessageType.PREPARE_FOR_SESSION:

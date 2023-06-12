@@ -11,7 +11,7 @@ interface BackgroundMessage {
  */
 export const mainWorldToBackground = (
   message: BackgroundMessage
-): Promise<string> => {
+): Promise<any> => {
   const requestId = generateRequestId();
 
   return new Promise((resolve) => {
@@ -29,8 +29,7 @@ export const mainWorldToBackground = (
     window.addEventListener(
       `SynQEvent:FromBackground:${requestId}`,
       (event: CustomEvent) => {
-        const { body, requestId: resRequestId } = event.detail;
-
+        const { body } = event.detail;
         resolve(body as string);
       }
     );
