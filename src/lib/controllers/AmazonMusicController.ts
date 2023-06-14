@@ -3,6 +3,8 @@ import type { Store } from 'redux';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
+import { waitForElement } from '~util/waitForElement';
 
 import type { IController } from './IController';
 
@@ -20,7 +22,7 @@ const REPEAT_ACTIONS_MAP: Record<RepeatMode, string> = {
   [RepeatMode.REPEAT_ALL]: 'PlaybackInterface.v1_0.RepeatAllMethod'
 };
 
-const REPEAT_STATES_MAP: Record<string, string> = {
+const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   OFF: RepeatMode.NO_REPEAT,
   ONE: RepeatMode.REPEAT_ONE,
   ALL: RepeatMode.REPEAT_ALL
@@ -32,12 +34,6 @@ const REPEAT_STATES_MAP: Record<string, string> = {
  * dispatch actions to the store to control playback.
  */
 export class AmazonMusicController implements IController {
-  private get _skyfireStore() {
-    return (window as any).__REDUX_STORES__.find(
-      (store) => store.name === SKYFIRE_STORE_NAME
-    );
-  }
-
   public play(): void {
     this._skyfireStore.dispatch({
       type: 'PlaybackInterface.v1_0.ResumeMediaMethod',
@@ -97,14 +93,50 @@ export class AmazonMusicController implements IController {
     });
   }
 
-  // TODO: Implement
+  /**
+   * Toggle the like button.
+   *
+   * The store dispatch option of toggling like/dislike is more complicated
+   * than the DOM manipulation option, so we'll use the DOM manipulation option.
+   */
   public toggleLike(): void {
-    throw new Error('Method not implemented.');
+    const likeButton = document.querySelector(
+      'music-button[icon-name="like"]'
+    ) as HTMLElement;
+
+    if (!likeButton) {
+      throw new Error('Could not find like button');
+    }
+
+    likeButton.click();
   }
 
-  // TODO: Implement
-  public toggleDislike(): void {
-    throw new Error('Method not implemented.');
+  /**
+   * Toggle the dislike button.
+   *
+   * The store dispatch option of toggling like/dislike is more complicated
+   * than the DOM manipulation option, so we'll use the DOM manipulation option.
+   */
+  public async toggleDislike(): Promise<void> {
+    const moreButton = document.querySelector(
+      '#transport music-button[icon-name="more"]'
+    ) as HTMLElement;
+
+    if (!moreButton) {
+      throw new Error('Could not find more button');
+    }
+
+    moreButton.click();
+
+    try {
+      const dislikeButton = await waitForElement(
+        '#contextMenuOverlay music-list-item[primary-text="Dislike"], #contextMenuOverlay music-list-item[primary-text="Undo Dislike"]'
+      );
+
+      (dislikeButton as HTMLElement).click();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   public setVolume(volume: number): void {
@@ -142,19 +174,113 @@ export class AmazonMusicController implements IController {
     return;
   }
 
-  // TODO: Implement
-  public getPlayerState(): Promise<PlayerState> {
-    throw new Error('Method not implemented.');
+  public async getPlayerState(): Promise<PlayerState> {
+    const maestro = await this._getMaestroInstance();
+
+    const appState = this._skyfireStore.getState();
+    const media = appState.Media;
+    const playbackStates = appState.PlaybackStates;
+
+    const songInfo: SongInfo = {
+      trackId: media.mediaId,
+      trackName: media.title,
+      albumName: media.albumName,
+      albumCoverUrl: media.artwork,
+      artistName: media.artistName,
+      duration: media.durationSeconds,
+      isLiked: this._isCurrentTrackLiked(),
+      isDisliked: this._isCurrentTrackDisliked()
+    };
+
+    return {
+      currentTime: Math.round(maestro.getCurrentTime()),
+      isPlaying: maestro.isPlaying(),
+      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
+      volume: maestro.getVolume() * 100,
+      songInfo
+    };
   }
 
-  // TODO: Implement
-  public getQueue(): Promise<SongInfo[]> {
-    throw new Error('Method not implemented.');
+  public async getQueue(): Promise<SongInfo[]> {
+    const appState = this._skyfireStore.getState();
+    let queue = appState.Media?.playQueue?.widgets?.[0]?.items;
+
+    // Amazon Music loads the queue only after a user tries to access it. If the
+    // queue is not loaded yet, we'll try to load it.
+    if (!queue || !queue.length) {
+      queue = await this._fetchQueue();
+    }
+
+    return queue?.map((item: any) => this._queueItemToSongInfo(item)) || [];
   }
 
-  // TODO: Implement
-  public isReady(): true | NotReadyReason {
-    throw new Error('Method not implemented.');
+  public async isReady(): Promise<true | NotReadyReason> {
+    const maestro = await this._getMaestroInstance();
+
+    if (!maestro.tier?.includes('UNLIMITED')) {
+      return NotReadyReason.NON_PREMIUM_USER;
+    }
+  }
+
+  private async _fetchQueue(): Promise<any> {
+    const appState = this._skyfireStore.getState();
+
+    this._skyfireStore.dispatch(
+      this._createLoadQueueAction(appState.Media?.mediaId)
+    );
+
+    return await new Promise((resolve) => {
+      // 20 attempts * 250ms = 5 seconds
+      let remainingAttempts = 20;
+
+      const interval = setInterval(() => {
+        if (!remainingAttempts) {
+          clearInterval(interval);
+          resolve([]);
+        }
+
+        const appState = this._skyfireStore.getState();
+        const curQueue = appState.Media?.playQueue?.widgets?.[0]?.items;
+
+        if (curQueue && curQueue.length) {
+          clearInterval(interval);
+          resolve(curQueue);
+        }
+
+        remainingAttempts--;
+      }, 250);
+    });
+  }
+
+  private _queueItemToSongInfo(item: any): SongInfo {
+    const searchParams = new URLSearchParams(
+      item?.primaryLink?.deeplink?.split('?')[1]
+    );
+
+    const trackId = searchParams.get('trackAsin');
+
+    return {
+      trackId,
+      trackName: item.primaryText,
+      artistName: item.secondaryText1,
+      albumName: item.secondaryText2,
+      albumCoverUrl: item.image,
+      duration: lengthTextToSeconds(item.secondaryText3)
+    };
+  }
+
+  private _isCurrentTrackLiked(): boolean {
+    const appState = this._skyfireStore.getState();
+    const rating = appState.Storage.RATINGS.TRACK_RATING;
+
+    return rating === 'THUMBS_UP';
+  }
+
+  private _isCurrentTrackDisliked(): boolean {
+    const appState = this._skyfireStore.getState();
+    const rating = appState.Storage.RATINGS.TRACK_RATING;
+
+    return rating === 'THUMBS_DOWN';
   }
 
   private _createStartTrackAction(trackId: string, albumId: string) {
@@ -179,5 +305,42 @@ export class AmazonMusicController implements IController {
       },
       type: 'EXECUTE_METHOD'
     };
+  }
+
+  private _createLoadQueueAction(currentTrackId: string) {
+    return {
+      payload: {
+        queue: {
+          interface: 'QueuesInterface.v1_0.MultiThreadedQueue',
+          id: 'MT_HTTP'
+        },
+        method: {
+          interface: 'InteractionInterface.v1_0.InvokeHttpSkillMethod',
+          url: 'https://na.mesk.skill.music.a2z.com/api/showVisualPlayQueue?userHash=%7B%22level%22%3A%22HD_MEMBER%22%7D',
+          clientInformation: [],
+          before: [],
+          after: [],
+          onSuccess: [],
+          onError: [],
+          queue: {
+            interface: 'QueuesInterface.v1_0.MultiThreadedQueue',
+            id: 'MT_HTTP'
+          },
+          forced: false,
+          owner: currentTrackId
+        }
+      },
+      type: 'ENQUEUE_SKYFIRE_METHOD'
+    };
+  }
+
+  private async _getMaestroInstance() {
+    return await window.maestro.getInstance();
+  }
+
+  private get _skyfireStore() {
+    return (window as any).__REDUX_STORES__.find(
+      (store) => store.name === SKYFIRE_STORE_NAME
+    );
   }
 }

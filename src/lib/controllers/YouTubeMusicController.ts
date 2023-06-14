@@ -1,6 +1,7 @@
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -186,18 +187,6 @@ export class YouTubeMusicController implements IController {
     return navigationRequest;
   }
 
-  private _lengthTextToSeconds(lengthText: string): number {
-    const parts = lengthText.split(':');
-
-    let duration = 0;
-
-    parts.forEach((part, index) => {
-      duration += parseInt(part) * Math.pow(60, parts.length - index - 1);
-    });
-
-    return duration;
-  }
-
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {
     // The last two runs are a separator and the year, album comes before that
     const album = longBylineRuns[longBylineRuns.length - 3].text;
@@ -244,7 +233,7 @@ export class YouTubeMusicController implements IController {
     );
 
     return {
-      duration: this._lengthTextToSeconds(rendererData.lengthText.runs[0].text),
+      duration: lengthTextToSeconds(rendererData.lengthText.runs[0].text),
       trackId,
       trackName,
       artistName: artist,
@@ -257,8 +246,6 @@ export class YouTubeMusicController implements IController {
    * Forces app the capture a navigation request so we can clone it later. This
    * is necessary when the user hasn't already clicked on a song and we want to
    * take programmatic control of the page.
-   *
-   * TODO: Add screenshot "curtain" to hide the navigation
    */
   private async _forceCaptureNavigationRequest() {
     return new Promise(async (resolve) => {
