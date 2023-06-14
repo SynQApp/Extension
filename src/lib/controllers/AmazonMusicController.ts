@@ -220,6 +220,8 @@ export class AmazonMusicController implements IController {
     if (!maestro.tier?.includes('UNLIMITED')) {
       return NotReadyReason.NON_PREMIUM_USER;
     }
+
+    return true;
   }
 
   private async _fetchQueue(): Promise<any> {
