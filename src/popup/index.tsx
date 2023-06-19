@@ -4,10 +4,9 @@ import styled from 'styled-components';
 
 import './index.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ControllerMessageType } from '~types/ControllerMessageType';
-import { RepeatMode } from '~types/RepeatMode';
 import { getMusicServiceTab } from '~util/tabs';
 
 const Container = styled.div`
@@ -140,6 +139,13 @@ const Popup = () => {
       }
     }).then(console.info);
   };
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+      console.info('Received message from background', message);
+      sendResponse(undefined);
+    });
+  });
 
   return (
     <Container>
