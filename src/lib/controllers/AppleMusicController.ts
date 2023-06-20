@@ -21,11 +21,11 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  */
 export class AppleMusicController implements IController {
   public play(): void {
-    this._player.play();
+    this.getPlayer().play();
   }
 
   public playPause(): void {
-    if (this._player.isPlaying) {
+    if (this.getPlayer().isPlaying) {
       this.pause();
     } else {
       this.play();
@@ -33,27 +33,27 @@ export class AppleMusicController implements IController {
   }
 
   public pause(): void {
-    this._player.pause();
+    this.getPlayer().pause();
   }
 
   public next(): void {
-    this._player.skipToNextItem();
+    this.getPlayer().skipToNextItem();
   }
 
   public previous(): void {
-    this._player.skipToPreviousItem();
+    this.getPlayer().skipToPreviousItem();
   }
 
   public toggleRepeatMode(): void {
-    switch (this._player.repeatMode) {
+    switch (this.getPlayer().repeatMode) {
       case 0:
-        this._player.repeatMode = 1;
+        this.getPlayer().repeatMode = 1;
         break;
       case 1:
-        this._player.repeatMode = 2;
+        this.getPlayer().repeatMode = 2;
         break;
       case 2:
-        this._player.repeatMode = 0;
+        this.getPlayer().repeatMode = 0;
         break;
     }
   }
@@ -73,11 +73,11 @@ export class AppleMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    this._player.volume = volume / 100;
+    this.getPlayer().volume = volume / 100;
   }
 
   public seekTo(time: number): void {
-    this._player.seekToTime(time);
+    this.getPlayer().seekToTime(time);
   }
 
   /**
@@ -87,8 +87,8 @@ export class AppleMusicController implements IController {
    */
   public async startTrack(trackId: string): Promise<void> {
     // Loads the song in the player which is required to change to it.
-    await this._player.playLater({ song: trackId });
-    await this._player.changeToMediaItem(trackId);
+    await this.getPlayer().playLater({ song: trackId });
+    await this.getPlayer().changeToMediaItem(trackId);
   }
 
   public prepareForSession(): Promise<void> {
@@ -96,33 +96,33 @@ export class AppleMusicController implements IController {
   }
 
   public getPlayerState(): PlayerState | undefined {
-    if (!this._player) {
+    if (!this.getPlayer()) {
       return undefined;
     }
 
-    const nowPlayingItem = this._player.nowPlayingItem;
+    const nowPlayingItem = this.getPlayer().nowPlayingItem;
 
     if (!nowPlayingItem) {
       return undefined;
     }
 
     const repeatMode = Object.keys(REPEAT_MAP).find(
-      (key) => REPEAT_MAP[key] === this._player.repeatMode
+      (key) => REPEAT_MAP[key] === this.getPlayer().repeatMode
     ) as RepeatMode;
 
     const playerState: PlayerState = {
-      currentTime: this._player.currentPlaybackTime,
-      isPlaying: this._player.isPlaying,
+      currentTime: this.getPlayer().currentPlaybackTime,
+      isPlaying: this.getPlayer().isPlaying,
       repeatMode: repeatMode,
-      volume: this._player.volume * 100,
-      songInfo: this._mediaItemToSongInfo(this._player.nowPlayingItem)
+      volume: this.getPlayer().volume * 100,
+      songInfo: this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem)
     };
 
     return playerState;
   }
 
   public getQueue(): SongInfo[] {
-    return this._player.queue._queueItems.map((queueItem: any) =>
+    return this.getPlayer().queue._queueItems.map((queueItem: any) =>
       this._mediaItemToSongInfo(queueItem.item)
     );
   }
@@ -136,7 +136,7 @@ export class AppleMusicController implements IController {
   }
 
   private async _isPremiumUser(): Promise<boolean> {
-    const me = await this._player.me();
+    const me = await this.getPlayer().me();
     return me.subscription.active;
   }
 
@@ -153,7 +153,7 @@ export class AppleMusicController implements IController {
     };
   }
 
-  private get _player() {
+  public getPlayer() {
     return (window as any).MusicKit.getInstance();
   }
 }
