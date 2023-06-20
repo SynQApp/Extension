@@ -1,7 +1,6 @@
 import type { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
-
-type ValueOrPromise<T> = T | Promise<T>;
+import type { ValueOrPromise } from '~types/Util';
 
 export interface IController {
   /**
