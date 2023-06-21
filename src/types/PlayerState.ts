@@ -2,7 +2,6 @@ import type { RepeatMode } from './RepeatMode';
 
 export interface PlayerState {
   isPlaying: boolean;
-  songInfo: SongInfo;
   currentTime: number;
   volume: number;
   repeatMode: RepeatMode;

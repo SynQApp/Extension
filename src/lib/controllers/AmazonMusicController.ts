@@ -3,6 +3,7 @@ import type { Store } from 'redux';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import type { ValueOrPromise } from '~types/Util';
 import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 import { waitForElement } from '~util/waitForElement';
 
@@ -176,8 +177,19 @@ export class AmazonMusicController implements IController {
     const maestro = await this.getMaestroInstance();
 
     const appState = this.getStore().getState();
-    const media = appState.Media;
     const playbackStates = appState.PlaybackStates;
+
+    return {
+      currentTime: Math.round(maestro.getCurrentTime()),
+      isPlaying: maestro.isPlaying(),
+      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
+      volume: maestro.getVolume() * 100
+    };
+  }
+
+  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+    const appState = this.getStore().getState();
+    const media = appState.Media;
 
     const songInfo: SongInfo = {
       trackId: media.mediaId,
@@ -190,13 +202,7 @@ export class AmazonMusicController implements IController {
       isDisliked: this._isCurrentTrackDisliked()
     };
 
-    return {
-      currentTime: Math.round(maestro.getCurrentTime()),
-      isPlaying: maestro.isPlaying(),
-      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
-      volume: maestro.getVolume() * 100,
-      songInfo
-    };
+    return songInfo;
   }
 
   public async getQueue(): Promise<SongInfo[]> {

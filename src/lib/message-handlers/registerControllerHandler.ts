@@ -75,6 +75,11 @@ export const registerControllerHandler = (controller: IController) => {
         sendResponse(playerState, event.detail.requestId);
         break;
 
+      case ControllerMessageType.GET_CURRENT_SONG_INFO:
+        const currentSongInfo = await controller.getCurrentSongInfo();
+        sendResponse(currentSongInfo, event.detail.requestId);
+        break;
+
       case ControllerMessageType.GET_QUEUE:
         const queue = await controller.getQueue();
         sendResponse(queue, event.detail.requestId);

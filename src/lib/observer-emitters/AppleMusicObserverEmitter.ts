@@ -16,7 +16,6 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
   private _controller: AppleMusicController;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
-  private _queueItemsDidChangeHandler: () => void;
 
   constructor(controller: AppleMusicController) {
     this._controller = controller;
@@ -40,10 +39,6 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
           await this._sendPlaybackUpdatedMessage();
         };
 
-        this._queueItemsDidChangeHandler = async () => {
-          await this._sendQueueUpdatedMessage();
-        };
-
         /**
          * Add the event listeners.
          */
@@ -59,13 +54,6 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
             .getPlayer()
             .addEventListener(event, this._playbackStateChangeHandler);
         });
-
-        this._controller
-          .getPlayer()
-          .addEventListener(
-            'queueItemsDidChange',
-            this._queueItemsDidChangeHandler
-          );
       }
     }, 500);
   }
@@ -83,20 +71,13 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
         .getPlayer()
         .removeEventListener(event, this._playbackStateChangeHandler);
     });
-
-    this._controller
-      .getPlayer()
-      .removeEventListener(
-        'queueItemsDidChange',
-        this._queueItemsDidChangeHandler
-      );
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
     await mainWorldToBackground({
       name: 'SONG_INFO_UPDATED',
       body: {
-        songInfo: this._controller.getPlayerState().songInfo
+        songInfo: this._controller.getCurrentSongInfo()
       }
     });
   }
@@ -106,15 +87,6 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
       name: 'PLAYBACK_UPDATED',
       body: {
         playback: this._controller.getPlayerState()
-      }
-    });
-  }
-
-  private async _sendQueueUpdatedMessage(): Promise<void> {
-    await mainWorldToBackground({
-      name: 'QUEUE_UPDATED',
-      body: {
-        queue: this._controller.getQueue()
       }
     });
   }

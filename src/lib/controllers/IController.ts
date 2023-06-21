@@ -69,7 +69,12 @@ export interface IController {
   getPlayerState(): ValueOrPromise<PlayerState> | undefined;
 
   /**
-   *
+   * Get the currently-playing song info.
+   */
+  getCurrentSongInfo(): ValueOrPromise<SongInfo | undefined>;
+
+  /**
+   * Get the queue.
    */
   getQueue(): ValueOrPromise<SongInfo[]>;
 

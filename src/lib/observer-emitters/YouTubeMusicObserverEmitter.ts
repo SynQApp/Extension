@@ -21,7 +21,6 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
 
         this._setupPlayerStateObserver();
         this._setupSongInfoObserver();
-        this._setupQueueObserver();
       }
     }, 500);
   }
@@ -54,39 +53,43 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
     const progressBarKnobElement = document.querySelector(
       '#progress-bar #sliderKnob .slider-knob-inner'
     );
-
-    progressBarKnobElement &&
+    if (progressBarKnobElement) {
       playerStateObserver.observe(progressBarKnobElement, {
         attributeFilter: ['value']
       });
+    }
 
     const likeButton = document.querySelector(
       '.ytmusic-like-button-renderer.like'
     );
-    likeButton &&
+    if (likeButton) {
       playerStateObserver.observe(likeButton, {
         attributeFilter: ['aria-pressed']
       });
+    }
 
     const dislikeButton = document.querySelector(
       '.ytmusic-like-button-renderer.dislike'
     );
-    dislikeButton &&
+    if (dislikeButton) {
       playerStateObserver.observe(dislikeButton, {
         attributeFilter: ['aria-pressed']
       });
+    }
 
     const volumeElement = document.getElementById('volume-slider');
-    volumeElement &&
+    if (volumeElement) {
       playerStateObserver.observe(volumeElement, {
         attributeFilter: ['value']
       });
+    }
 
     const repeatButton = document.querySelector('.repeat.ytmusic-player-bar');
-    repeatButton &&
+    if (repeatButton) {
       playerStateObserver.observe(repeatButton, {
         attributeFilter: ['aria-label']
       });
+    }
 
     this._mutationObservers.push(playerStateObserver);
   }
@@ -101,28 +104,11 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
       .addEventListener('videodatachange', this._onVideoDataChangeHandler);
   }
 
-  private _setupQueueObserver() {
-    const queueObserver = new MutationObserver(async () => {
-      await this._sendQueueUpdatedMessage();
-    });
-
-    const queueElement = document.querySelector(
-      '#contents.ytmusic-player-queue'
-    );
-
-    queueElement &&
-      queueObserver.observe(queueElement, {
-        childList: true
-      });
-
-    this._mutationObservers.push(queueObserver);
-  }
-
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
     await mainWorldToBackground({
       name: 'SONG_INFO_UPDATED',
       body: {
-        songInfo: this._controller.getPlayerState().songInfo
+        songInfo: this._controller.getCurrentSongInfo()
       }
     });
   }
@@ -132,15 +118,6 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
       name: 'PLAYBACK_UPDATED',
       body: {
         playback: this._controller.getPlayerState()
-      }
-    });
-  }
-
-  private async _sendQueueUpdatedMessage(): Promise<void> {
-    await mainWorldToBackground({
-      name: 'QUEUE_UPDATED',
-      body: {
-        queue: this._controller.getQueue()
       }
     });
   }

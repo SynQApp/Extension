@@ -42,7 +42,6 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
         clearInterval(maestroInterval);
 
         this._setupMaestroObserver();
-        this._setupQueueObserver();
 
         // The store observer also requires the maestro instance to be ready,
         // so we nest the store observer setup inside the maestro observer setup.
@@ -120,30 +119,11 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     });
   }
 
-  /**
-   * The queue is a bit special because the application state is only populated when
-   * the user opens the queue. We got around this in the controller.getQueue() method,
-   * so we can use that to force fetch the queue if it isn't available and then check
-   * when it changes.
-   */
-  private _setupQueueObserver() {
-    this._queueObserverInterval = setInterval(async () => {
-      const queue = await this._controller.getQueue();
-
-      const newQueueIds = queue.map((track) => track.trackId);
-
-      if (newQueueIds.join() !== this._currentState.queueIds.join()) {
-        this._currentState.queueIds = newQueueIds;
-        await this._sendQueueUpdatedMessage();
-      }
-    }, 2000);
-  }
-
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
     await mainWorldToBackground({
       name: 'SONG_INFO_UPDATED',
       body: {
-        songInfo: (await this._controller.getPlayerState()).songInfo
+        songInfo: this._controller.getCurrentSongInfo()
       }
     });
   }
@@ -153,15 +133,6 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
       name: 'PLAYBACK_UPDATED',
       body: {
         playback: await this._controller.getPlayerState()
-      }
-    });
-  }
-
-  private async _sendQueueUpdatedMessage(): Promise<void> {
-    await mainWorldToBackground({
-      name: 'QUEUE_UPDATED',
-      body: {
-        queue: await this._controller.getQueue()
       }
     });
   }
