@@ -2,6 +2,7 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 
 import type { IController } from './IController';
 
@@ -9,6 +10,12 @@ const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,
   context: RepeatMode.REPEAT_ALL,
   off: RepeatMode.NO_REPEAT
+};
+
+const REPEAT_UI_MAP: Record<string, RepeatMode> = {
+  'Enable repeat': RepeatMode.NO_REPEAT,
+  'Enable repeat one': RepeatMode.REPEAT_ALL,
+  'Disable repeat': RepeatMode.REPEAT_ONE
 };
 
 export class SpotifyController implements IController {
@@ -154,35 +161,56 @@ export class SpotifyController implements IController {
     }
   }
 
-  public async getPlayerState(): Promise<PlayerState> {
-    const playerState = await this._fetchSpotify(
-      SpotifyEndpoints.PLAYER_STATE,
-      'GET'
+  public getPlayerState(): PlayerState {
+    const playbackProgressBarElement = document.querySelector(
+      'div[data-testid="playback-progressbar"]'
+    );
+    const playbackProgressBarInput = playbackProgressBarElement.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
+    const currentTime = parseInt(
+      playbackProgressBarInput.getAttribute('value')
     );
 
-    const searchParams = new URLSearchParams({
-      ids: playerState.item.id
-    });
-
-    const [inLibrary] = await this._fetchSpotify(
-      `${SpotifyEndpoints.IS_IN_LIBRARY}?${searchParams.toString()}`,
-      'GET'
+    const playPauseButton = document.querySelector(
+      'button[data-testid="control-button-playpause"]'
     );
+    // The aria-label is "Play" when the song is paused and "Pause" when the song is playing
+    const isPlaying = playPauseButton?.getAttribute('aria-label') === 'Pause';
 
-    const songInfo: SongInfo = this._itemToSongInfo(playerState.item);
-    songInfo.isLiked = inLibrary;
+    const repeatButton = document.querySelector(
+      'button[data-testid="control-button-repeat"]'
+    );
+    const repeatText = repeatButton?.getAttribute('aria-label');
+    const repeatMode = repeatText
+      ? REPEAT_UI_MAP[repeatText]
+      : RepeatMode.NO_REPEAT;
+
+    const volumeContainerElement = document.querySelector(
+      'div[data-testid="volume-bar"]'
+    );
+    const volumeInputElement = volumeContainerElement.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
+    const volume = volumeInputElement
+      ? parseFloat(volumeInputElement.value) * 100
+      : 0;
 
     return {
-      currentTime: playerState?.progress_ms
-        ? playerState.progress_ms / 1000
-        : 0,
-      isPlaying: playerState?.is_playing ?? false,
-      repeatMode: playerState?.repeat_state
-        ? REPEAT_MAP[playerState.repeat_state]
-        : RepeatMode.NO_REPEAT,
-      volume: playerState?.device?.volume_percent ?? 0,
-      songInfo
+      currentTime,
+      isPlaying,
+      repeatMode,
+      volume
     };
+  }
+
+  public async getCurrentSongInfo(): Promise<SongInfo> {
+    const currentlyPlaying = await this._fetchSpotify(
+      SpotifyEndpoints.CURRENTLY_PLAYING,
+      'GET'
+    );
+
+    return this._itemToSongInfo(currentlyPlaying.item);
   }
 
   public async getQueue(): Promise<SongInfo[]> {
@@ -250,8 +278,6 @@ export class SpotifyController implements IController {
       if (res.status === 204) {
         return;
       }
-
-      console.log(res);
 
       return res.json();
     });

@@ -131,6 +131,15 @@ const Popup = () => {
     }).then(console.info);
   };
 
+  const handleGetCurrentSongInfo = async () => {
+    sendToTab({
+      type: ControllerMessageType.GET_CURRENT_SONG_INFO,
+      body: {
+        awaitResponse: true
+      }
+    }).then(console.info);
+  };
+
   const handleGetQueue = async () => {
     sendToTab({
       type: ControllerMessageType.GET_QUEUE,
@@ -178,6 +187,7 @@ const Popup = () => {
       />
       <Button onClick={handleStartTrack}>Start Track</Button>
       <Button onClick={handleGetPlayerState}>Get Player State</Button>
+      <Button onClick={handleGetCurrentSongInfo}>Get Current Song Info</Button>
       <Button onClick={handleGetQueue}>Get Queue</Button>
     </Container>
   );

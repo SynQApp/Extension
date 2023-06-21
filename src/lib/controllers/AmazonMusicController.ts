@@ -3,6 +3,7 @@ import type { Store } from 'redux';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import type { ValueOrPromise } from '~types/Util';
 import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 import { waitForElement } from '~util/waitForElement';
 
@@ -35,14 +36,14 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
  */
 export class AmazonMusicController implements IController {
   public play(): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.ResumeMediaMethod',
       payload: {}
     });
   }
 
   public playPause(): void {
-    if (this._skyfireStore.getState().PlaybackStates.play.state === 'PAUSED') {
+    if (this.getStore().getState().PlaybackStates.play.state === 'PAUSED') {
       this.play();
     } else {
       this.pause();
@@ -50,20 +51,20 @@ export class AmazonMusicController implements IController {
   }
 
   public pause(): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.PauseMediaMethod'
     });
   }
 
   public next(): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.PlayNextMediaMethod',
       payload: {}
     });
   }
 
   public previous(): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.PlayPreviousMediaMethod',
       payload: {}
     });
@@ -71,9 +72,7 @@ export class AmazonMusicController implements IController {
 
   public toggleRepeatMode(): void {
     const prevRepeatMode =
-      REPEAT_STATES_MAP[
-        this._skyfireStore.getState().PlaybackStates.repeat.state
-      ];
+      REPEAT_STATES_MAP[this.getStore().getState().PlaybackStates.repeat.state];
     let newRepeatMode: RepeatMode;
 
     switch (prevRepeatMode) {
@@ -88,7 +87,7 @@ export class AmazonMusicController implements IController {
         break;
     }
 
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: REPEAT_ACTIONS_MAP[newRepeatMode]
     });
   }
@@ -140,7 +139,7 @@ export class AmazonMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.SetVolumeMethod',
       payload: {
         volume: volume / 100
@@ -149,7 +148,7 @@ export class AmazonMusicController implements IController {
   }
 
   public seekTo(time: number): void {
-    this._skyfireStore.dispatch({
+    this.getStore().dispatch({
       type: 'PLAYBACK_SCRUBBED',
       payload: {
         position: time
@@ -167,7 +166,7 @@ export class AmazonMusicController implements IController {
    */
   public async startTrack(trackId: string, albumId: string): Promise<void> {
     const playTrackAction = this._createStartTrackAction(trackId, albumId);
-    this._skyfireStore.dispatch(playTrackAction);
+    this.getStore().dispatch(playTrackAction);
   }
 
   public prepareForSession(): Promise<void> {
@@ -175,11 +174,22 @@ export class AmazonMusicController implements IController {
   }
 
   public async getPlayerState(): Promise<PlayerState> {
-    const maestro = await this._getMaestroInstance();
+    const maestro = await this.getMaestroInstance();
 
-    const appState = this._skyfireStore.getState();
-    const media = appState.Media;
+    const appState = this.getStore().getState();
     const playbackStates = appState.PlaybackStates;
+
+    return {
+      currentTime: Math.round(maestro.getCurrentTime()),
+      isPlaying: maestro.isPlaying(),
+      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
+      volume: maestro.getVolume() * 100
+    };
+  }
+
+  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+    const appState = this.getStore().getState();
+    const media = appState.Media;
 
     const songInfo: SongInfo = {
       trackId: media.mediaId,
@@ -192,17 +202,11 @@ export class AmazonMusicController implements IController {
       isDisliked: this._isCurrentTrackDisliked()
     };
 
-    return {
-      currentTime: Math.round(maestro.getCurrentTime()),
-      isPlaying: maestro.isPlaying(),
-      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
-      volume: maestro.getVolume() * 100,
-      songInfo
-    };
+    return songInfo;
   }
 
   public async getQueue(): Promise<SongInfo[]> {
-    const appState = this._skyfireStore.getState();
+    const appState = this.getStore().getState();
     let queue = appState.Media?.playQueue?.widgets?.[0]?.items;
 
     // Amazon Music loads the queue only after a user tries to access it. If the
@@ -215,7 +219,7 @@ export class AmazonMusicController implements IController {
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
-    const maestro = await this._getMaestroInstance();
+    const maestro = await this.getMaestroInstance();
 
     if (!maestro.tier?.includes('UNLIMITED')) {
       return NotReadyReason.NON_PREMIUM_USER;
@@ -225,9 +229,9 @@ export class AmazonMusicController implements IController {
   }
 
   private async _fetchQueue(): Promise<any> {
-    const appState = this._skyfireStore.getState();
+    const appState = this.getStore().getState();
 
-    this._skyfireStore.dispatch(
+    this.getStore().dispatch(
       this._createLoadQueueAction(appState.Media?.mediaId)
     );
 
@@ -241,7 +245,7 @@ export class AmazonMusicController implements IController {
           resolve([]);
         }
 
-        const appState = this._skyfireStore.getState();
+        const appState = this.getStore().getState();
         const curQueue = appState.Media?.playQueue?.widgets?.[0]?.items;
 
         if (curQueue && curQueue.length) {
@@ -272,15 +276,15 @@ export class AmazonMusicController implements IController {
   }
 
   private _isCurrentTrackLiked(): boolean {
-    const appState = this._skyfireStore.getState();
-    const rating = appState.Storage.RATINGS.TRACK_RATING;
+    const appState = this.getStore().getState();
+    const rating = appState.Storage.RATINGS?.TRACK_RATING;
 
     return rating === 'THUMBS_UP';
   }
 
   private _isCurrentTrackDisliked(): boolean {
-    const appState = this._skyfireStore.getState();
-    const rating = appState.Storage.RATINGS.TRACK_RATING;
+    const appState = this.getStore().getState();
+    const rating = appState.Storage.RATINGS?.TRACK_RATING;
 
     return rating === 'THUMBS_DOWN';
   }
@@ -302,7 +306,7 @@ export class AmazonMusicController implements IController {
             id: 'ST_HTTP'
           },
           forced: true,
-          owner: this._skyfireStore.getState().TemplateStack.currentTemplate.id
+          owner: this.getStore().getState().TemplateStack.currentTemplate.id
         }
       },
       type: 'EXECUTE_METHOD'
@@ -336,11 +340,11 @@ export class AmazonMusicController implements IController {
     };
   }
 
-  private async _getMaestroInstance() {
+  public async getMaestroInstance() {
     return await window.maestro.getInstance();
   }
 
-  private get _skyfireStore() {
+  public getStore() {
     return (window as any).__REDUX_STORES__.find(
       (store) => store.name === SKYFIRE_STORE_NAME
     );

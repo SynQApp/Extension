@@ -1,7 +1,6 @@
 import type { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
-
-type ValueOrPromise<T> = T | Promise<T>;
+import type { ValueOrPromise } from '~types/Util';
 
 export interface IController {
   /**
@@ -70,7 +69,12 @@ export interface IController {
   getPlayerState(): ValueOrPromise<PlayerState> | undefined;
 
   /**
-   *
+   * Get the currently-playing song info.
+   */
+  getCurrentSongInfo(): ValueOrPromise<SongInfo | undefined>;
+
+  /**
+   * Get the queue.
    */
   getQueue(): ValueOrPromise<SongInfo[]>;
 

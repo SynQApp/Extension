@@ -1,6 +1,7 @@
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import type { ValueOrPromise } from '~types/Util';
 
 import type { IController } from './IController';
 
@@ -114,11 +115,14 @@ export class AppleMusicController implements IController {
       currentTime: this.getPlayer().currentPlaybackTime,
       isPlaying: this.getPlayer().isPlaying,
       repeatMode: repeatMode,
-      volume: this.getPlayer().volume * 100,
-      songInfo: this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem)
+      volume: this.getPlayer().volume * 100
     };
 
     return playerState;
+  }
+
+  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+    return this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem);
   }
 
   public getQueue(): SongInfo[] {

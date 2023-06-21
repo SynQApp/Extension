@@ -1,6 +1,7 @@
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import type { ValueOrPromise } from '~types/Util';
 import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -129,6 +130,16 @@ export class YouTubeMusicController implements IController {
       return undefined;
     }
 
+    return {
+      currentTime: Math.round(this.getPlayer().getCurrentTime()),
+      isPlaying:
+        this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
+      volume: this.getPlayer().getVolume(),
+      repeatMode: RepeatMode.NO_REPEAT
+    };
+  }
+
+  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
     const videoDetails = this._appState.player?.playerResponse?.videoDetails;
     const trackId = videoDetails.videoId;
 
@@ -140,14 +151,7 @@ export class YouTubeMusicController implements IController {
 
     const songInfo: SongInfo = this._queueItemToSongInfo(queueItem);
 
-    return {
-      currentTime: Math.round(this.getPlayer().getCurrentTime()),
-      isPlaying:
-        this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
-      volume: this.getPlayer().getVolume(),
-      repeatMode: RepeatMode.NO_REPEAT,
-      songInfo
-    };
+    return songInfo;
   }
 
   public getQueue(): SongInfo[] {
