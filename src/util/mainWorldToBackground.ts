@@ -1,16 +1,13 @@
-import { generateRequestId } from './generateRequestId';
+import { sendToBackground } from '@plasmohq/messaging';
 
-interface BackgroundMessage {
-  name: any;
-  body?: any;
-}
+import { generateRequestId } from './generateRequestId';
 
 /**
  * A util function for using the message relay to send a message to the background script
  * from a MAIN world content script.
  */
-export const mainWorldToBackground = (
-  message: BackgroundMessage
+export const mainWorldToBackground: typeof sendToBackground = (
+  message
 ): Promise<any> => {
   const requestId = generateRequestId();
 

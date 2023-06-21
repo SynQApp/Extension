@@ -55,11 +55,11 @@ export class YouTubeMusicController implements IController {
   }
 
   public play(): void {
-    this._player.playVideo();
+    this.getPlayer().playVideo();
   }
 
   public playPause(): void {
-    if (this._player.getPlayerState() === YouTubeMusicPlayerState.PLAYING) {
+    if (this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING) {
       this.pause();
     } else {
       this.play();
@@ -67,15 +67,15 @@ export class YouTubeMusicController implements IController {
   }
 
   public pause(): void {
-    this._player.pauseVideo();
+    this.getPlayer().pauseVideo();
   }
 
   public next(): void {
-    this._player.nextVideo();
+    this.getPlayer().nextVideo();
   }
 
   public previous(): void {
-    this._player.previousVideo();
+    this.getPlayer().previousVideo();
   }
 
   public toggleRepeatMode(): void {
@@ -101,11 +101,11 @@ export class YouTubeMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    this._player.setVolume(volume);
+    this.getPlayer().setVolume(volume);
   }
 
   public seekTo(time: number): void {
-    this._player.seekTo(time);
+    this.getPlayer().seekTo(time);
   }
 
   /**
@@ -141,10 +141,10 @@ export class YouTubeMusicController implements IController {
     const songInfo: SongInfo = this._queueItemToSongInfo(queueItem);
 
     return {
-      currentTime: Math.round(this._player.getCurrentTime()),
+      currentTime: Math.round(this.getPlayer().getCurrentTime()),
       isPlaying:
-        this._player.getPlayerState() === YouTubeMusicPlayerState.PLAYING,
-      volume: this._player.getVolume(),
+        this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
+      volume: this.getPlayer().getVolume(),
       repeatMode: RepeatMode.NO_REPEAT,
       songInfo
     };
@@ -340,7 +340,7 @@ export class YouTubeMusicController implements IController {
 
   private _addCurtainStyles() {
     const curtainStyle = document.createElement('style');
-    curtainStyle.innerHTML = `
+    curtainStyle.innerText = `
 @keyframes spin {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -385,7 +385,7 @@ export class YouTubeMusicController implements IController {
     document.head.appendChild(curtainStyle);
   }
 
-  private get _player() {
+  public getPlayer() {
     return document.getElementById('movie_player') as any;
   }
 
