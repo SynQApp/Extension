@@ -1,4 +1,4 @@
-const ShareTrackPage = () => {
+const ShareTrackScreen = () => {
   return (
     <div>
       <h1>Share Track</h1>
@@ -6,4 +6,4 @@ const ShareTrackPage = () => {
   );
 };
 
-export default ShareTrackPage;
+export default ShareTrackScreen;

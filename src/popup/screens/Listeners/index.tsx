@@ -1,4 +1,4 @@
-const ListenersPage = () => {
+const ListenersScreen = () => {
   return (
     <div>
       <h1>Listeners</h1>
@@ -6,4 +6,4 @@ const ListenersPage = () => {
   );
 };
 
-export default ListenersPage;
+export default ListenersScreen;

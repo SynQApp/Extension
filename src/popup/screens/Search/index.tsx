@@ -1,4 +1,4 @@
-const SearchPage = () => {
+const SearchScreen = () => {
   return (
     <div>
       <h1>Search</h1>
@@ -6,4 +6,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default SearchScreen;

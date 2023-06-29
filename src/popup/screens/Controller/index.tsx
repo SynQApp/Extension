@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const ControllerPage = () => {
+const ControllerScreen = () => {
   return (
     <div>
       <h1>Controller</h1>
@@ -9,4 +9,4 @@ const ControllerPage = () => {
   );
 };
 
-export default ControllerPage;
+export default ControllerScreen;

@@ -1,4 +1,4 @@
-const QueuePage = () => {
+const QueueScreen = () => {
   return (
     <div>
       <h1>Queue</h1>
@@ -6,4 +6,4 @@ const QueuePage = () => {
   );
 };
 
-export default QueuePage;
+export default QueueScreen;

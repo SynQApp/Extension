@@ -1,4 +1,4 @@
-const ShareSessionPage = () => {
+const ShareSessionScreen = () => {
   return (
     <div>
       <h1>Share Session</h1>
@@ -6,4 +6,4 @@ const ShareSessionPage = () => {
   );
 };
 
-export default ShareSessionPage;
+export default ShareSessionScreen;

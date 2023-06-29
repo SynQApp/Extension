@@ -1,4 +1,4 @@
-const ChoosePlatformPage = () => {
+const ChoosePlatformScreen = () => {
   return (
     <div>
       <h1>Choose Platform</h1>
@@ -6,4 +6,4 @@ const ChoosePlatformPage = () => {
   );
 };
 
-export default ChoosePlatformPage;
+export default ChoosePlatformScreen;

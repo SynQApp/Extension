@@ -1,25 +1,25 @@
 import { Route, Routes } from 'react-router-dom';
 
-import ChoosePlatformPage from './screens/ChoosePlatform';
-import ControllerPage from './screens/Controller';
-import ListenersPage from './screens/Listeners';
-import QueuePage from './screens/Queue';
-import SearchPage from './screens/Search';
-import SettingsPage from './screens/Settings';
-import ShareSessionPage from './screens/ShareSession';
-import ShareTrackPage from './screens/ShareTrack';
+import ChoosePlatformScreen from './screens/ChoosePlatform';
+import ControllerScreen from './screens/Controller';
+import ListenersScreen from './screens/Listeners';
+import QueueScreen from './screens/Queue';
+import SearchScreen from './screens/Search';
+import SettingsScreen from './screens/Settings';
+import ShareSessionScreen from './screens/ShareSession';
+import ShareTrackScreen from './screens/ShareTrack';
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<ControllerPage />} />
-      <Route path="/choose-platform" element={<ChoosePlatformPage />} />
-      <Route path="/listeners" element={<ListenersPage />} />
-      <Route path="/queue" element={<QueuePage />} />
-      <Route path="/search" element={<SearchPage />} />
-      <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/share-session" element={<ShareSessionPage />} />
-      <Route path="/share-track" element={<ShareTrackPage />} />
+      <Route path="/" element={<ControllerScreen />} />
+      <Route path="/choose-platform" element={<ChoosePlatformScreen />} />
+      <Route path="/listeners" element={<ListenersScreen />} />
+      <Route path="/queue" element={<QueueScreen />} />
+      <Route path="/search" element={<SearchScreen />} />
+      <Route path="/settings" element={<SettingsScreen />} />
+      <Route path="/share-session" element={<ShareSessionScreen />} />
+      <Route path="/share-track" element={<ShareTrackScreen />} />
     </Routes>
   );
 };
