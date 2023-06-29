@@ -38,7 +38,6 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
   public observe(): void {
     const maestroInterval = setInterval(async () => {
       if (await this._controller.getMaestroInstance()) {
-        console.log('SynQ: Observing player');
         clearInterval(maestroInterval);
 
         this._setupMaestroObserver();
@@ -47,7 +46,6 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
         // so we nest the store observer setup inside the maestro observer setup.
         const storeInterval = setInterval(async () => {
           if (this._controller.getStore()) {
-            console.log('SynQ: Observing store');
             clearInterval(storeInterval);
 
             this._setupStoreObserver();

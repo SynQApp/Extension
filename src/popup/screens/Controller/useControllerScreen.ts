@@ -12,7 +12,6 @@ const useControllerScreen = () => {
       return;
     }
 
-    console.log({ allTabs });
     if (!allTabs || allTabs.length === 0) {
       navigate('/select-platform');
     } else if (allTabs.length > 1) {

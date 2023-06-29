@@ -17,8 +17,6 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
   public async observe(): Promise<void> {
     await waitForElement('.player-controls');
 
-    console.log('SynQ: Observing player');
-
     this._setupPlayerStateObserver();
     await this._setupSongInfoObserver();
   }
