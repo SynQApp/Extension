@@ -5,12 +5,16 @@ import Layout from './Layout';
 
 import './index.css';
 
+import { ContextProvidersWrapper } from './contexts/ContextProvidersWrapper';
+
 const Popup = () => {
   return (
     <MemoryRouter>
-      <Layout>
-        <AppRoutes />
-      </Layout>
+      <ContextProvidersWrapper>
+        <Layout>
+          <AppRoutes />
+        </Layout>
+      </ContextProvidersWrapper>
     </MemoryRouter>
   );
 };
