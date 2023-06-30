@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-
 import useControllerScreen from './useControllerScreen';
 
 const ControllerScreen = () => {
