@@ -16,7 +16,6 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
   public observe(): void {
     const interval = setInterval(() => {
       if (this._controller.getPlayer()) {
-        console.log('SynQ: Observing player');
         clearInterval(interval);
 
         this._setupPlayerStateObserver();
