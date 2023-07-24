@@ -30,8 +30,9 @@ const MusicServiceButton = ({
 };
 
 const StyledButton = styled(Button)`
-  border: 1px solid ${token('colors.borderPrimary')};
+  border: 1px solid ${token('colors.base.white')};
   display: block;
+  font-size: ${token('typography.fontSizes.md')};
   padding: 12px 0;
 
   &::before {

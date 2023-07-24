@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.3.3",
-    "@synq/ui": "0.0.1-alpha.15",
+    "@synq/ui": "0.0.3-alpha-main-screen-updates.4",
     "plasmo": "0.75.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",

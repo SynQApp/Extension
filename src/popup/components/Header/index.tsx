@@ -14,17 +14,17 @@ const Header = () => {
 
 const HeaderStyled = styled.header`
   background: ${token('colors.background')};
+  border-bottom: 1px solid ${token('colors.borderLow')};
   display: flex;
-  padding: 0 ${token('spacing.md')} 0 ${token('spacing.sm')};
   height: 50px;
   justify-content: space-between;
-  border-bottom: 1px solid ${token('colors.borderLow')};
+  padding: 0 ${token('spacing.md')} 0 ${token('spacing.sm')};
 `;
 
 const SettingsButton = styled(Button)`
-  font-size: ${token('typography.fontSizes.h2')};
-  padding: 0;
+  font-size: ${token('typography.fontSizes.2xl')};
   margin: 0;
+  padding: 0;
 `;
 
 export default Header;

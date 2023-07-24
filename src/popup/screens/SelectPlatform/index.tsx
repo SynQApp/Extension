@@ -1,4 +1,4 @@
-import { Text, token } from '@synq/ui';
+import { Stack, Text, token } from '@synq/ui';
 import WaveGraphic from 'data-base64:~assets/images/wave-graphic.svg';
 import styled from 'styled-components';
 
@@ -18,16 +18,16 @@ const SelectPlatformScreen = () => {
   return (
     <Container>
       <div>
-        <Heading variant="h2">
+        <Heading type="display" size="2xl" forwardedAs="h2">
           <span>Choose</span>{' '}
-          <Text variant="h2" as="span" gradient glow>
+          <Text type="display" size="2xl" as="span" gradient glow>
             Service
           </Text>
         </Heading>
-        <Description variant="body1">
+        <Description type="body" size="sm">
           Select your preferred music service to get started.
         </Description>
-        <MusicServiceButtons>
+        <MusicServiceButtons spacing="xs">
           <MusicServiceButton
             name="Spotify"
             urlMatch={SPOTIFY_URL_MATCH}
@@ -57,32 +57,29 @@ const SelectPlatformScreen = () => {
 
 const Container = styled.div`
   background-color: ${token('colors.background')};
-  height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
+  width: 100%;
 `;
 
 const Heading = styled(Text)`
+  font-weight: ${token('typography.fontWeights.bold')};
   letter-spacing: 0.5px;
   margin: 0;
-  padding-bottom: ${token('spacing.sm')};
   text-align: center;
 `;
 
 const Description = styled(Text)`
-  margin: 0 auto;
+  color: ${token('colors.onBackgroundMedium')};
+  margin: ${token('spacing.xs')} auto;
   text-align: center;
   width: 250px;
 `;
 
-const MusicServiceButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 210px;
-  justify-content: space-between;
-  margin: 20px auto 0;
+const MusicServiceButtons = styled(Stack)`
+  margin: ${token('spacing.md')} auto 0;
   width: 90%;
 `;
 

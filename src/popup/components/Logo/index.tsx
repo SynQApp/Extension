@@ -6,23 +6,24 @@ const Logo = () => {
   return (
     <Container>
       <LogoImage src={Icon} alt="SynQ Logo" />
-      <LogoText variant="h1">SynQ</LogoText>
+      <LogoText type="display" size="2xl" forwardedAs="h1">
+        SynQ
+      </LogoText>
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: inline-flex;
   align-items: center;
+  display: inline-flex;
 `;
 
 const LogoImage = styled.img`
-  width: 50px;
   height: 50px;
+  width: 50px;
 `;
 
 const LogoText = styled(Text)`
-  font-size: ${token('typography.fontSizes.h2')};
   font-weight: ${token('typography.fontWeights.medium')};
 `;
 
