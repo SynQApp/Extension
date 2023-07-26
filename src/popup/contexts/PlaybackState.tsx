@@ -2,43 +2,47 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 import { ControllerMessageType } from '~types/ControllerMessageType';
 import { EventMessageType } from '~types/Events';
-import type { SongInfo } from '~types/PlayerState';
+import type { PlayerState } from '~types/PlayerState';
 
 import { useTabs } from './Tabs';
 
-const CurrentSongInfoContext = createContext<SongInfo | null>(null);
+type PlaybackState = Omit<PlayerState, 'songInfo'>;
 
-interface CurrentSongInfoProviderProps {
+const PlaybackStateContext = createContext<PlaybackState | null>(null);
+
+interface PlaybackStateProviderProps {
   children: React.ReactNode;
 }
 
 /**
- * Get the current song info.
+ * Get the playback state.
  */
-export const CurrentSongInfoProvider = ({
+export const PlaybackStateProvider = ({
   children
-}: CurrentSongInfoProviderProps) => {
-  const [currentSongInfo, setCurrentSongInfo] = useState<SongInfo | null>(null);
+}: PlaybackStateProviderProps) => {
+  const [playbackState, setPlaybackState] = useState<PlaybackState | null>(
+    null
+  );
   const { selectedTab } = useTabs();
 
   useEffect(() => {
     if (!selectedTab) {
-      setCurrentSongInfo(null);
+      setPlaybackState(null);
       return;
     }
 
-    const getSongInfo = async () => {
+    const getPlaybackState = async () => {
       let info = await chrome.tabs.sendMessage(selectedTab.id, {
-        name: ControllerMessageType.GET_CURRENT_SONG_INFO,
+        name: ControllerMessageType.GET_PLAYER_STATE,
         body: {
           awaitResponse: true
         }
       });
 
-      setCurrentSongInfo(info);
+      setPlaybackState(info);
     };
 
-    getSongInfo();
+    getPlaybackState();
 
     const handleMessage = (
       message: any,
@@ -46,10 +50,10 @@ export const CurrentSongInfoProvider = ({
       sendResponse
     ) => {
       if (
-        message.name === EventMessageType.SONG_INFO_UPDATED &&
+        message.name === EventMessageType.PLAYBACK_UPDATED &&
         sender.tab?.id === selectedTab.id
       ) {
-        setCurrentSongInfo(message.body.songInfo);
+        setPlaybackState(message.body.playbackState);
         sendResponse(undefined);
       }
     };
@@ -62,10 +66,10 @@ export const CurrentSongInfoProvider = ({
   }, [selectedTab]);
 
   return (
-    <CurrentSongInfoContext.Provider value={currentSongInfo}>
+    <PlaybackStateContext.Provider value={playbackState}>
       {children}
-    </CurrentSongInfoContext.Provider>
+    </PlaybackStateContext.Provider>
   );
 };
 
-export const useCurrentSongInfo = () => useContext(CurrentSongInfoContext);
+export const usePlaybackState = () => useContext(PlaybackStateContext);
