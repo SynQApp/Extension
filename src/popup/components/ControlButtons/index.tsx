@@ -200,10 +200,18 @@ const PlayPauseButton = styled(Button)<ControlButtonProps>`
   width: 30px;
   padding: 0;
   border-radius: 50%;
+  opacity: 1;
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out 0s;
 
   &::before {
     border-radius: 50%;
   }
+
+  ${({ $hidden }) =>
+    $hidden &&
+    css`
+      opacity: 0;
+    `}
 
   ${expandedStyle(
     css`

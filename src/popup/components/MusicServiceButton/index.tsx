@@ -23,7 +23,7 @@ const MusicServiceButton = ({
   };
 
   return (
-    <StyledButton onClick={handleClick} size="large" variant="primary">
+    <StyledButton onClick={handleClick} size="large" variant="secondary">
       {name}
     </StyledButton>
   );
@@ -36,8 +36,16 @@ const StyledButton = styled(Button)`
   padding: 12px 0;
 
   &::before {
+    background: ${token('colors.gradient')};
+    content: '';
+    height: 100%;
+    left: 0;
     opacity: 0;
+    position: absolute;
+    top: 0;
     transition: opacity 0.2s ease-in-out;
+    width: 100%;
+    z-index: -1;
   }
 
   &:hover {
