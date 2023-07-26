@@ -9,3 +9,8 @@ export const ALL_URL_MATCHES = [
   AMAZON_MUSIC_URL_MATCH,
   APPLE_MUSIC_URL_MATCH
 ];
+
+export const SPOTIFY_URL = 'https://open.spotify.com';
+export const YOUTUBE_MUSIC_URL = 'https://music.youtube.com';
+export const AMAZON_MUSIC_URL = 'https://music.amazon.com';
+export const APPLE_MUSIC_URL = 'https://music.apple.com';

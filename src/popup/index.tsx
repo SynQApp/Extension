@@ -1,19 +1,21 @@
+import { UiProvider } from '@synq/ui';
 import { MemoryRouter } from 'react-router-dom';
 
 import AppRoutes from './AppRoutes';
 import Layout from './Layout';
+import { ContextProvidersWrapper } from './contexts/ContextProvidersWrapper';
 
 import './index.css';
-
-import { ContextProvidersWrapper } from './contexts/ContextProvidersWrapper';
 
 const Popup = () => {
   return (
     <MemoryRouter>
       <ContextProvidersWrapper>
-        <Layout>
-          <AppRoutes />
-        </Layout>
+        <UiProvider>
+          <Layout>
+            <AppRoutes />
+          </Layout>
+        </UiProvider>
       </ContextProvidersWrapper>
     </MemoryRouter>
   );

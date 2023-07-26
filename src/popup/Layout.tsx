@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 import Header from './components/Header';
 
@@ -6,15 +6,19 @@ const Layout = ({ children }) => {
   return (
     <Container>
       <Header />
-      <div>{children}</div>
+      <Content>{children}</Content>
     </Container>
   );
 };
 
-export default Layout;
-
 const Container = styled.div`
   width: 300px;
-  height: 400px;
-  overflow-y: scroll;
+  height: 420px;
 `;
+
+const Content = styled.div`
+  width: 100%;
+  height: calc(100% - 50px);
+`;
+
+export default Layout;
