@@ -1,10 +1,9 @@
 import { Flex, Text, token } from '@synq/ui';
+import { Slider } from '@synq/ui';
 import { useMemo } from 'react';
 import { styled, useTheme } from 'styled-components';
 
 import { secondsToLengthText } from '~util/time';
-
-import { Slider } from '../GradientSlider';
 
 interface TrackSeekerProps {
   currentTime: number;
@@ -30,7 +29,6 @@ export const TrackSeeker = ({
           max={duration}
           value={currentTime}
           onChange={handleSliderChange}
-          progressColor={theme.colors.gradient}
         />
       </SeekContainer>
       <Flex justify="space-between">

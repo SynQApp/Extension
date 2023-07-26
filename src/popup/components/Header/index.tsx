@@ -1,8 +1,8 @@
-import { Button, Flex, token } from '@synq/ui';
+import { Flex, token } from '@synq/ui';
+import { Icon } from '@synq/ui';
 import styled from 'styled-components';
 
 import Logo from '../Logo';
-import { SvgIcon } from '../SvgIcon';
 
 const Header = () => {
   return (
@@ -21,12 +21,7 @@ const HeaderStyled = styled.header`
   padding: 0 ${token('spacing.sm')} 0;
 `;
 
-const SettingsButton = styled(Button)`
-  margin: 0;
-  padding: 0;
-`;
-
-const SettingsIcon = styled(SvgIcon)`
+const SettingsIcon = styled(Icon)`
   color: white;
   width: 24px;
   height: 24px;

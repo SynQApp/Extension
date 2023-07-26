@@ -2,7 +2,6 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
-import { lengthTextToSeconds } from '~util/time';
 
 import type { IController } from './IController';
 

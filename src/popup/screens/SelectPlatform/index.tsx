@@ -27,7 +27,7 @@ const SelectPlatformScreen = () => {
         <Description type="body" size="sm">
           Select your preferred music service to get started.
         </Description>
-        <MusicServiceButtons spacing="sm">
+        <MusicServiceButtons spacing="sm" direction="column">
           <MusicServiceButton
             name="Spotify"
             urlMatch={SPOTIFY_URL_MATCH}
