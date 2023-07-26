@@ -47,7 +47,6 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
       .addEventListener('onStateChange', this._onStateChangeHandler);
 
     const playerStateObserver = new MutationObserver(async () => {
-      console.log('mutation observed');
       await this._sendPlaybackUpdatedMessage();
     });
 

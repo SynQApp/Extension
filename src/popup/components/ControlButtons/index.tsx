@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, token } from '@synq/ui';
 import { useState } from 'react';
 import styled, { css, useTheme } from 'styled-components';
