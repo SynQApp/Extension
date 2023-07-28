@@ -108,14 +108,6 @@ export class YouTubeMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    // const volumeSlider = document.getElementById(
-    //   'volume-slider'
-    // ) as HTMLElement;
-    // volumeSlider?.setAttribute('value', volume.toString());
-
-    // const changeEvent = new Event('change');
-    // volumeSlider?.dispatchEvent(changeEvent);
-
     this.getPlayer().setVolume(volume);
 
     this._ytmApp.store.dispatch({
