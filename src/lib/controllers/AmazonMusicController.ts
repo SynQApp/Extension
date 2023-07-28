@@ -183,7 +183,8 @@ export class AmazonMusicController implements IController {
       currentTime: Math.round(maestro.getCurrentTime()),
       isPlaying: maestro.isPlaying(),
       repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
-      volume: maestro.getVolume() * 100
+      volume: maestro.getVolume() * 100,
+      queue: await this.getQueue()
     };
   }
 
@@ -226,6 +227,10 @@ export class AmazonMusicController implements IController {
     }
 
     return true;
+  }
+
+  public playQueueTrack(id: string): ValueOrPromise<void> {
+    throw new Error('Method not implemented.');
   }
 
   private async _fetchQueue(): Promise<any> {

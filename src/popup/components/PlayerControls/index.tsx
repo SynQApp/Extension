@@ -4,7 +4,7 @@ import { css, styled } from 'styled-components';
 import { expandedStyle } from '~popup/util/expandedStyle';
 
 import { ControlButtons } from '../ControlButtons';
-import { TextShortenedMarquee } from '../MarqueeText';
+import { MarqueeText } from '../MarqueeText';
 import { TrackSeeker } from '../TrackSeeker';
 import { usePlayerControls } from './usePlayerControls';
 
@@ -75,22 +75,26 @@ interface Expandable {
   $expanded: boolean;
 }
 
-const TrackTitle = styled(TextShortenedMarquee)<Expandable>`
-  margin: 0;
-  font-weight: ${token('typography.fontWeights.semibold')};
+const TrackTitle = styled(MarqueeText)<Expandable>`
+  .text {
+    margin: 0;
+    font-weight: ${token('typography.fontWeights.semibold')};
+  }
 `;
 
-const TrackArtist = styled(TextShortenedMarquee)<Expandable>`
-  margin: ${token('spacing.3xs')} 0 0;
-  color: ${token('colors.onBackgroundMedium')};
-  line-height: 14px;
-  font-weight: ${token('typography.fontWeights.regular')};
+const TrackArtist = styled(MarqueeText)<Expandable>`
+  .text {
+    margin: ${token('spacing.3xs')} 0 0;
+    color: ${token('colors.onBackgroundMedium')};
+    line-height: 14px;
+    font-weight: ${token('typography.fontWeights.regular')};
 
-  ${expandedStyle(
-    css`
-      font-weight: ${token('typography.fontWeights.thin')};
-    `
-  )};
+    ${expandedStyle(
+      css`
+        font-weight: ${token('typography.fontWeights.thin')};
+      `
+    )};
+  }
 `;
 
 const TrackSeekerContainer = styled.div`

@@ -5,6 +5,7 @@ export interface PlayerState {
   currentTime: number;
   volume: number;
   repeatMode: RepeatMode;
+  queue: SongInfo[];
 }
 
 export interface SongInfo {

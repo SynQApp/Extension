@@ -108,13 +108,20 @@ export class YouTubeMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    const volumeSlider = document.getElementById(
-      'volume-slider'
-    ) as HTMLElement;
-    volumeSlider?.setAttribute('value', volume.toString());
+    // const volumeSlider = document.getElementById(
+    //   'volume-slider'
+    // ) as HTMLElement;
+    // volumeSlider?.setAttribute('value', volume.toString());
 
-    const changeEvent = new Event('change');
-    volumeSlider?.dispatchEvent(changeEvent);
+    // const changeEvent = new Event('change');
+    // volumeSlider?.dispatchEvent(changeEvent);
+
+    this.getPlayer().setVolume(volume);
+
+    this._ytmApp.store.dispatch({
+      type: 'SET_VOLUME',
+      payload: volume
+    });
   }
 
   public seekTo(time: number): void {
@@ -151,7 +158,8 @@ export class YouTubeMusicController implements IController {
       isPlaying:
         this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
       volume: this.getPlayer().getVolume(),
-      repeatMode
+      repeatMode,
+      queue: this.getQueue()
     };
   }
 
@@ -186,6 +194,13 @@ export class YouTubeMusicController implements IController {
     }
 
     return true;
+  }
+
+  public playQueueTrack(id: string): ValueOrPromise<void> {
+    const queue = this.getQueue();
+    const index = queue.findIndex((song) => song.trackId === id);
+
+    this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: index });
   }
 
   private _createNavigationRequestInstance(trackId: string): any {

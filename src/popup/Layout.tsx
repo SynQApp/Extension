@@ -20,12 +20,12 @@ const Layout = ({ children }) => {
 const Container = styled.div<Expandable>`
   background: ${token('colors.background')};
   transition: all 0.2s ease-in-out;
-  width: 330px;
-  height: 190px;
+  width: 350px;
+  /* height: 235px; */
 
   ${expandedStyle(css`
     width: 290px;
-    height: 400px;
+    /* height: 600px; */
   `)}
 `;
 

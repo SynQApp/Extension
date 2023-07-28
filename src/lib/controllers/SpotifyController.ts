@@ -2,6 +2,7 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import type { ValueOrPromise } from '~types/Util';
 
 import type { IController } from './IController';
 
@@ -160,7 +161,7 @@ export class SpotifyController implements IController {
     }
   }
 
-  public getPlayerState(): PlayerState {
+  public async getPlayerState(): Promise<PlayerState> {
     const playbackProgressBarElement = document.querySelector(
       'div[data-testid="playback-progressbar"]'
     );
@@ -199,7 +200,8 @@ export class SpotifyController implements IController {
       currentTime,
       isPlaying,
       repeatMode,
-      volume
+      volume,
+      queue: await this.getQueue()
     };
   }
 
@@ -236,6 +238,10 @@ export class SpotifyController implements IController {
     }
 
     return true;
+  }
+
+  public playQueueTrack(id: string): ValueOrPromise<void> {
+    throw new Error('Method not implemented.');
   }
 
   private _itemToSongInfo(item: any): SongInfo {

@@ -85,6 +85,10 @@ export const registerControllerHandler = (controller: IController) => {
         sendResponse(queue, event.detail.requestId);
         break;
 
+      case ControllerMessageType.PLAY_QUEUE_TRACK:
+        await controller.playQueueTrack(message.body.trackId);
+        break;
+
       default:
         break;
     }

@@ -14,8 +14,8 @@ dependencies:
     specifier: ^0.3.3
     version: 0.3.3(react@18.2.0)
   '@synq/ui':
-    specifier: 0.0.4-main-screen-fixes.4
-    version: 0.0.4-main-screen-fixes.4(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3)
+    specifier: 0.0.4-main-screen-queue.3
+    version: 0.0.4-main-screen-queue.3(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3)
   plasmo:
     specifier: 0.75.2
     version: 0.75.2(react-dom@18.2.0)(react@18.2.0)
@@ -3651,8 +3651,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@synq/ui@0.0.4-main-screen-fixes.4(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3):
-    resolution: {integrity: sha512-g15Tlrprqa61uiavljfI76i00/1Vdh3Yt30DkRUfnIU/CyzSdooULe5ZQGvY90KKN2t4TByHs9UdnnWy/NMGlg==}
+  /@synq/ui@0.0.4-main-screen-queue.3(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3):
+    resolution: {integrity: sha512-e57Z1M3Jlf9za7CBkwa0uPLDahZlYK3Dw/qvwESZJ+BJvgX5A5meqSVC3RPI7DhiUOcStRdPTFHZkYzRd1Z6cQ==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0

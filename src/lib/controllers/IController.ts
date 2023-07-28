@@ -82,4 +82,9 @@ export interface IController {
    * Check if the controller is ready for use.
    */
   isReady(): ValueOrPromise<true | NotReadyReason>;
+
+  /**
+   * Play the item in the queue.
+   */
+  playQueueTrack(id: string): ValueOrPromise<void>;
 }

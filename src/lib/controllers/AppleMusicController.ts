@@ -115,7 +115,8 @@ export class AppleMusicController implements IController {
       currentTime: this.getPlayer().currentPlaybackTime,
       isPlaying: this.getPlayer().isPlaying,
       repeatMode: repeatMode,
-      volume: this.getPlayer().volume * 100
+      volume: this.getPlayer().volume * 100,
+      queue: this.getQueue()
     };
 
     return playerState;
@@ -137,6 +138,10 @@ export class AppleMusicController implements IController {
     }
 
     return true;
+  }
+
+  public playQueueTrack(id: string): ValueOrPromise<void> {
+    throw new Error('Method not implemented.');
   }
 
   private async _isPremiumUser(): Promise<boolean> {

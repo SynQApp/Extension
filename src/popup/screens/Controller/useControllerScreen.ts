@@ -10,6 +10,7 @@ const useControllerScreen = () => {
   const { allTabs, loading: tabsLoading } = useTabs();
   const currentSongInfo = useCurrentSongInfo();
   const navigate = useNavigate();
+  const [showQueue, setShowQueue] = useState(false);
 
   useEffect(() => {
     if (tabsLoading) {
@@ -27,7 +28,9 @@ const useControllerScreen = () => {
   return {
     currentSongInfo,
     expanded,
-    setExpanded
+    setExpanded,
+    showQueue,
+    setShowQueue
   };
 };
 

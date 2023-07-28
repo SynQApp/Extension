@@ -1,18 +1,20 @@
 import { Text, token } from '@synq/ui';
 import type { TextProps } from '@synq/ui';
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
 import { styled } from 'styled-components';
 
-interface TextShortenedMarqueeProps extends TextProps {
-  children: string;
+interface MarqueeTextProps extends TextProps {
+  children: string | string[];
+  className?: string;
 }
 
-export const TextShortenedMarquee = ({
+export const MarqueeText = ({
   children,
   as,
+  className,
   ...textProps
-}: TextShortenedMarqueeProps) => {
+}: MarqueeTextProps) => {
   const [play, setPlay] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -35,16 +37,29 @@ export const TextShortenedMarquee = ({
   };
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div
+      className={className}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {play ? (
         <Marquee>
-          <Text {...textProps}>{children}</Text>
+          <Text className="text" {...textProps}>
+            {children}
+          </Text>
           <Space />
         </Marquee>
       ) : (
-        <StaticText ref={textRef} forwardedAs={as} {...textProps}>
-          {children}
-        </StaticText>
+        <StaticTextContainer>
+          <StaticText
+            className="text"
+            ref={textRef}
+            forwardedAs={as}
+            {...textProps}
+          >
+            {children}
+          </StaticText>
+        </StaticTextContainer>
       )}
     </div>
   );
@@ -53,6 +68,12 @@ export const TextShortenedMarquee = ({
 const Space = styled.span`
   display: inline-block;
   width: ${token('spacing.md')};
+`;
+
+const StaticTextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 `;
 
 const StaticText = styled(Text)`
