@@ -86,7 +86,10 @@ export const registerControllerHandler = (controller: IController) => {
         break;
 
       case ControllerMessageType.PLAY_QUEUE_TRACK:
-        await controller.playQueueTrack(message.body.trackId);
+        await controller.playQueueTrack(
+          message.body.trackId,
+          message.body.duplicateIndex
+        );
         break;
 
       default:

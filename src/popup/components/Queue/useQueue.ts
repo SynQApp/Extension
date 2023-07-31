@@ -4,53 +4,44 @@ import { useTheme } from 'styled-components';
 import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
+import { getMusicServiceFromUrl } from '~popup/util/getMusicServiceFromUrl';
 import { ControllerMessageType } from '~types/ControllerMessageType';
+import { findIndexes } from '~util/findIndexes';
 
-interface UseQueueProps {
-  start: 'beginning' | 'next';
-  count?: number;
-}
-
-export const useQueue = ({ start, count }: UseQueueProps) => {
+export const useQueue = () => {
   const playbackState = usePlaybackState();
   const currentSongInfo = useCurrentSongInfo();
   const theme = useTheme();
-  const { sendToTab } = useTabs();
+  const { sendToTab, selectedTab } = useTabs();
 
-  const queueItems = useMemo(() => {
-    if (!playbackState) {
-      return [];
+  const queue = useMemo(() => playbackState?.queue || [], [playbackState]);
+
+  const musicServiceName = useMemo(() => {
+    if (!selectedTab) {
+      return '';
     }
 
-    if (start === 'beginning') {
-      const endIndex = count || playbackState.queue.length;
+    return getMusicServiceFromUrl(selectedTab?.url);
+  }, [selectedTab]);
 
-      return playbackState.queue.slice(0, endIndex);
-    }
+  const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
+    const trackIndexes = findIndexes(queue, (item) => item.trackId === trackId);
+    const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
-    const currentSongIndex = playbackState.queue.findIndex(
-      (song) => song.trackId === currentSongInfo?.trackId
-    );
-
-    const endIndex = count
-      ? currentSongIndex + count + 1
-      : playbackState.queue.length;
-
-    return playbackState.queue.slice(currentSongIndex + 1, endIndex);
-  }, [playbackState, start, count]);
-
-  const handlePlayQueueTrack = (trackId: string) => {
     sendToTab({
       name: ControllerMessageType.PLAY_QUEUE_TRACK,
       body: {
-        trackId
+        trackId,
+        duplicateIndex
       }
     });
   };
 
   return {
-    queueItems,
+    currentTrackId: currentSongInfo?.trackId,
     handlePlayQueueTrack,
+    musicServiceName,
+    queueItems: queue,
     theme
   };
 };

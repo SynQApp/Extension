@@ -2,6 +2,7 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
+import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
@@ -188,11 +189,13 @@ export class YouTubeMusicController implements IController {
     return true;
   }
 
-  public playQueueTrack(id: string): ValueOrPromise<void> {
+  public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
-    const index = queue.findIndex((song) => song.trackId === id);
 
-    this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: index });
+    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndex = trackIndexes[duplicateIndex];
+
+    this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
   private _createNavigationRequestInstance(trackId: string): any {

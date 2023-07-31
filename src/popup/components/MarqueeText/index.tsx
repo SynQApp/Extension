@@ -1,6 +1,6 @@
 import { Text, token } from '@synq/ui';
 import type { TextProps } from '@synq/ui';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
 import { styled } from 'styled-components';
 
@@ -17,6 +17,7 @@ export const MarqueeText = ({
 }: MarqueeTextProps) => {
   const [play, setPlay] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const hasOverflow = () => {
     if (!textRef.current) {
@@ -25,6 +26,32 @@ export const MarqueeText = ({
 
     return textRef.current.offsetWidth < textRef.current.scrollWidth;
   };
+
+  // The mouseleave event is not always reliable, so we also check the mouse position
+  useEffect(() => {
+    if (!divRef.current || !play) {
+      return;
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = divRef.current.getBoundingClientRect();
+
+      if (
+        e.clientX < rect.left ||
+        e.clientX > rect.right ||
+        e.clientY < rect.top ||
+        e.clientY > rect.bottom
+      ) {
+        setPlay(false);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [divRef.current, play]);
 
   const handleMouseEnter = () => {
     if (hasOverflow()) {
@@ -39,8 +66,9 @@ export const MarqueeText = ({
   return (
     <div
       className={className}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseOver={handleMouseEnter}
+      onMouseOut={handleMouseLeave}
+      ref={divRef}
     >
       {play ? (
         <Marquee>
@@ -71,14 +99,14 @@ const Space = styled.span`
 `;
 
 const StaticTextContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   overflow: hidden;
 `;
 
 const StaticText = styled(Text)`
-  width: 100%;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;

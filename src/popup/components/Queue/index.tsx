@@ -1,9 +1,10 @@
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Image, List, ListItem, token } from '@synq/ui';
+import { List, token } from '@synq/ui';
+import { useMemo } from 'react';
 import { styled } from 'styled-components';
 
-import { MarqueeText } from '../MarqueeText';
+import { getMusicServiceFromUrl } from '~popup/util/getMusicServiceFromUrl';
+
+import { QueueItem } from '../QueueItem';
 import { useQueue } from './useQueue';
 
 interface QueueProps {
@@ -12,76 +13,45 @@ interface QueueProps {
 }
 
 export const Queue = ({ start, count }: QueueProps) => {
-  const { queueItems, handlePlayQueueTrack, theme } = useQueue({
-    start,
-    count
-  });
+  const {
+    currentTrackId,
+    queueItems,
+    handlePlayQueueTrack,
+    musicServiceName,
+    theme
+  } = useQueue();
 
   return (
-    <QueueContainer>
-      <QueueList>
-        {queueItems.map((item) => (
-          <ListItem
-            key={item.trackId}
-            avatar={
-              <Image
-                src={item.albumCoverUrl}
-                alt={`Album art for ${item.trackName}`}
-                height="60px"
-                width="60px"
-                radius="lg"
-              />
+    <QueueList>
+      {queueItems.map((item, index) => (
+        <QueueItem
+          key={index}
+          albumCoverUrl={item.albumCoverUrl}
+          trackName={item.trackName}
+          artistName={item.artistName}
+          albumName={item.albumName}
+          onClick={() => handlePlayQueueTrack(item.trackId, index)}
+          secondaryActions={[
+            {
+              iconName: 'musicNote',
+              text: musicServiceName,
+              // TODO: Implement music service click handler
+              onClick: () => console.info(musicServiceName)
+            },
+            {
+              iconName: 'share',
+              text: 'Share',
+              // TODO: Implement share click handler
+              onClick: () => console.info('Share')
             }
-            secondaryAction={
-              <FontAwesomeIcon
-                icon={faEllipsisV}
-                size="lg"
-                color={theme.colors.onBackground}
-                width="20px"
-              />
-            }
-            onClick={() => handlePlayQueueTrack(item.trackId)}
-          >
-            <QueueItemContent>
-              <QueueItemTitle type="display" size="sm">
-                {item.trackName}
-              </QueueItemTitle>
-              <QueueItemArtist type="body" size="xs">
-                {item.artistName} • {item.albumName}
-              </QueueItemArtist>
-            </QueueItemContent>
-          </ListItem>
-        ))}
-      </QueueList>
-    </QueueContainer>
+          ]}
+          active={item.trackId === currentTrackId}
+        />
+      ))}
+    </QueueList>
   );
 };
 
-const QueueContainer = styled.div``;
-
 const QueueList = styled(List)`
-  background: ${token('colors.surface01')};
-`;
-
-const QueueItemContent = styled.div``;
-
-const QueueItemTitle = styled(MarqueeText)`
-  font-weight: ${token('typography.fontWeights.bold')};
-  height: 100%;
-  width: 100%;
-
-  .text {
-    margin: 0;
-  }
-`;
-
-const QueueItemArtist = styled(MarqueeText)`
-  color: ${token('colors.onBackgroundMedium')};
-  margin-top: ${token('spacing.2xs')};
-  height: 100%;
-  width: 100%;
-
-  .text {
-    margin: 0;
-  }
+  background: ${token('colors.surface')};
 `;

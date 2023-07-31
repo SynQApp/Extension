@@ -2,6 +2,7 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
+import { findIndexes } from '~util/findIndexes';
 
 import type { IController } from './IController';
 
@@ -140,8 +141,13 @@ export class AppleMusicController implements IController {
     return true;
   }
 
-  public playQueueTrack(id: string): ValueOrPromise<void> {
-    throw new Error('Method not implemented.');
+  public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
+    const queue = this.getQueue();
+
+    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndex = trackIndexes[duplicateIndex];
+
+    this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
   private async _isPremiumUser(): Promise<boolean> {
