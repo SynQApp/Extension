@@ -28,9 +28,9 @@ const HeaderStyled = styled.header`
 
 const SessionButton = styled(Button)`
   font-family: ${token('typography.fontFamilies.body')};
-  font-size: 14px;
+  font-size: ${token('typography.fontSizes.sm')};
   height: 30px;
-  line-height: 0px;
+  line-height: ${token('spacing.none')};
   margin-right: ${token('spacing.md')};
   padding: ${token('spacing.3xs')} ${token('spacing.sm')};
 
