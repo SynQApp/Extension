@@ -35,8 +35,8 @@ const AlbumGlow = styled.div<AlbumGlowProps>`
     props.src ? `url(${props.src})` : token('colors.surface01')};
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain !important;
-  border-radius: 10px;
+  background-size: contain;
+  border-radius: ${token('radii.lg')};
   filter: blur(5px);
   height: 100%;
   position: absolute;
