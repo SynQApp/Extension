@@ -4,6 +4,7 @@ import { ALL_URL_MATCHES } from '~constants/urls';
 
 interface TabsContextValue {
   selectedTab: chrome.tabs.Tab | null;
+  sendToTab: (message: any) => void;
   setSelectedTab: React.Dispatch<React.SetStateAction<number | null>>;
   allTabs: chrome.tabs.Tab[] | null;
   loading: boolean;
@@ -48,8 +49,17 @@ export const TabsProvider = ({ children }: SelectedTabsProviderProps) => {
     });
   };
 
+  const sendToTab = (message: any) => {
+    if (selectedTab === null) {
+      return;
+    }
+
+    chrome.tabs.sendMessage(selectedTab.id!, message);
+  };
+
   const value = {
     selectedTab,
+    sendToTab,
     setSelectedTab,
     allTabs,
     loading

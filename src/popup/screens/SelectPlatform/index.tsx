@@ -27,7 +27,7 @@ const SelectPlatformScreen = () => {
         <Description type="body" size="sm">
           Select your preferred music service to get started.
         </Description>
-        <MusicServiceButtons spacing="xs">
+        <MusicServiceButtons spacing="sm" direction="column">
           <MusicServiceButton
             name="Spotify"
             urlMatch={SPOTIFY_URL_MATCH}
@@ -57,10 +57,8 @@ const SelectPlatformScreen = () => {
 
 const Container = styled.div`
   background-color: ${token('colors.background')};
-  display: flex;
-  flex-direction: column;
+  padding-top: ${token('spacing.md')};
   height: 100%;
-  justify-content: center;
   width: 100%;
 `;
 

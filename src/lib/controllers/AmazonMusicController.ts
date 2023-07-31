@@ -4,7 +4,7 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
-import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
+import { lengthTextToSeconds } from '~util/time';
 import { waitForElement } from '~util/waitForElement';
 
 import type { IController } from './IController';

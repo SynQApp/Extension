@@ -21,7 +21,7 @@ export const registerControllerHandler = (controller: IController) => {
   window.addEventListener('SynQEvent:ToContent', async (event: CustomEvent) => {
     const message = event.detail.body;
 
-    switch (message.type) {
+    switch (message.name) {
       case ControllerMessageType.PLAY:
         await controller.play();
         break;

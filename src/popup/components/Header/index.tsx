@@ -1,4 +1,5 @@
-import { Button, token } from '@synq/ui';
+import { Flex, token } from '@synq/ui';
+import { Icon } from '@synq/ui';
 import styled from 'styled-components';
 
 import Logo from '../Logo';
@@ -6,25 +7,24 @@ import Logo from '../Logo';
 const Header = () => {
   return (
     <HeaderStyled>
-      <Logo />
-      <SettingsButton variant="tertiary">⚙</SettingsButton>
+      <Flex align="center">
+        <Logo />
+        <SettingsIcon icon="settings" />
+      </Flex>
     </HeaderStyled>
   );
 };
 
 const HeaderStyled = styled.header`
   background: ${token('colors.background')};
-  border-bottom: 1px solid ${token('colors.borderLow')};
-  display: flex;
   height: 50px;
-  justify-content: space-between;
-  padding: 0 ${token('spacing.md')} 0 ${token('spacing.sm')};
+  padding: 0 ${token('spacing.sm')} 0;
 `;
 
-const SettingsButton = styled(Button)`
-  font-size: ${token('typography.fontSizes.2xl')};
-  margin: 0;
-  padding: 0;
+const SettingsIcon = styled(Icon)`
+  color: white;
+  width: 24px;
+  height: 24px;
 `;
 
 export default Header;

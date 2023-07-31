@@ -2,7 +2,6 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
-import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 
 import type { IController } from './IController';
 
@@ -246,7 +245,7 @@ export class SpotifyController implements IController {
       albumName: item.album.name,
       artistName: item.artists.map((artist) => artist.name).join(' & '),
       albumCoverUrl: item.album.images[0].url,
-      duration: item.duration_ms / 1000
+      duration: Math.round(item.duration_ms / 1000)
     };
   }
 

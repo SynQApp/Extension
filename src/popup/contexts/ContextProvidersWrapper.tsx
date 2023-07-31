@@ -1,3 +1,6 @@
+import { CurrentSongInfoProvider } from './CurrentSongInfo';
+import { ExpandedProvider } from './Expanded';
+import { PlaybackStateProvider } from './PlaybackState';
 import { TabsProvider } from './Tabs';
 
 interface ContextsWrapperProps {
@@ -5,5 +8,13 @@ interface ContextsWrapperProps {
 }
 
 export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
-  return <TabsProvider>{children}</TabsProvider>;
+  return (
+    <TabsProvider>
+      <PlaybackStateProvider>
+        <CurrentSongInfoProvider>
+          <ExpandedProvider>{children}</ExpandedProvider>
+        </CurrentSongInfoProvider>
+      </PlaybackStateProvider>
+    </TabsProvider>
+  );
 };

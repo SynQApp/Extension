@@ -2,9 +2,9 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
-import { lengthTextToSeconds } from '~util/lengthTextToSeconds';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
+import { lengthTextToSeconds } from '~util/time';
 
 import type { IController } from './IController';
 
@@ -20,6 +20,12 @@ export enum YouTubeMusicPlayerState {
   BUFFERING = 3,
   CUED = 5
 }
+
+const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
+  'Repeat off': RepeatMode.NO_REPEAT,
+  'Repeat one': RepeatMode.REPEAT_ONE,
+  'Repeat all': RepeatMode.REPEAT_ALL
+};
 
 export class YouTubeMusicController implements IController {
   /**
@@ -102,7 +108,13 @@ export class YouTubeMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    this.getPlayer().setVolume(volume);
+    const volumeSlider = document.getElementById(
+      'volume-slider'
+    ) as HTMLElement;
+    volumeSlider?.setAttribute('value', volume.toString());
+
+    const changeEvent = new Event('change');
+    volumeSlider?.dispatchEvent(changeEvent);
   }
 
   public seekTo(time: number): void {
@@ -130,12 +142,16 @@ export class YouTubeMusicController implements IController {
       return undefined;
     }
 
+    const repeatButton = document.querySelector('.repeat.ytmusic-player-bar');
+    const repeatMode =
+      REPEAT_STATES_MAP[repeatButton?.getAttribute('aria-label')];
+
     return {
       currentTime: Math.round(this.getPlayer().getCurrentTime()),
       isPlaying:
         this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
       volume: this.getPlayer().getVolume(),
-      repeatMode: RepeatMode.NO_REPEAT
+      repeatMode
     };
   }
 

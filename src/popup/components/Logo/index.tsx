@@ -6,7 +6,7 @@ const Logo = () => {
   return (
     <Container>
       <LogoImage src={Icon} alt="SynQ Logo" />
-      <LogoText type="display" size="2xl" forwardedAs="h1">
+      <LogoText type="display" size="xl" forwardedAs="h1">
         SynQ
       </LogoText>
     </Container>

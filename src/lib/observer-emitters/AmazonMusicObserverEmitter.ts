@@ -1,4 +1,5 @@
 import type { AmazonMusicController } from '~lib/controllers/AmazonMusicController';
+import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { IObserverEmitter } from './IObserverEmitter';
@@ -22,6 +23,7 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     rating: string;
     volume: number;
     repeat: string;
+    isPlaying: boolean;
   };
 
   constructor(controller: AmazonMusicController) {
@@ -31,7 +33,8 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
       queueIds: [],
       rating: undefined,
       volume: undefined,
-      repeat: undefined
+      repeat: undefined,
+      isPlaying: undefined
     };
   }
 
@@ -74,7 +77,7 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
   private async _setupMaestroObserver() {
     const maestro = await this._controller.getMaestroInstance();
 
-    this._onStateChangeHandler = async () => {
+    this._onStateChangeHandler = async (...params) => {
       await this._sendPlaybackUpdatedMessage();
     };
 
@@ -110,6 +113,11 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
         await this._sendPlaybackUpdatedMessage();
       }
 
+      if (state.PlaybackStates?.play?.state !== this._currentState.isPlaying) {
+        this._currentState.isPlaying = state.PlaybackStates.play.state;
+        await this._sendPlaybackUpdatedMessage();
+      }
+
       if (maestro.getVolume() !== this._currentState.volume) {
         this._currentState.volume = maestro.getVolume();
         await this._sendPlaybackUpdatedMessage();
@@ -119,7 +127,7 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
     await mainWorldToBackground({
-      name: 'SONG_INFO_UPDATED',
+      name: EventMessageType.SONG_INFO_UPDATED,
       body: {
         songInfo: this._controller.getCurrentSongInfo()
       }
@@ -128,9 +136,9 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
     await mainWorldToBackground({
-      name: 'PLAYBACK_UPDATED',
+      name: EventMessageType.PLAYBACK_UPDATED,
       body: {
-        playback: await this._controller.getPlayerState()
+        playbackState: await this._controller.getPlayerState()
       }
     });
   }

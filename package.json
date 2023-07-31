@@ -10,11 +10,15 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@plasmohq/messaging": "^0.3.3",
-    "@synq/ui": "0.0.3-alpha-main-screen-updates.4",
+    "@synq/ui": "0.0.4-alpha.0",
     "plasmo": "0.75.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-fast-marquee": "^1.6.0",
     "react-router-dom": "^6.14.0",
     "redux": "^4.2.1",
     "styled-components": "^6.0.3",
