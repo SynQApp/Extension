@@ -54,6 +54,10 @@ export class YouTubeMusicController implements IController {
     this._addCurtainStyles();
   }
 
+  public prepareForAutoplay(): ValueOrPromise<void> {
+    return;
+  }
+
   public async prepareForSession() {
     if (!this._navigationRequestInstance) {
       await this._forceCaptureNavigationRequest();
@@ -183,7 +187,7 @@ export class YouTubeMusicController implements IController {
     }
 
     if (!this._navigationRequestInstance) {
-      return NotReadyReason.NOT_CONTROLLABLE;
+      return NotReadyReason.AUTOPLAY_NOT_READY;
     }
 
     return true;

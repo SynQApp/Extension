@@ -58,6 +58,8 @@ export interface IController {
    */
   startTrack(trackId: string, albumId?: string): ValueOrPromise<void>;
 
+  prepareForAutoplay(): ValueOrPromise<void>;
+
   /**
    * Prepare the controller for use in a session.
    */

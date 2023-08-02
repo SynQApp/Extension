@@ -93,7 +93,11 @@ export class AppleMusicController implements IController {
     await this.getPlayer().changeToMediaItem(trackId);
   }
 
-  public prepareForSession(): Promise<void> {
+  public prepareForAutoplay(): void {
+    return;
+  }
+
+  public prepareForSession(): void {
     return;
   }
 

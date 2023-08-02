@@ -177,6 +177,10 @@ export class AmazonMusicController implements IController {
     this.getStore().dispatch(playTrackAction);
   }
 
+  public async prepareForAutoplay(): Promise<void> {
+    await this._preparePlayer();
+  }
+
   public prepareForSession(): Promise<void> {
     return;
   }
@@ -236,8 +240,12 @@ export class AmazonMusicController implements IController {
   public async isReady(): Promise<true | NotReadyReason> {
     const maestro = await this.getMaestroInstance();
 
-    if (!maestro.tier?.includes('UNLIMITED')) {
+    if (!maestro.getConfig()?.tier?.includes('UNLIMITED')) {
       return NotReadyReason.NON_PREMIUM_USER;
+    }
+
+    if (!(await this._isPlayerReady())) {
+      return NotReadyReason.AUTOPLAY_NOT_READY;
     }
 
     return true;
@@ -328,6 +336,59 @@ export class AmazonMusicController implements IController {
     const rating = appState.Storage.RATINGS?.TRACK_RATING;
 
     return rating === 'THUMBS_DOWN';
+  }
+
+  private async _isPlayerReady(): Promise<boolean> {
+    const maestro = await this.getMaestroInstance();
+    return !!maestro?.getAudioPlayer()?.getAudioElement();
+  }
+
+  /**
+   * _playerReady could be false if either the player is actually not ready,
+   * or if we haven't checked yet. First check if API can be used, and if not,
+   * initialize the player.
+   */
+  private async _preparePlayer() {
+    const isPlayerReady = await this._isPlayerReady();
+
+    if (!isPlayerReady) {
+      await this._forceInitializePlayer();
+    }
+  }
+
+  /**
+   * If the player hasn't been interacted with, other methods will fail. This method
+   * clicks the play button to initialize the player and then again once it has
+   * started playing to pause it.
+   */
+  private async _forceInitializePlayer() {
+    return new Promise((resolve) => {
+      // TODO: Temporarily mute the player so it doesn't make any noise
+
+      const playButtons = document.querySelectorAll(
+        'music-button[icon-name="play"]'
+      );
+
+      const mainPlayButton = playButtons[playButtons.length - 1] as HTMLElement;
+
+      mainPlayButton.click();
+
+      const observer = new MutationObserver((mutations, observerInstance) => {
+        if (mainPlayButton.getAttribute('icon-name') === 'pause') {
+          setTimeout(() => {
+            mainPlayButton.click();
+          }, 100);
+
+          observerInstance.disconnect();
+          resolve(void 0);
+        }
+      });
+
+      observer.observe(mainPlayButton, {
+        attributes: true,
+        attributeFilter: ['aria-label']
+      });
+    });
   }
 
   private _createStartTrackAction(trackId: string, albumId: string) {

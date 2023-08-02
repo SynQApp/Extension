@@ -63,8 +63,8 @@ const ControllerScreen = () => {
 
 const PlayerSection = styled.section`
   background: ${token('colors.background')};
-  padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
   height: ${PLAYER_HEIGHT}px;
+  padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
   position: relative;
 `;
 
@@ -111,13 +111,13 @@ const ExpandButton = styled.button`
   border: none;
   bottom: 0;
   cursor: pointer;
+  display: flex;
   height: 15px;
+  justify-content: center;
   left: calc(50% - 25px);
   outline: none;
   position: absolute;
   width: 50px;
-  display: flex;
-  justify-content: center;
 `;
 
 const ExpandIcon = styled(FontAwesomeIcon)<Expandable>`

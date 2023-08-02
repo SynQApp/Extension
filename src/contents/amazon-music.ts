@@ -1,6 +1,7 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
 import { AmazonMusicController } from '~lib/controllers/AmazonMusicController';
+import { registerAutoplayReadyHandler } from '~lib/message-handlers/registerAutoplayReadyHandler';
 import { registerControllerHandler } from '~lib/message-handlers/registerControllerHandler';
 import { AmazonMusicObserverEmitter } from '~lib/observer-emitters/AmazonMusicObserverEmitter';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -18,6 +19,8 @@ const initialize = () => {
   const observer = new AmazonMusicObserverEmitter(controller);
 
   registerControllerHandler(controller);
+  registerAutoplayReadyHandler(controller);
+
   observer.observe();
 };
 
