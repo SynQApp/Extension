@@ -79,7 +79,7 @@ const Modal = styled.div`
   left: calc(50% - 200px);
   padding: ${token('spacing.lg')};
   position: fixed;
-  top: calc(50% - 150px);
+  top: calc(50% - 75px);
   width: 400px;
   z-index: 101;
 `;
