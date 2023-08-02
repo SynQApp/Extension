@@ -86,8 +86,6 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
   }
 
   private async _setupSongInfoObserver() {
-    const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
-
     const songInfoObserver = new MutationObserver(async () => {
       const nowPlayingWidget = document.querySelector(nowPlayingWidgetSelector);
       await this._sendSongInfoUpdatedMessage(
@@ -95,10 +93,21 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
       );
     });
 
+    const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
     const nowPlayingWidget = await waitForElement(nowPlayingWidgetSelector);
     if (nowPlayingWidget) {
       songInfoObserver.observe(nowPlayingWidget, {
         attributeFilter: ['aria-label']
+      });
+    }
+
+    const addToLibraryButtonSelector = 'button[data-testid="add-button"]';
+    const addToLibraryButton = nowPlayingWidget.querySelector(
+      addToLibraryButtonSelector
+    );
+    if (addToLibraryButton) {
+      songInfoObserver.observe(addToLibraryButton, {
+        attributeFilter: ['aria-checked']
       });
     }
 

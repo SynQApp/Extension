@@ -98,7 +98,7 @@ export class YouTubeMusicController implements IController {
     // Simulate a click on the like button
     (
       document.querySelector(
-        '.ytmusic-like-button-renderer.like'
+        '.ytmusic-player-bar #button-shape-like button'
       ) as HTMLElement
     ).click();
   }
@@ -107,7 +107,7 @@ export class YouTubeMusicController implements IController {
     // Simulate a click on the dislike button
     (
       document.querySelector(
-        '.ytmusic-like-button-renderer.dislike'
+        '.ytmusic-player-bar #button-shape-dislike button'
       ) as HTMLElement
     ).click();
   }
@@ -171,6 +171,23 @@ export class YouTubeMusicController implements IController {
     });
 
     const songInfo: SongInfo = this._queueItemToSongInfo(queueItem);
+
+    const isLiked =
+      (
+        document.querySelector(
+          '.ytmusic-player-bar #button-shape-like'
+        ) as HTMLElement
+      )?.getAttribute('aria-pressed') === 'true';
+
+    const isDisliked =
+      (
+        document.querySelector(
+          '.ytmusic-player-bar #button-shape-dislike'
+        ) as HTMLElement
+      )?.getAttribute('aria-pressed') === 'true';
+
+    songInfo.isLiked = isLiked;
+    songInfo.isDisliked = isDisliked;
 
     return songInfo;
   }

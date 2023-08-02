@@ -242,9 +242,22 @@ export class SpotifyController implements IController {
       'GET'
     );
 
+    const currentSongInfo = this._itemToSongInfo(currentlyPlaying.item);
+
+    const isInLibraryParams = new URLSearchParams({
+      ids: currentlyPlaying.item.id
+    });
+
+    const isLiked = await this._fetchSpotify(
+      `${SpotifyEndpoints.IS_IN_LIBRARY}?${isInLibraryParams.toString()}`,
+      'GET'
+    );
+
+    currentSongInfo.isLiked = isLiked[0];
+
     this._currentTrackId = currentlyPlaying.item.id;
 
-    return this._itemToSongInfo(currentlyPlaying.item);
+    return currentSongInfo;
   }
 
   public async getQueue(noCache?: boolean): Promise<SongInfo[]> {

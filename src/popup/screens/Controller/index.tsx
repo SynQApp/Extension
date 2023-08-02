@@ -18,6 +18,8 @@ const ControllerScreen = () => {
     currentSongInfo,
     expanded,
     queueCount,
+    handleDislikeClick,
+    handleLikeClick,
     setExpanded,
     showQueue,
     setShowQueue
@@ -37,7 +39,13 @@ const ControllerScreen = () => {
             align="center"
           >
             <AlbumArtContainer $expanded={expanded}>
-              <AlbumArt src={currentSongInfo?.albumCoverUrl} />
+              <AlbumArt
+                liked={currentSongInfo?.isLiked}
+                disliked={currentSongInfo?.isDisliked}
+                onLikeClick={handleLikeClick}
+                onDislikeClick={handleDislikeClick}
+                src={currentSongInfo?.albumCoverUrl}
+              />
             </AlbumArtContainer>
             <PlayerControlsContainer $expanded={expanded}>
               <PlayerControls />

@@ -4,7 +4,7 @@ import { styled } from 'styled-components';
 
 import { AutoplayMessageType } from '~types/AutoplayMessageType';
 import { ControllerMessageType } from '~types/ControllerMessageType';
-import { getMusicServiceFromUrl } from '~util/getMusicServiceFromUrl';
+import { getMusicServiceNameFromUrl } from '~util/musicService';
 
 const Popup = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -51,7 +51,7 @@ const Popup = () => {
       <Modal>
         <DescriptionText type="subtitle" size="md">
           Click the button below to enable SynQ to control{' '}
-          {getMusicServiceFromUrl(window.location.href)}.
+          {getMusicServiceNameFromUrl(window.location.href)}.
         </DescriptionText>
         <Button onClick={handleEnableClick}>Enable SynQ</Button>
       </Modal>
