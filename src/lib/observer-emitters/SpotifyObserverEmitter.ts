@@ -10,6 +10,7 @@ import type { IObserverEmitter } from './IObserverEmitter';
 export class SpotifyObserverEmitter implements IObserverEmitter {
   private _controller: SpotifyController;
   private _mutationObservers: MutationObserver[] = [];
+  private _paused = true;
 
   constructor(controller: SpotifyController) {
     this._controller = controller;
@@ -20,6 +21,14 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
 
     this._setupPlayerStateObserver();
     await this._setupSongInfoObserver();
+  }
+
+  public pause(): void {
+    this._paused = true;
+  }
+
+  public resume(): void {
+    this._paused = false;
   }
 
   public unobserve(): void {
@@ -104,6 +113,10 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
   private async _sendSongInfoUpdatedMessage(
     nowPlayingText: string
   ): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     for (let i = 0; i < 5; i++) {
       const songInfo = await this._controller.getCurrentSongInfo();
 
@@ -122,6 +135,10 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.PLAYBACK_UPDATED,
       body: {

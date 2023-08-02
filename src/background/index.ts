@@ -1,2 +1,3 @@
-export {};
-console.info('HELLO WORLD FROM BGSCRIPTS');
+import { popupListener } from './popupListener';
+
+popupListener();

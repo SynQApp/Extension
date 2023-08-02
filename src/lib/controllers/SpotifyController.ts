@@ -2,6 +2,7 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { waitForElement } from '~util/waitForElement';
 
@@ -61,7 +62,14 @@ export class SpotifyController implements IController {
   }
 
   public async previous(): Promise<void> {
-    await this._fetchSpotify(SpotifyEndpoints.PREVIOUS, 'POST');
+    const playerState = await this.getPlayerState();
+
+    if (playerState.currentTime < 5) {
+      await this._fetchSpotify(SpotifyEndpoints.PREVIOUS, 'POST');
+      return;
+    }
+
+    await this.seekTo(0);
   }
 
   public async toggleRepeatMode(): Promise<void> {
@@ -131,24 +139,36 @@ export class SpotifyController implements IController {
   }
 
   public async setVolume(volume: number): Promise<void> {
-    const searchParams = new URLSearchParams({
-      volume_percent: volume.toString()
-    });
+    debounce(
+      async () => {
+        const searchParams = new URLSearchParams({
+          volume_percent: volume.toString()
+        });
 
-    await this._fetchSpotify(
-      `${SpotifyEndpoints.SET_VOLUME}?${searchParams.toString()}`,
-      'PUT'
+        await this._fetchSpotify(
+          `${SpotifyEndpoints.SET_VOLUME}?${searchParams.toString()}`,
+          'PUT'
+        );
+      },
+      'setVolume',
+      25
     );
   }
 
   public async seekTo(time: number): Promise<void> {
-    const searchParams = new URLSearchParams({
-      position_ms: (time * 1000).toString()
-    });
+    debounce(
+      async () => {
+        const searchParams = new URLSearchParams({
+          position_ms: (time * 1000).toString()
+        });
 
-    await this._fetchSpotify(
-      `${SpotifyEndpoints.SEEK_TO}?${searchParams.toString()}`,
-      'PUT'
+        await this._fetchSpotify(
+          `${SpotifyEndpoints.SEEK_TO}?${searchParams.toString()}`,
+          'PUT'
+        );
+      },
+      'seekTo',
+      25
     );
   }
 
@@ -427,6 +447,6 @@ export class SpotifyController implements IController {
 
     setTimeout(() => {
       this._cachedQueue = undefined;
-    }, 30000);
+    }, 5000);
   }
 }

@@ -12,6 +12,16 @@ export interface IObserverEmitter {
   observe(): ValueOrPromise<void>;
 
   /**
+   * Pause emitting events.
+   */
+  pause(): ValueOrPromise<void>;
+
+  /**
+   * Resume emitting events.
+   */
+  resume(): ValueOrPromise<void>;
+
+  /**
    * Stop observing the music player. Remove all listeners.
    */
   unobserve(): ValueOrPromise<void>;
