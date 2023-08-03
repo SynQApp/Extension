@@ -118,6 +118,8 @@ const ExpandButton = styled.button`
   outline: none;
   position: absolute;
   width: 50px;
+  display: flex;
+  justify-content: center;
 `;
 
 const ExpandIcon = styled(FontAwesomeIcon)<Expandable>`
