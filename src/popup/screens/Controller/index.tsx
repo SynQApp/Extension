@@ -44,6 +44,7 @@ const ControllerScreen = () => {
                 disliked={currentSongInfo?.isDisliked}
                 onLikeClick={handleLikeClick}
                 onDislikeClick={handleDislikeClick}
+                trackName={currentSongInfo?.trackName}
                 src={currentSongInfo?.albumCoverUrl}
               />
             </AlbumArtContainer>

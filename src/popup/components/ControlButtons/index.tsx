@@ -71,7 +71,7 @@ export const ControlButtons = ({
           $expanded={expanded}
           $hidden={showVolumeSlider}
         >
-          <PlayPauseButtonContent>
+          <PlayPauseButtonContent justify="center" align="center">
             <PlayPauseIcon
               icon={isPlaying ? 'pause' : 'play'}
               $expanded={expanded}
@@ -100,6 +100,8 @@ export const ControlButtons = ({
         </ControlButton>
       </ControlButtonsFlex>
       <VolumeSliderContainer
+        justify="flex-end"
+        align="center"
         $show={showVolumeSlider}
         $expanded={expanded}
         onMouseEnter={handleVolumeMouseEnter}
@@ -214,10 +216,7 @@ const PlayPauseButton = styled(Button)<ControlButtonProps>`
   )};
 `;
 
-const PlayPauseButtonContent = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const PlayPauseButtonContent = styled(Flex)`
   position: absolute;
   height: 100%;
   width: 100%;
@@ -243,10 +242,7 @@ interface VolumeSliderContainerProps extends Expandable {
   $show?: boolean;
 }
 
-const VolumeSliderContainer = styled.div<VolumeSliderContainerProps>`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+const VolumeSliderContainer = styled(Flex)<VolumeSliderContainerProps>`
   height: 100%;
   opacity: 0;
   transition: opacity 0.1s ease-in-out;

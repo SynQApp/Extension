@@ -4,7 +4,7 @@ import {
   faThumbsUp as faThumbsUpSolid
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Stack, token } from '@synq/ui';
+import { Flex, Image, Stack, token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
 import { useExpanded } from '~popup/contexts/Expanded';
@@ -12,26 +12,28 @@ import type { Expandable } from '~popup/types';
 import { expandedStyle } from '~popup/util/expandedStyle';
 
 interface AlbumArtProps {
-  src: string;
-  liked: boolean;
   disliked: boolean;
-  onLikeClick?: () => void;
+  liked: boolean;
   onDislikeClick?: () => void;
+  onLikeClick?: () => void;
+  src: string;
+  trackName: string;
 }
 
 export const AlbumArt = ({
-  liked,
   disliked,
-  onLikeClick,
+  liked,
   onDislikeClick,
-  src
+  onLikeClick,
+  src,
+  trackName
 }: AlbumArtProps) => {
   const { expanded } = useExpanded();
 
   return (
-    <AlbumArtContainer>
+    <AlbumArtContainer justify="center" align="center">
       <AlbumGlow className="album-glow" src={src} $expanded={expanded} />
-      <AlbumArtImg src={src} />
+      <AlbumArtImg src={src} alt={`Album art for: ${trackName}`} />
       <ThumbsOverlay className="thumbs-overlay" />
       <ThumbsContainer
         className="thumbs"
@@ -61,13 +63,10 @@ export const AlbumArt = ({
   );
 };
 
-const AlbumArtContainer = styled.div`
+const AlbumArtContainer = styled(Flex)`
   height: 100%;
   position: relative;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   &:hover {
     .thumbs-overlay {
@@ -109,7 +108,7 @@ const AlbumGlow = styled.div<AlbumGlowProps>`
   `)}
 `;
 
-const AlbumArtImg = styled.img`
+const AlbumArtImg = styled(Image)`
   border-radius: ${token('radii.lg')};
   border: 1px solid ${token('colors.onBackground')}24;
   height: 100%;

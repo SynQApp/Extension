@@ -1,4 +1,4 @@
-import { Text, token } from '@synq/ui';
+import { Image, Text, token } from '@synq/ui';
 import Icon from 'data-base64:~assets/images/icon-filled.svg';
 import styled from 'styled-components';
 
@@ -18,7 +18,7 @@ const Container = styled.div`
   display: inline-flex;
 `;
 
-const LogoImage = styled.img`
+const LogoImage = styled(Image)`
   height: 50px;
   width: 50px;
 `;

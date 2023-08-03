@@ -1,6 +1,7 @@
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  Flex,
   Icon,
   type IconProps,
   Image,
@@ -140,9 +141,9 @@ export const QueueItem = ({
             width="100%"
           />
           {active && (
-            <AlbumArtOverlay>
+            <AlbumArtOverlayFlex align="center" justify="center">
               <Icon icon="volume" color={theme.colors.onBackground} />
-            </AlbumArtOverlay>
+            </AlbumArtOverlayFlex>
           )}
         </AlbumArtContainer>
       }
@@ -262,11 +263,8 @@ const AlbumArt = styled(Image)<AlbumArtProps>`
     `}
 `;
 
-const AlbumArtOverlay = styled.div`
-  align-items: center;
-  display: flex;
+const AlbumArtOverlayFlex = styled(Flex)`
   height: 100%;
-  justify-content: center;
   position: absolute;
   width: 100%;
 `;

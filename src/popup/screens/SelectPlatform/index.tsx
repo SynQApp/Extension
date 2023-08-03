@@ -1,4 +1,4 @@
-import { Stack, Text, token } from '@synq/ui';
+import { Image, Stack, Text, token } from '@synq/ui';
 import WaveGraphic from 'data-base64:~assets/images/wave-graphic.svg';
 import styled from 'styled-components';
 
@@ -81,7 +81,7 @@ const MusicServiceButtons = styled(Stack)`
   width: 90%;
 `;
 
-const WaveGraphicImage = styled.img`
+const WaveGraphicImage = styled(Image)`
   bottom: 0;
   height: auto;
   left: 0;
