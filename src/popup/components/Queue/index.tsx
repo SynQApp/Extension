@@ -1,8 +1,5 @@
 import { List, token } from '@synq/ui';
-import { useMemo } from 'react';
 import { styled } from 'styled-components';
-
-import { getMusicServiceFromUrl } from '~popup/util/getMusicServiceFromUrl';
 
 import { QueueItem } from '../QueueItem';
 import { useQueue } from './useQueue';

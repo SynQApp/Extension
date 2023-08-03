@@ -4,9 +4,9 @@ import { useTheme } from 'styled-components';
 import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
-import { getMusicServiceFromUrl } from '~popup/util/getMusicServiceFromUrl';
 import { ControllerMessageType } from '~types/ControllerMessageType';
 import { findIndexes } from '~util/findIndexes';
+import { getMusicServiceFromUrl } from '~util/getMusicServiceFromUrl';
 
 export const useQueue = () => {
   const playbackState = usePlaybackState();

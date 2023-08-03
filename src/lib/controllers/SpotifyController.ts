@@ -23,7 +23,6 @@ const QUEUE_PATH = '/queue';
 
 export class SpotifyController implements IController {
   private _accessToken: string;
-  private _playerReady = false;
   private _cachedQueue:
     | {
         items: SongInfo[] | undefined;
@@ -166,9 +165,11 @@ export class SpotifyController implements IController {
   }
 
   public async prepareForSession(): Promise<void> {
-    if (!this._playerReady) {
-      await this._forceInitializePlayer();
-    }
+    await this._preparePlayer();
+  }
+
+  public async prepareForAutoplay(): Promise<void> {
+    await this._preparePlayer();
   }
 
   public async getPlayerState(): Promise<PlayerState> {
@@ -262,8 +263,10 @@ export class SpotifyController implements IController {
       return NotReadyReason.NON_PREMIUM_USER;
     }
 
-    if (!this._playerReady) {
-      return NotReadyReason.NOT_CONTROLLABLE;
+    const playerReady = await this._isPlayerReady();
+
+    if (!playerReady) {
+      return NotReadyReason.AUTOPLAY_NOT_READY;
     }
 
     return true;
@@ -331,8 +334,6 @@ export class SpotifyController implements IController {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     body?: any
   ) {
-    await this._preparePlayer();
-
     return this._rawFetchSpotify(url, method, body);
   }
 
@@ -356,21 +357,30 @@ export class SpotifyController implements IController {
     });
   }
 
+  private async _isPlayerReady() {
+    const playerState = await this._rawFetchSpotify(
+      SpotifyEndpoints.PLAYER_STATE,
+      'GET'
+    );
+
+    return !!playerState;
+  }
+
   /**
    * _playerReady could be false if either the player is actually not ready,
    * or if we haven't checked yet. First check if API can be used, and if not,
    * initialize the player.
    */
   private async _preparePlayer() {
-    if (!this._playerReady) {
+    const isPlayerReady = await this._isPlayerReady();
+
+    if (!isPlayerReady) {
       const remotePlayer = await this._rawFetchSpotify(
         SpotifyEndpoints.PLAYER_STATE,
         'GET'
       );
 
-      if (remotePlayer) {
-        this._playerReady = true;
-      } else {
+      if (!remotePlayer) {
         await this._forceInitializePlayer();
       }
     }
@@ -383,6 +393,8 @@ export class SpotifyController implements IController {
    */
   private async _forceInitializePlayer() {
     return new Promise((resolve) => {
+      // TODO: Temporarily mute the player so it doesn't make any noise
+
       const playButton = document.querySelector(
         'button[data-testid="control-button-playpause"]'
       ) as HTMLButtonElement;
@@ -393,7 +405,6 @@ export class SpotifyController implements IController {
         if (playButton.attributes['aria-label'].value === 'Pause') {
           playButton.click();
           observerInstance.disconnect();
-          this._playerReady = true;
           resolve(void 0);
         }
       });

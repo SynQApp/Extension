@@ -70,6 +70,10 @@ export const registerControllerHandler = (controller: IController) => {
         await controller.prepareForSession();
         break;
 
+      case ControllerMessageType.PREPARE_FOR_AUTOPLAY:
+        await controller.prepareForAutoplay();
+        break;
+
       case ControllerMessageType.GET_PLAYER_STATE:
         const playerState = await controller.getPlayerState();
         sendResponse(playerState, event.detail.requestId);
