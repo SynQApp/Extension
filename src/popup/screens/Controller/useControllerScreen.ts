@@ -47,6 +47,7 @@ const useControllerScreen = () => {
   useEffect(() => {
     const checkAutoplayReady = async () => {
       const res = await sendToTab({
+        name: AutoplayMessage.CHECK_AUTOPLAY_READY,
         body: {
           awaitResponse: true
         }
