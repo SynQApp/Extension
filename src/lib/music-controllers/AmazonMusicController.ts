@@ -8,7 +8,7 @@ import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { waitForElement } from '~util/waitForElement';
 
-import type { IController } from './IController';
+import type { MusicController } from './MusicController';
 
 declare let window: Window & {
   __REDUX_STORES__: (Store & { name: string })[];
@@ -42,7 +42,7 @@ interface AmazonQueueItem extends QueueItem {
  * Redux store we exposed in the amazon-music-redux-init content script. Then we can
  * dispatch actions to the store to control playback.
  */
-export class AmazonMusicController implements IController {
+export class AmazonMusicController implements MusicController {
   private _unmuteVolume = 50;
 
   public play(): void {

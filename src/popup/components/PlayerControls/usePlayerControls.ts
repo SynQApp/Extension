@@ -2,7 +2,7 @@ import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { useExpanded } from '~popup/contexts/Expanded';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
-import { ControllerMessageType } from '~types/ControllerMessageType';
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
 
 export const usePlayerControls = () => {
   const { expanded } = useExpanded();
@@ -12,25 +12,25 @@ export const usePlayerControls = () => {
 
   const handleTogglePausePlay = () => {
     sendToTab({
-      name: ControllerMessageType.PLAY_PAUSE
+      name: MusicControllerMessage.PLAY_PAUSE
     });
   };
 
   const handleNext = () => {
     sendToTab({
-      name: ControllerMessageType.NEXT
+      name: MusicControllerMessage.NEXT
     });
   };
 
   const handlePrevious = () => {
     sendToTab({
-      name: ControllerMessageType.PREVIOUS
+      name: MusicControllerMessage.PREVIOUS
     });
   };
 
   const handleSeek = (time: number) => {
     sendToTab({
-      name: ControllerMessageType.SEEK_TO,
+      name: MusicControllerMessage.SEEK_TO,
       body: {
         time
       }
@@ -39,13 +39,13 @@ export const usePlayerControls = () => {
 
   const handleToggleRepeat = () => {
     sendToTab({
-      name: ControllerMessageType.TOGGLE_REPEAT_MODE
+      name: MusicControllerMessage.TOGGLE_REPEAT_MODE
     });
   };
 
   const handleChangeVolume = (volume: number) => {
     sendToTab({
-      name: ControllerMessageType.SET_VOLUME,
+      name: MusicControllerMessage.SET_VOLUME,
       body: {
         volume
       }
@@ -54,7 +54,7 @@ export const usePlayerControls = () => {
 
   const handleToggleMute = () => {
     sendToTab({
-      name: ControllerMessageType.TOGGLE_MUTE
+      name: MusicControllerMessage.TOGGLE_MUTE
     });
   };
 

@@ -1,4 +1,4 @@
-import type { IController } from '~lib/controllers/IController';
+import type { MusicController } from '~lib/music-controllers/MusicController';
 import type { ValueOrPromise } from '~types/Util';
 
 /**

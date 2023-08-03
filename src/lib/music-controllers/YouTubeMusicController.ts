@@ -7,7 +7,7 @@ import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
 
-import type { IController } from './IController';
+import type { MusicController } from './MusicController';
 
 declare let window: Window & {
   yt: any;
@@ -28,7 +28,7 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   'Repeat all': RepeatMode.REPEAT_ALL
 };
 
-export class YouTubeMusicController implements IController {
+export class YouTubeMusicController implements MusicController {
   /**
    * Reference to a NavigationRequest that we can clone for song change navigation
    */

@@ -1,4 +1,4 @@
-import type { AmazonMusicController } from '~lib/controllers/AmazonMusicController';
+import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 

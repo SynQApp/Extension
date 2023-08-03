@@ -5,7 +5,7 @@ import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
 import { useMusicService } from '~popup/hooks/useMusicService';
-import { ControllerMessageType } from '~types/ControllerMessageType';
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 
@@ -31,7 +31,7 @@ export const useQueue = () => {
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
     sendToTab({
-      name: ControllerMessageType.PLAY_QUEUE_TRACK,
+      name: MusicControllerMessage.PLAY_QUEUE_TRACK,
       body: {
         trackId,
         duplicateIndex
