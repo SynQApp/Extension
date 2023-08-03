@@ -1,6 +1,8 @@
+import wait from 'waait';
+
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, SongInfo } from '~types/PlayerState';
+import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
@@ -26,7 +28,7 @@ export class SpotifyController implements IController {
   private _accessToken: string;
   private _cachedQueue:
     | {
-        items: SongInfo[] | undefined;
+        items: QueueItem[] | undefined;
         trackId: string | undefined;
       }
     | undefined = undefined;
@@ -138,6 +140,14 @@ export class SpotifyController implements IController {
     return;
   }
 
+  public toggleMute(): void {
+    (
+      document.querySelector(
+        'button[aria-describedby="volume-icon"]'
+      ) as HTMLButtonElement
+    )?.click();
+  }
+
   public async setVolume(volume: number): Promise<void> {
     debounce(
       async () => {
@@ -217,15 +227,7 @@ export class SpotifyController implements IController {
       ? REPEAT_UI_MAP[repeatText]
       : RepeatMode.NO_REPEAT;
 
-    const volumeContainerElement = document.querySelector(
-      'div[data-testid="volume-bar"]'
-    );
-    const volumeInputElement = volumeContainerElement.querySelector(
-      'input[type="range"]'
-    ) as HTMLInputElement;
-    const volume = volumeInputElement
-      ? parseFloat(volumeInputElement.value) * 100
-      : 0;
+    const volume = this._getVolume();
 
     return {
       currentTime,
@@ -260,7 +262,7 @@ export class SpotifyController implements IController {
     return currentSongInfo;
   }
 
-  public async getQueue(noCache?: boolean): Promise<SongInfo[]> {
+  public async getQueue(noCache?: boolean): Promise<QueueItem[]> {
     // If the queue is cached and the current track is the same, the queue is
     // likely the same as well (unless someone added or removed a track). Return
     // the cached queue.
@@ -277,11 +279,24 @@ export class SpotifyController implements IController {
       'GET'
     );
 
-    const queue = queueRes.queue;
-    const queueItems = queue.map((item) => this._itemToSongInfo(item));
+    const queue = queueRes.queue as any[];
+    const queueItems =
+      queue?.map((item: any) => {
+        const queueItem: QueueItem = {
+          songInfo: this._itemToSongInfo(item),
+          isPlaying: false
+        };
 
-    const currentTrack = await this.getCurrentSongInfo();
-    queueItems.unshift(currentTrack);
+        return queueItem;
+      }) || [];
+
+    const currentSongInfo = await this.getCurrentSongInfo();
+    const currentSongQueueItem: QueueItem = {
+      songInfo: currentSongInfo,
+      isPlaying: true
+    };
+
+    queueItems.unshift(currentSongQueueItem);
 
     this._cacheQueue(queueItems, this._currentTrackId);
 
@@ -319,7 +334,10 @@ export class SpotifyController implements IController {
     }
 
     const queue = await this.getQueue(true);
-    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndexes = findIndexes(
+      queue,
+      (item) => item.songInfo.trackId === id
+    );
     const trackIndex = trackIndexes[duplicateIndex];
 
     const trackRows = await waitForElement(
@@ -338,6 +356,20 @@ export class SpotifyController implements IController {
     }
 
     return;
+  }
+
+  private _getVolume(): number {
+    const volumeContainerElement = document.querySelector(
+      'div[data-testid="volume-bar"]'
+    );
+    const volumeInputElement = volumeContainerElement.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
+    const volume = volumeInputElement
+      ? parseFloat(volumeInputElement.value) * 100
+      : 0;
+
+    return volume;
   }
 
   private _clickQueueButton() {
@@ -426,7 +458,11 @@ export class SpotifyController implements IController {
    */
   private async _forceInitializePlayer() {
     return new Promise((resolve) => {
-      // TODO: Temporarily mute the player so it doesn't make any noise
+      const isMuted = this._getVolume() === 0;
+
+      if (!isMuted) {
+        this.toggleMute();
+      }
 
       const playButton = document.querySelector(
         'button[data-testid="control-button-playpause"]'
@@ -438,6 +474,11 @@ export class SpotifyController implements IController {
         if (playButton.attributes['aria-label'].value === 'Pause') {
           playButton.click();
           observerInstance.disconnect();
+
+          if (!isMuted) {
+            this.toggleMute();
+          }
+
           resolve(void 0);
         }
       });
@@ -452,7 +493,7 @@ export class SpotifyController implements IController {
   /**
    * Cache the queue to prevent overwhelming the Spotify API.
    */
-  private _cacheQueue(queue: SongInfo[], trackId: string) {
+  private _cacheQueue(queue: QueueItem[], trackId: string) {
     this._cachedQueue = {
       items: queue,
       trackId

@@ -24,7 +24,10 @@ export const useQueue = () => {
   );
 
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
-    const trackIndexes = findIndexes(queue, (item) => item.trackId === trackId);
+    const trackIndexes = findIndexes(
+      queue,
+      (item) => item.songInfo.trackId === trackId
+    );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
     sendToTab({

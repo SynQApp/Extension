@@ -160,7 +160,7 @@ const ThumbIcon = styled(FontAwesomeIcon)`
 `;
 
 const Line = styled.div`
-  background: ${token('colors.onBackgroundMedium')};
+  background: ${token('colors.onBackgroundLow')};
   height: 100%;
   min-width: 1px;
 `;

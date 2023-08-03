@@ -1,5 +1,5 @@
 import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, SongInfo } from '~types/PlayerState';
+import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
 import { findIndexes } from '~util/findIndexes';
@@ -48,6 +48,8 @@ export class YouTubeMusicController implements IController {
   private _shouldPlayOnNavigation = true;
 
   private _curtain: HTMLDivElement;
+
+  private _unmuteVolume: number = 50;
 
   constructor() {
     this._createNavigationWrapper();
@@ -110,6 +112,17 @@ export class YouTubeMusicController implements IController {
         '.ytmusic-player-bar #button-shape-dislike button'
       ) as HTMLElement
     ).click();
+  }
+
+  public toggleMute(): void {
+    const volume = this.getPlayer().getVolume();
+
+    if (volume === 0) {
+      this.setVolume(this._unmuteVolume);
+    } else {
+      this._unmuteVolume = volume;
+      this.setVolume(0);
+    }
   }
 
   public setVolume(volume: number): void {
@@ -192,10 +205,18 @@ export class YouTubeMusicController implements IController {
     return songInfo;
   }
 
-  public getQueue(): SongInfo[] {
-    return this._appState.queue.items.map((queueItem) =>
-      this._queueItemToSongInfo(queueItem)
-    );
+  public getQueue(): QueueItem[] {
+    const ytQueueItems = this._appState.queue.items as any[];
+    const currentSongIndex = this._appState.queue.selectedItemIndex;
+
+    return ytQueueItems.map((item, index) => {
+      const queueItem: QueueItem = {
+        songInfo: this._queueItemToSongInfo(item),
+        isPlaying: index === currentSongIndex
+      };
+
+      return queueItem;
+    });
   }
 
   public isReady(): true | NotReadyReason {
@@ -213,7 +234,10 @@ export class YouTubeMusicController implements IController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndexes = findIndexes(
+      queue,
+      (item) => item.songInfo.trackId === id
+    );
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });

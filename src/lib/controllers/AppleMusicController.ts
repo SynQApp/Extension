@@ -1,5 +1,5 @@
 import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, SongInfo } from '~types/PlayerState';
+import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
 import { findIndexes } from '~util/findIndexes';
@@ -22,6 +22,8 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  * control playback.
  */
 export class AppleMusicController implements IController {
+  private _unmuteVolume = 50;
+
   public play(): void {
     this.getPlayer().play();
   }
@@ -72,6 +74,17 @@ export class AppleMusicController implements IController {
    */
   public toggleDislike(): void {
     return;
+  }
+
+  public toggleMute(): void {
+    const volume = this.getPlayer().volume * 100;
+
+    if (volume === 0) {
+      this.setVolume(this._unmuteVolume);
+    } else {
+      this._unmuteVolume = volume;
+      this.setVolume(0);
+    }
   }
 
   public setVolume(volume: number): void {
@@ -131,10 +144,18 @@ export class AppleMusicController implements IController {
     return this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem);
   }
 
-  public getQueue(): SongInfo[] {
-    return this.getPlayer().queue._queueItems.map((queueItem: any) =>
-      this._mediaItemToSongInfo(queueItem.item)
-    );
+  public getQueue(): QueueItem[] {
+    const appleMusicQueueItems = this.getPlayer().queue._queueItems as any[];
+    const nowPlayingIndex = this.getPlayer().nowPlayingItemIndex;
+
+    return appleMusicQueueItems.map((item, index) => {
+      const queueItem: QueueItem = {
+        songInfo: this._mediaItemToSongInfo(item.item),
+        isPlaying: index === nowPlayingIndex
+      };
+
+      return queueItem;
+    });
   }
 
   public isReady(): true | NotReadyReason {
@@ -148,7 +169,10 @@ export class AppleMusicController implements IController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndexes = findIndexes(
+      queue,
+      (item) => item.songInfo.trackId === id
+    );
     const trackIndex = trackIndexes[duplicateIndex];
 
     this.getPlayer().changeToMediaAtIndex(trackIndex);

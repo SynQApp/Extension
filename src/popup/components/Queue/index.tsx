@@ -20,14 +20,14 @@ export const Queue = ({ start, count }: QueueProps) => {
 
   return (
     <QueueList>
-      {queueItems.map((item, index) => (
+      {queueItems.map(({ songInfo, isPlaying }, index) => (
         <QueueItem
           key={index}
-          albumCoverUrl={item.albumCoverUrl}
-          trackName={item.trackName}
-          artistName={item.artistName}
-          albumName={item.albumName}
-          onClick={() => handlePlayQueueTrack(item.trackId, index)}
+          albumCoverUrl={songInfo?.albumCoverUrl}
+          trackName={songInfo?.trackName}
+          artistName={songInfo?.artistName}
+          albumName={songInfo?.albumName}
+          onClick={() => handlePlayQueueTrack(songInfo?.trackId, index)}
           secondaryActions={[
             {
               iconName: 'musicNote',
@@ -42,7 +42,7 @@ export const Queue = ({ start, count }: QueueProps) => {
               onClick: () => console.info('Share')
             }
           ]}
-          active={item.trackId === currentTrackId}
+          active={isPlaying}
         />
       ))}
     </QueueList>

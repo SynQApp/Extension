@@ -14,6 +14,7 @@ interface ControlButtonsProps {
   onPrevious: () => void;
   onRepeatModeChange: () => void;
   onVolumeChange: (volume: number) => void;
+  onVolumeClick?: () => void;
   repeatMode: RepeatMode;
   volume: number;
 }
@@ -25,20 +26,12 @@ export const ControlButtons = ({
   onPrevious,
   onRepeatModeChange,
   onVolumeChange,
+  onVolumeClick,
   repeatMode,
   volume
 }: ControlButtonsProps) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const { expanded } = useExpanded();
-  const theme = useTheme();
-
-  const handleVolumeButtonClick = () => {
-    if (volume === 0) {
-      onVolumeChange(50);
-    } else {
-      onVolumeChange(0);
-    }
-  };
 
   const handleVolumeMouseEnter = () => {
     setShowVolumeSlider(true);
@@ -56,7 +49,7 @@ export const ControlButtons = ({
     <ControlButtonsContainer $expanded={expanded}>
       <ControlButtonsFlex justify="space-between" align="center">
         <ControlButton
-          onClick={handleVolumeButtonClick}
+          onClick={onVolumeClick}
           onMouseEnter={handleVolumeMouseEnter}
           onMouseLeave={handleVolumeMouseLeave}
           $expanded={expanded}

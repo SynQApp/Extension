@@ -1,7 +1,7 @@
 import type { Store } from 'redux';
 
 import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, SongInfo } from '~types/PlayerState';
+import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
 import { findIndexes } from '~util/findIndexes';
@@ -30,7 +30,7 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   ALL: RepeatMode.REPEAT_ALL
 };
 
-interface QueueItem extends SongInfo {
+interface AmazonQueueItem extends QueueItem {
   /**
    * Amazon Music uses a queue entity ID in addition to the ASIN/track ID.
    */
@@ -43,6 +43,8 @@ interface QueueItem extends SongInfo {
  * dispatch actions to the store to control playback.
  */
 export class AmazonMusicController implements IController {
+  private _unmuteVolume = 50;
+
   public play(): void {
     this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.ResumeMediaMethod',
@@ -146,6 +148,18 @@ export class AmazonMusicController implements IController {
     }
   }
 
+  public async toggleMute(): Promise<void> {
+    const maestro = await this.getMaestroInstance();
+    const volume = maestro.getVolume() * 100;
+
+    if (volume === 0) {
+      this.setVolume(this._unmuteVolume);
+    } else {
+      this._unmuteVolume = volume;
+      this.setVolume(0);
+    }
+  }
+
   public setVolume(volume: number): void {
     this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.SetVolumeMethod',
@@ -218,9 +232,9 @@ export class AmazonMusicController implements IController {
     return songInfo;
   }
 
-  public async getQueue(): Promise<QueueItem[]> {
+  public async getQueue(): Promise<AmazonQueueItem[]> {
     const appState = this.getStore().getState();
-    let queue = appState.Media?.playQueue?.widgets?.[0]?.items;
+    let queue = appState.Media?.playQueue?.widgets?.[0]?.items as any[];
 
     // Amazon Music loads the queue only after a user tries to access it. If the
     // queue is not loaded yet, we'll try to load it.
@@ -228,13 +242,27 @@ export class AmazonMusicController implements IController {
       queue = await this._fetchQueue();
     }
 
-    const songInfoQueue =
-      queue?.map((item: any) => this._queueItemToSongInfo(item)) || [];
+    const queueItems =
+      queue?.map((item: any) => {
+        const queueItem: AmazonQueueItem = {
+          songInfo: this._queueItemToSongInfo(item),
+          isPlaying: false,
+          queueItemId: item.id
+        };
 
-    const currentTrack = await this.getCurrentSongInfo();
-    songInfoQueue.unshift(currentTrack);
+        return queueItem;
+      }) || [];
 
-    return songInfoQueue;
+    const currentSongInfo = await this.getCurrentSongInfo();
+    const currentQueueItem: AmazonQueueItem = {
+      songInfo: currentSongInfo,
+      isPlaying: true,
+      queueItemId: ''
+    };
+
+    queueItems.unshift(currentQueueItem);
+
+    return queueItems;
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
@@ -262,13 +290,16 @@ export class AmazonMusicController implements IController {
 
     const queueItems = await this.getQueue();
 
-    const trackIndexes = findIndexes(queueItems, (item) => item.trackId === id);
+    const trackIndexes = findIndexes(
+      queueItems,
+      (item) => item.songInfo.trackId === id
+    );
     const trackIndex = trackIndexes[duplicateIndex];
 
     const queueItem = queueItems[trackIndex];
 
     const playTrackAction = this._createPlayAtQueueEntityAction(
-      queueItem.trackId,
+      queueItem.songInfo.trackId,
       queueItem.queueItemId,
       currentTrack.trackId
     );
@@ -306,7 +337,7 @@ export class AmazonMusicController implements IController {
     });
   }
 
-  private _queueItemToSongInfo(item: any): QueueItem {
+  private _queueItemToSongInfo(item: any): SongInfo {
     const searchParams = new URLSearchParams(
       item?.primaryLink?.deeplink?.split('?')[1]
     );
@@ -319,8 +350,7 @@ export class AmazonMusicController implements IController {
       artistName: item.secondaryText1,
       albumName: item.secondaryText2,
       albumCoverUrl: item.image,
-      duration: lengthTextToSeconds(item.secondaryText3),
-      queueItemId: item.id
+      duration: lengthTextToSeconds(item.secondaryText3)
     };
   }
 
@@ -362,8 +392,13 @@ export class AmazonMusicController implements IController {
    * started playing to pause it.
    */
   private async _forceInitializePlayer() {
-    return new Promise((resolve) => {
-      // TODO: Temporarily mute the player so it doesn't make any noise
+    return new Promise(async (resolve) => {
+      const maestro = await this.getMaestroInstance();
+      const isMuted = maestro.getVolume() === 0;
+
+      if (isMuted) {
+        this.toggleMute();
+      }
 
       const playButtons = document.querySelectorAll(
         'music-button[icon-name="play"]'
@@ -373,16 +408,22 @@ export class AmazonMusicController implements IController {
 
       mainPlayButton.click();
 
-      const observer = new MutationObserver((mutations, observerInstance) => {
-        if (mainPlayButton.getAttribute('icon-name') === 'pause') {
-          setTimeout(() => {
-            mainPlayButton.click();
-          }, 100);
+      const observer = new MutationObserver(
+        async (mutations, observerInstance) => {
+          if (mainPlayButton.getAttribute('icon-name') === 'pause') {
+            setTimeout(() => {
+              mainPlayButton.click();
 
-          observerInstance.disconnect();
-          resolve(void 0);
+              if (isMuted) {
+                this.toggleMute();
+              }
+            }, 100);
+
+            observerInstance.disconnect();
+            resolve(void 0);
+          }
         }
-      });
+      );
 
       observer.observe(mainPlayButton, {
         attributes: true,

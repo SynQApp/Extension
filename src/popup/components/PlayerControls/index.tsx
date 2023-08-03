@@ -18,7 +18,8 @@ export const PlayerControls = () => {
     handlePrevious,
     handleSeek,
     handleToggleRepeat,
-    handleChangeVolume
+    handleChangeVolume,
+    handleToggleMute
   } = usePlayerControls();
 
   return (
@@ -55,6 +56,7 @@ export const PlayerControls = () => {
           onPrevious={handlePrevious}
           onRepeatModeChange={handleToggleRepeat}
           onVolumeChange={handleChangeVolume}
+          onVolumeClick={handleToggleMute}
         />
       </ControlButtonsContainer>
     </PlayerControlsContainer>
