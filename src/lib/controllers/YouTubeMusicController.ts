@@ -2,6 +2,7 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
+import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
@@ -108,13 +109,12 @@ export class YouTubeMusicController implements IController {
   }
 
   public setVolume(volume: number): void {
-    const volumeSlider = document.getElementById(
-      'volume-slider'
-    ) as HTMLElement;
-    volumeSlider?.setAttribute('value', volume.toString());
+    this.getPlayer().setVolume(volume);
 
-    const changeEvent = new Event('change');
-    volumeSlider?.dispatchEvent(changeEvent);
+    this._ytmApp.store.dispatch({
+      type: 'SET_VOLUME',
+      payload: volume
+    });
   }
 
   public seekTo(time: number): void {
@@ -151,7 +151,8 @@ export class YouTubeMusicController implements IController {
       isPlaying:
         this.getPlayer().getPlayerState() === YouTubeMusicPlayerState.PLAYING,
       volume: this.getPlayer().getVolume(),
-      repeatMode
+      repeatMode,
+      queue: this.getQueue()
     };
   }
 
@@ -186,6 +187,15 @@ export class YouTubeMusicController implements IController {
     }
 
     return true;
+  }
+
+  public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
+    const queue = this.getQueue();
+
+    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndex = trackIndexes[duplicateIndex];
+
+    this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
   private _createNavigationRequestInstance(trackId: string): any {

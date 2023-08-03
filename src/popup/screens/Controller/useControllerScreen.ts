@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { useExpanded } from '~popup/contexts/Expanded';
+import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
 
 const useControllerScreen = () => {
@@ -10,6 +11,9 @@ const useControllerScreen = () => {
   const { allTabs, loading: tabsLoading } = useTabs();
   const currentSongInfo = useCurrentSongInfo();
   const navigate = useNavigate();
+  const playbackState = usePlaybackState();
+
+  const [showQueue, setShowQueue] = useState(false);
 
   useEffect(() => {
     if (tabsLoading) {
@@ -24,10 +28,18 @@ const useControllerScreen = () => {
     }
   }, [tabsLoading]);
 
+  const queueCount = useMemo(
+    () => playbackState?.queue?.length ?? 0,
+    [playbackState]
+  );
+
   return {
     currentSongInfo,
     expanded,
-    setExpanded
+    queueCount,
+    setExpanded,
+    showQueue,
+    setShowQueue
   };
 };
 

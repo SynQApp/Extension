@@ -82,4 +82,11 @@ export interface IController {
    * Check if the controller is ready for use.
    */
   isReady(): ValueOrPromise<true | NotReadyReason>;
+
+  /**
+   * Play the item in the queue.
+   * @param id The ID of the item to play.
+   * @param duplicateIndex If there are multiple items with the same ID, this is the duplicate index of the item to play.
+   */
+  playQueueTrack(id: string, duplicateIndex?: number): ValueOrPromise<void>;
 }

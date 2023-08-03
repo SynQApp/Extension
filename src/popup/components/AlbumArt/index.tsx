@@ -32,11 +32,11 @@ interface AlbumGlowProps extends Expandable {
 
 const AlbumGlow = styled.div<AlbumGlowProps>`
   background: ${(props) =>
-    props.src ? `url(${props.src})` : 'linear-gradient(#424242, #333333)'};
+    props.src ? `url(${props.src})` : token('colors.surface01')};
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain !important;
-  border-radius: 10px;
+  background-size: contain;
+  border-radius: ${token('radii.lg')};
   filter: blur(5px);
   height: 100%;
   position: absolute;

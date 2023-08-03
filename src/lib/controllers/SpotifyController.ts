@@ -2,6 +2,8 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
+import { findIndexes } from '~util/findIndexes';
+import { waitForElement } from '~util/waitForElement';
 
 import type { IController } from './IController';
 
@@ -17,9 +19,18 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
   'Disable repeat': RepeatMode.REPEAT_ONE
 };
 
+const QUEUE_PATH = '/queue';
+
 export class SpotifyController implements IController {
   private _accessToken: string;
   private _playerReady = false;
+  private _cachedQueue:
+    | {
+        items: SongInfo[] | undefined;
+        trackId: string | undefined;
+      }
+    | undefined = undefined;
+  private _currentTrackId: string | undefined = undefined;
 
   constructor() {
     const sessionElement = document.getElementById('session');
@@ -160,7 +171,7 @@ export class SpotifyController implements IController {
     }
   }
 
-  public getPlayerState(): PlayerState {
+  public async getPlayerState(): Promise<PlayerState> {
     const playbackProgressBarElement = document.querySelector(
       'div[data-testid="playback-progressbar"]'
     );
@@ -199,7 +210,8 @@ export class SpotifyController implements IController {
       currentTime,
       isPlaying,
       repeatMode,
-      volume
+      volume,
+      queue: await this.getQueue()
     };
   }
 
@@ -209,18 +221,37 @@ export class SpotifyController implements IController {
       'GET'
     );
 
+    this._currentTrackId = currentlyPlaying.item.id;
+
     return this._itemToSongInfo(currentlyPlaying.item);
   }
 
-  public async getQueue(): Promise<SongInfo[]> {
+  public async getQueue(noCache?: boolean): Promise<SongInfo[]> {
+    // If the queue is cached and the current track is the same, the queue is
+    // likely the same as well (unless someone added or removed a track). Return
+    // the cached queue.
+    if (
+      !noCache &&
+      this._cachedQueue?.trackId &&
+      this._cachedQueue.trackId === this._currentTrackId
+    ) {
+      return this._cachedQueue.items ?? [];
+    }
+
     const queueRes = await this._fetchSpotify(
       SpotifyEndpoints.GET_QUEUE,
       'GET'
     );
 
     const queue = queueRes.queue;
+    const queueItems = queue.map((item) => this._itemToSongInfo(item));
 
-    return queue.map((item) => this._itemToSongInfo(item));
+    const currentTrack = await this.getCurrentSongInfo();
+    queueItems.unshift(currentTrack);
+
+    this._cacheQueue(queueItems, this._currentTrackId);
+
+    return queueItems;
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
@@ -236,6 +267,49 @@ export class SpotifyController implements IController {
     }
 
     return true;
+  }
+
+  public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
+    // If current track is the same as the one we want to play, just restart it
+    if (this._currentTrackId === id && duplicateIndex === 0) {
+      await this.seekTo(0);
+      return;
+    }
+
+    const alreadyOnQueuePage = window.location.pathname === QUEUE_PATH;
+
+    if (!alreadyOnQueuePage) {
+      this._clickQueueButton();
+    }
+
+    const queue = await this.getQueue(true);
+    const trackIndexes = findIndexes(queue, (item) => item.trackId === id);
+    const trackIndex = trackIndexes[duplicateIndex];
+
+    const trackRows = await waitForElement(
+      `div[data-testid="tracklist-row"]`,
+      10000,
+      true
+    );
+
+    const trackRow = trackRows[trackIndex] as HTMLDivElement;
+    const trackButton = trackRow.querySelector('button');
+
+    trackButton?.click();
+
+    if (!alreadyOnQueuePage) {
+      this._clickQueueButton();
+    }
+
+    return;
+  }
+
+  private _clickQueueButton() {
+    const queueButton = document.querySelector(
+      'button[aria-label="Queue"]'
+    ) as HTMLButtonElement;
+
+    queueButton.click();
   }
 
   private _itemToSongInfo(item: any): SongInfo {
@@ -329,5 +403,19 @@ export class SpotifyController implements IController {
         attributeFilter: ['aria-label']
       });
     });
+  }
+
+  /**
+   * Cache the queue to prevent overwhelming the Spotify API.
+   */
+  private _cacheQueue(queue: SongInfo[], trackId: string) {
+    this._cachedQueue = {
+      items: queue,
+      trackId
+    };
+
+    setTimeout(() => {
+      this._cachedQueue = undefined;
+    }, 30000);
   }
 }

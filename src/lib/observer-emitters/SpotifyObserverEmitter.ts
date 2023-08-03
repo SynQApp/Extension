@@ -125,7 +125,7 @@ export class SpotifyObserverEmitter implements IObserverEmitter {
     await mainWorldToBackground({
       name: EventMessageType.PLAYBACK_UPDATED,
       body: {
-        playbackState: this._controller.getPlayerState()
+        playbackState: await this._controller.getPlayerState()
       }
     });
   }

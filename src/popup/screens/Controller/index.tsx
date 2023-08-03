@@ -1,56 +1,71 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, token } from '@synq/ui';
+import { Flex, Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
 import { AlbumArt } from '~popup/components/AlbumArt';
 import { PlayerControls } from '~popup/components/PlayerControls';
+import { Queue } from '~popup/components/Queue';
 import type { Expandable } from '~popup/types';
 import { expandedStyle } from '~popup/util/expandedStyle';
 
 import useControllerScreen from './useControllerScreen';
 
-const EXAMPLE_IMG =
-  'https://lh3.googleusercontent.com/cYEaqMFK85Z64kIe_0eB5nh-rvMH7FFdkKc0P9-9kvm0zHMqnawY7bK8cwlG8ffJiTd_RrEtmlFpDPsv=w544-h544-l90-rj';
+const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
-  const { currentSongInfo, expanded, setExpanded } = useControllerScreen();
+  const {
+    currentSongInfo,
+    expanded,
+    queueCount,
+    setExpanded,
+    showQueue,
+    setShowQueue
+  } = useControllerScreen();
 
-  const handleExpandButtonClick = () => {
-    setExpanded(!expanded);
+  const handleShowQueueButtonPress = () => {
+    setShowQueue(!showQueue);
   };
 
   return (
-    <PlayerSection>
-      <div>
-        <Flex
-          direction={expanded ? 'column' : 'row'}
-          justify={expanded ? 'flex-start' : 'space-between'}
-          align="center"
-        >
-          <AlbumArtContainer $expanded={expanded}>
-            <AlbumArt src={currentSongInfo?.albumCoverUrl} />
-          </AlbumArtContainer>
-          <PlayerControlsContainer $expanded={expanded}>
-            <PlayerControls />
-          </PlayerControlsContainer>
-        </Flex>
-      </div>
-      <ExpandButton onClick={handleExpandButtonClick}>
-        <ExpandIcon
-          icon={expanded ? faChevronUp : faChevronDown}
-          $expanded={expanded}
-          onClick={() => setExpanded(!expanded)}
-        />
-      </ExpandButton>
-    </PlayerSection>
+    <>
+      <PlayerSection>
+        <div>
+          <Flex
+            direction={expanded ? 'column' : 'row'}
+            justify={expanded ? 'flex-start' : 'space-between'}
+            align="center"
+          >
+            <AlbumArtContainer $expanded={expanded}>
+              <AlbumArt src={currentSongInfo?.albumCoverUrl} />
+            </AlbumArtContainer>
+            <PlayerControlsContainer $expanded={expanded}>
+              <PlayerControls />
+            </PlayerControlsContainer>
+          </Flex>
+        </div>
+        <ExpandButton onClick={handleShowQueueButtonPress}>
+          <ExpandIcon
+            icon={showQueue ? faChevronUp : faChevronDown}
+            $expanded={expanded}
+          />
+        </ExpandButton>
+      </PlayerSection>
+      <QueueSection $show={showQueue}>
+        <QueueHeader type="display" size="lg">
+          Queue ({queueCount})
+        </QueueHeader>
+        <Queue start="next" />
+      </QueueSection>
+    </>
   );
 };
 
 const PlayerSection = styled.section`
   background: ${token('colors.background')};
   padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
-  height: 100%;
+  height: ${PLAYER_HEIGHT}px;
+  position: relative;
 `;
 
 const AlbumArtContainer = styled.div<Expandable>`
@@ -96,16 +111,67 @@ const ExpandButton = styled.button`
   border: none;
   bottom: 0;
   cursor: pointer;
-  height: 20px;
+  height: 15px;
   left: calc(50% - 25px);
   outline: none;
   position: absolute;
   width: 50px;
+  display: flex;
+  justify-content: center;
 `;
 
 const ExpandIcon = styled(FontAwesomeIcon)<Expandable>`
   color: ${token('colors.onBackground')};
-  margin-top: ${token('spacing.2xs')};
+`;
+
+interface QueueSectionProps {
+  $show: boolean;
+}
+
+const QueueSection = styled.section<QueueSectionProps>`
+  background: ${token('colors.surface')};
+  height: 0px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  transition: height 0.2s ease-in-out, padding-top 0.2s ease-in-out;
+
+  ${({ $show }) =>
+    $show &&
+    css`
+      height: 390px;
+    `}
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${token('colors.surface01')};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      to bottom,
+      ${token('colors.base.orange.4')} 0%,
+      ${token('colors.base.pink.4')} 100%
+    );
+    border-radius: 10px;
+
+    &:hover {
+      background: linear-gradient(
+        to bottom,
+        ${token('colors.base.orange.5')} 0%,
+        ${token('colors.base.pink.5')} 100%
+      );
+    }
+  }
+`;
+
+const QueueHeader = styled(Text)`
+  margin: 0;
+  font-weight: ${token('typography.fontWeights.semibold')};
+  padding: ${token('spacing.sm')} ${token('spacing.md')} ${token('spacing.2xs')};
 `;
 
 export default ControllerScreen;

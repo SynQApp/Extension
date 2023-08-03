@@ -1,20 +1,23 @@
 import { Text, token } from '@synq/ui';
 import type { TextProps } from '@synq/ui';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
 import { styled } from 'styled-components';
 
-interface TextShortenedMarqueeProps extends TextProps {
-  children: string;
+interface MarqueeTextProps extends TextProps {
+  children: string | string[];
+  className?: string;
 }
 
-export const TextShortenedMarquee = ({
+export const MarqueeText = ({
   children,
   as,
+  className,
   ...textProps
-}: TextShortenedMarqueeProps) => {
+}: MarqueeTextProps) => {
   const [play, setPlay] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   const hasOverflow = () => {
     if (!textRef.current) {
@@ -23,6 +26,32 @@ export const TextShortenedMarquee = ({
 
     return textRef.current.offsetWidth < textRef.current.scrollWidth;
   };
+
+  // The mouseleave event is not always reliable, so we also check the mouse position
+  useEffect(() => {
+    if (!divRef.current || !play) {
+      return;
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = divRef.current.getBoundingClientRect();
+
+      if (
+        e.clientX < rect.left ||
+        e.clientX > rect.right ||
+        e.clientY < rect.top ||
+        e.clientY > rect.bottom
+      ) {
+        setPlay(false);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [divRef.current, play]);
 
   const handleMouseEnter = () => {
     if (hasOverflow()) {
@@ -35,16 +64,30 @@ export const TextShortenedMarquee = ({
   };
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div
+      className={className}
+      onMouseOver={handleMouseEnter}
+      onMouseOut={handleMouseLeave}
+      ref={divRef}
+    >
       {play ? (
         <Marquee>
-          <Text {...textProps}>{children}</Text>
+          <Text className="text" {...textProps}>
+            {children}
+          </Text>
           <Space />
         </Marquee>
       ) : (
-        <StaticText ref={textRef} forwardedAs={as} {...textProps}>
-          {children}
-        </StaticText>
+        <StaticTextContainer>
+          <StaticText
+            className="text"
+            ref={textRef}
+            forwardedAs={as}
+            {...textProps}
+          >
+            {children}
+          </StaticText>
+        </StaticTextContainer>
       )}
     </div>
   );
@@ -55,9 +98,15 @@ const Space = styled.span`
   width: ${token('spacing.md')};
 `;
 
+const StaticTextContainer = styled.div`
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+`;
+
 const StaticText = styled(Text)`
-  width: 100%;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;

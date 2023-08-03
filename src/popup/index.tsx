@@ -1,24 +1,9 @@
-import { UiProvider } from '@synq/ui';
-import { MemoryRouter } from 'react-router-dom';
-
-import AppRoutes from './AppRoutes';
-import Layout from './Layout';
-import { ContextProvidersWrapper } from './contexts/ContextProvidersWrapper';
-
 import './index.css';
 
+import App from './App';
+
 const Popup = () => {
-  return (
-    <MemoryRouter>
-      <ContextProvidersWrapper>
-        <UiProvider>
-          <Layout>
-            <AppRoutes />
-          </Layout>
-        </UiProvider>
-      </ContextProvidersWrapper>
-    </MemoryRouter>
-  );
+  return <App />;
 };
 
 export default Popup;

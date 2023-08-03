@@ -4,6 +4,7 @@ import { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, SongInfo } from '~types/PlayerState';
 import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
+import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { waitForElement } from '~util/waitForElement';
 
@@ -28,6 +29,13 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   ONE: RepeatMode.REPEAT_ONE,
   ALL: RepeatMode.REPEAT_ALL
 };
+
+interface QueueItem extends SongInfo {
+  /**
+   * Amazon Music uses a queue entity ID in addition to the ASIN/track ID.
+   */
+  queueItemId: string;
+}
 
 /**
  * In general, the strategy for controlling Amazon Music is to use the DMWebPlayerSkyfire
@@ -183,7 +191,8 @@ export class AmazonMusicController implements IController {
       currentTime: Math.round(maestro.getCurrentTime()),
       isPlaying: maestro.isPlaying(),
       repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
-      volume: maestro.getVolume() * 100
+      volume: maestro.getVolume() * 100,
+      queue: await this.getQueue()
     };
   }
 
@@ -205,7 +214,7 @@ export class AmazonMusicController implements IController {
     return songInfo;
   }
 
-  public async getQueue(): Promise<SongInfo[]> {
+  public async getQueue(): Promise<QueueItem[]> {
     const appState = this.getStore().getState();
     let queue = appState.Media?.playQueue?.widgets?.[0]?.items;
 
@@ -215,7 +224,13 @@ export class AmazonMusicController implements IController {
       queue = await this._fetchQueue();
     }
 
-    return queue?.map((item: any) => this._queueItemToSongInfo(item)) || [];
+    const songInfoQueue =
+      queue?.map((item: any) => this._queueItemToSongInfo(item)) || [];
+
+    const currentTrack = await this.getCurrentSongInfo();
+    songInfoQueue.unshift(currentTrack);
+
+    return songInfoQueue;
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
@@ -226,6 +241,31 @@ export class AmazonMusicController implements IController {
     }
 
     return true;
+  }
+
+  public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
+    const currentTrack = await this.getCurrentSongInfo();
+
+    // If current track is the same as the one we want to play, just restart it
+    if (currentTrack.trackId === id && duplicateIndex === 0) {
+      this.seekTo(0);
+      return;
+    }
+
+    const queueItems = await this.getQueue();
+
+    const trackIndexes = findIndexes(queueItems, (item) => item.trackId === id);
+    const trackIndex = trackIndexes[duplicateIndex];
+
+    const queueItem = queueItems[trackIndex];
+
+    const playTrackAction = this._createPlayAtQueueEntityAction(
+      queueItem.trackId,
+      queueItem.queueItemId,
+      currentTrack.trackId
+    );
+
+    this.getStore().dispatch(playTrackAction);
   }
 
   private async _fetchQueue(): Promise<any> {
@@ -258,7 +298,7 @@ export class AmazonMusicController implements IController {
     });
   }
 
-  private _queueItemToSongInfo(item: any): SongInfo {
+  private _queueItemToSongInfo(item: any): QueueItem {
     const searchParams = new URLSearchParams(
       item?.primaryLink?.deeplink?.split('?')[1]
     );
@@ -271,7 +311,8 @@ export class AmazonMusicController implements IController {
       artistName: item.secondaryText1,
       albumName: item.secondaryText2,
       albumCoverUrl: item.image,
-      duration: lengthTextToSeconds(item.secondaryText3)
+      duration: lengthTextToSeconds(item.secondaryText3),
+      queueItemId: item.id
     };
   }
 
@@ -331,6 +372,40 @@ export class AmazonMusicController implements IController {
           queue: {
             interface: 'QueuesInterface.v1_0.MultiThreadedQueue',
             id: 'MT_HTTP'
+          },
+          forced: false,
+          owner: currentTrackId
+        }
+      },
+      type: 'ENQUEUE_SKYFIRE_METHOD'
+    };
+  }
+
+  private _createPlayAtQueueEntityAction(
+    trackId: string,
+    entityId: string,
+    currentTrackId: string
+  ) {
+    return {
+      payload: {
+        queue: {
+          interface: 'QueuesInterface.v1_0.SingleThreadedQueue',
+          id: 'ST_HTTP'
+        },
+        method: {
+          interface: 'InteractionInterface.v1_0.InvokeHttpSkillMethod',
+          url: `https://na.mesk.skill.music.a2z.com/api/playAtQueueEntity?trackId=${trackId}&entityId=${entityId}&metricsInfo=&userHash=%7B%22level%22%3A%22HD_MEMBER%22%7D`,
+          clientInformation: [
+            'PlaybackInterface.v1_0.MediaStateClientInformation',
+            'PlaybackInterface.v1_0.LyricLinesClientInformation'
+          ],
+          before: [],
+          after: [],
+          onSuccess: [],
+          onError: [],
+          queue: {
+            interface: 'QueuesInterface.v1_0.SingleThreadedQueue',
+            id: 'ST_HTTP'
           },
           forced: false,
           owner: currentTrackId
