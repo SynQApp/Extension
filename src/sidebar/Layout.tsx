@@ -1,10 +1,10 @@
 import { token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
-import Header from '../player-ui/components/Header';
-import { useExpanded } from '../player-ui/contexts/Expanded';
-import { expandedStyle } from '../player-ui/util/expandedStyle';
-import { type Expandable } from './types';
+import Header from '~player-ui/components/Header';
+import { useExpanded } from '~player-ui/contexts/Expanded';
+import { expandedStyle } from '~player-ui/util/expandedStyle';
+import type { Expandable } from '~popup/types';
 
 const Layout = ({ children }) => {
   const expanded = useExpanded();
@@ -21,11 +21,7 @@ const Container = styled.div<Expandable>`
   background: ${token('colors.background')};
   transition: all 0.2s ease-in-out;
   width: 350px;
-
-  ${expandedStyle(css`
-    width: 310px;
-    height: 410px;
-  `)}
+  height: 100vh;
 `;
 
 const Content = styled.div`

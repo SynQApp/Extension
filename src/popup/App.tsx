@@ -1,9 +1,9 @@
 import { UiProvider } from '@synq/ui';
 import { MemoryRouter } from 'react-router-dom';
 
+import { ContextProvidersWrapper } from '../player-ui/contexts/ContextProvidersWrapper';
 import AppRoutes from './AppRoutes';
 import Layout from './Layout';
-import { ContextProvidersWrapper } from './contexts/ContextProvidersWrapper';
 
 const App = () => {
   return (

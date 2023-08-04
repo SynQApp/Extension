@@ -2,8 +2,8 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { useTabs } from '~popup/contexts/Tabs';
-import { useMusicService } from '~popup/hooks/useMusicService';
+import { useTabs } from '~player-ui/contexts/Tabs';
+import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {

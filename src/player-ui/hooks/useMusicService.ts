@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { useTabs } from '~popup/contexts/Tabs';
+import { useTabs } from '~player-ui/contexts/Tabs';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
 export const useMusicService = () => {

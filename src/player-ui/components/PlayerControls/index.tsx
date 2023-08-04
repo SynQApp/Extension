@@ -1,7 +1,7 @@
 import { Text, token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
-import { expandedStyle } from '~popup/util/expandedStyle';
+import { expandedStyle } from '~player-ui/util/expandedStyle';
 
 import { ControlButtons } from '../ControlButtons';
 import { MarqueeText } from '../MarqueeText';

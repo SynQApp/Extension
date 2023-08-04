@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
-import { useExpanded } from '~popup/contexts/Expanded';
-import { usePlaybackState } from '~popup/contexts/PlaybackState';
-import { useTabs } from '~popup/contexts/Tabs';
-import { useMusicService } from '~popup/hooks/useMusicService';
+import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
+import { useExpanded } from '~player-ui/contexts/Expanded';
+import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useTabs } from '~player-ui/contexts/Tabs';
+import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { AutoplayMessage } from '~types/AutoplayMessage';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { MusicService } from '~types/MusicService';
@@ -22,7 +22,7 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 ]);
 
 const useControllerScreen = () => {
-  const { expanded, setExpanded } = useExpanded();
+  const expanded = useExpanded();
   const { allTabs, loading: tabsLoading, sendToTab } = useTabs();
   const currentSongInfo = useCurrentSongInfo();
   const navigate = useNavigate();
@@ -37,7 +37,6 @@ const useControllerScreen = () => {
     }
 
     if (!allTabs || allTabs.length === 0) {
-      setExpanded(true);
       navigate('/select-platform');
     } else if (allTabs.length > 1) {
       navigate('/select-tab');
@@ -88,7 +87,6 @@ const useControllerScreen = () => {
     handleDislikeClick,
     handleLikeClick,
     queueCount,
-    setExpanded,
     showQueue,
     setShowQueue
   };

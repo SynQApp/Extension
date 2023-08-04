@@ -1,20 +1,16 @@
 import { useMemo } from 'react';
-import { useTheme } from 'styled-components';
 
-import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
-import { usePlaybackState } from '~popup/contexts/PlaybackState';
-import { useTabs } from '~popup/contexts/Tabs';
-import { useMusicService } from '~popup/hooks/useMusicService';
+import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useTabs } from '~player-ui/contexts/Tabs';
+import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 
 export const useQueue = () => {
   const playbackState = usePlaybackState();
-  const currentSongInfo = useCurrentSongInfo();
-  const theme = useTheme();
   const musicService = useMusicService();
-  const { sendToTab, selectedTab } = useTabs();
+  const { sendToTab } = useTabs();
 
   const queue = useMemo(() => playbackState?.queue || [], [playbackState]);
 
@@ -40,10 +36,8 @@ export const useQueue = () => {
   };
 
   return {
-    currentTrackId: currentSongInfo?.trackId,
     handlePlayQueueTrack,
     musicServiceName,
-    queueItems: queue,
-    theme
+    queueItems: queue
   };
 };

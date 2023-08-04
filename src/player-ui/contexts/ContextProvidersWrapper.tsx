@@ -12,7 +12,7 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
     <TabsProvider>
       <PlaybackStateProvider>
         <CurrentSongInfoProvider>
-          <ExpandedProvider>{children}</ExpandedProvider>
+          <ExpandedProvider expanded={false}>{children}</ExpandedProvider>
         </CurrentSongInfoProvider>
       </PlaybackStateProvider>
     </TabsProvider>

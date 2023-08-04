@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
-import { AlbumArt } from '~popup/components/AlbumArt';
-import { PlayerControls } from '~popup/components/PlayerControls';
-import { Queue } from '~popup/components/Queue';
+import { AlbumArt } from '~player-ui/components/AlbumArt';
+import { PlayerControls } from '~player-ui/components/PlayerControls';
+import { Queue } from '~player-ui/components/Queue';
+import { expandedStyle } from '~player-ui/util/expandedStyle';
 import type { Expandable } from '~popup/types';
-import { expandedStyle } from '~popup/util/expandedStyle';
 
 import useControllerScreen from './useControllerScreen';
 
@@ -20,7 +20,6 @@ const ControllerScreen = () => {
     queueCount,
     handleDislikeClick,
     handleLikeClick,
-    setExpanded,
     showQueue,
     setShowQueue
   } = useControllerScreen();
@@ -64,7 +63,7 @@ const ControllerScreen = () => {
         <QueueHeader type="display" size="lg">
           Queue ({queueCount})
         </QueueHeader>
-        <Queue start="next" />
+        <Queue />
       </QueueSection>
     </>
   );

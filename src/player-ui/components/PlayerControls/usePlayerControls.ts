@@ -1,11 +1,11 @@
-import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
-import { useExpanded } from '~popup/contexts/Expanded';
-import { usePlaybackState } from '~popup/contexts/PlaybackState';
-import { useTabs } from '~popup/contexts/Tabs';
+import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
+import { useExpanded } from '~player-ui/contexts/Expanded';
+import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useTabs } from '~player-ui/contexts/Tabs';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 
 export const usePlayerControls = () => {
-  const { expanded } = useExpanded();
+  const expanded = useExpanded();
   const currentSongInfo = useCurrentSongInfo();
   const playbackState = usePlaybackState();
   const { sendToTab } = useTabs();

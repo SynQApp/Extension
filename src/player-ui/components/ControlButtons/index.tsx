@@ -2,9 +2,9 @@ import { Button, Flex, Icon, Slider, token } from '@synq/ui';
 import { useState } from 'react';
 import styled, { css, useTheme } from 'styled-components';
 
-import { useExpanded } from '~popup/contexts/Expanded';
+import { useExpanded } from '~player-ui/contexts/Expanded';
+import { expandedStyle } from '~player-ui/util/expandedStyle';
 import type { Expandable } from '~popup/types';
-import { expandedStyle } from '~popup/util/expandedStyle';
 import { RepeatMode } from '~types/RepeatMode';
 
 interface ControlButtonsProps {
