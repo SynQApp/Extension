@@ -1,9 +1,10 @@
+import { POPUP_PORT } from '~constants/port';
 import { ALL_URL_MATCHES } from '~constants/urls';
 import { PopupMessage } from '~types/PopupMessage';
 
 export const popupListener = () => {
   chrome.runtime.onConnect.addListener(async (port) => {
-    if (port.name !== 'popup') {
+    if (port.name !== POPUP_PORT) {
       return;
     }
 
