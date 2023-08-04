@@ -1,5 +1,7 @@
 import { sendToBackground } from '@plasmohq/messaging';
 
+import { ContentEvent } from '~types/ContentEvent';
+
 import { generateRequestId } from './generateRequestId';
 
 /**
@@ -13,7 +15,7 @@ export const mainWorldToBackground: typeof sendToBackground = (
 
   return new Promise((resolve) => {
     // Send message to background script via the message relay script
-    const event = new CustomEvent('SynQEvent:ToBackground', {
+    const event = new CustomEvent(ContentEvent.TO_BACKGROUND, {
       detail: {
         requestId,
         message
@@ -24,7 +26,7 @@ export const mainWorldToBackground: typeof sendToBackground = (
 
     // Listen for the response from the background script
     window.addEventListener(
-      `SynQEvent:FromBackground:${requestId}`,
+      `${ContentEvent.FROM_BACKGROUND}:${requestId}`,
       (event: CustomEvent) => {
         const { body } = event.detail;
         resolve(body as string);
