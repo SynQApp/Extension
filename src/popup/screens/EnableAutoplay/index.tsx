@@ -3,19 +3,22 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useTabs } from '~popup/contexts/Tabs';
-import { getMusicServiceFromUrl } from '~util/getMusicServiceFromUrl';
+import { useMusicService } from '~popup/hooks/useMusicService';
+import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {
   const { selectedTab } = useTabs();
+  const musicService = useMusicService();
 
   const handleEnableClick = () => {
     // Switch to selected tab
     chrome.tabs.update(selectedTab?.id, { active: true });
   };
 
-  const musicService = useMemo(() => {
-    return selectedTab?.url ? getMusicServiceFromUrl(selectedTab?.url) : '';
-  }, [selectedTab]);
+  const musicServiceName = useMemo(
+    () => (selectedTab?.url ? getMusicServiceName(musicService) : ''),
+    [selectedTab]
+  );
 
   return (
     <Container>
@@ -23,7 +26,7 @@ export const EnableAutoplayScreen = () => {
         Please enable SynQ to continue.
       </Title>
       <Button variant="secondary" size="small" onClick={handleEnableClick}>
-        {musicService} →
+        {musicServiceName} →
       </Button>
     </Container>
   );

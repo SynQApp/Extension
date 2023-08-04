@@ -5,7 +5,21 @@ import { useCurrentSongInfo } from '~popup/contexts/CurrentSongInfo';
 import { useExpanded } from '~popup/contexts/Expanded';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
+import { useMusicService } from '~popup/hooks/useMusicService';
 import { AutoplayMessageType } from '~types/AutoplayMessageType';
+import { ControllerMessageType } from '~types/ControllerMessageType';
+import { MusicService } from '~types/MusicService';
+
+const LIKE_ENABLED_SERVICES = new Set([
+  MusicService.AMAZON_MUSIC,
+  MusicService.SPOTIFY,
+  MusicService.YOUTUBE_MUSIC
+]);
+
+const DISLIKE_ENABLED_SERVICES = new Set([
+  MusicService.AMAZON_MUSIC,
+  MusicService.YOUTUBE_MUSIC
+]);
 
 const useControllerScreen = () => {
   const { expanded, setExpanded } = useExpanded();
@@ -13,6 +27,7 @@ const useControllerScreen = () => {
   const currentSongInfo = useCurrentSongInfo();
   const navigate = useNavigate();
   const playbackState = usePlaybackState();
+  const musicService = useMusicService();
 
   const [showQueue, setShowQueue] = useState(false);
 
@@ -46,6 +61,22 @@ const useControllerScreen = () => {
     checkAutoplayReady();
   }, [sendToTab]);
 
+  const handleLikeClick = LIKE_ENABLED_SERVICES.has(musicService)
+    ? () => {
+        sendToTab({
+          name: ControllerMessageType.TOGGLE_LIKE
+        });
+      }
+    : undefined;
+
+  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(musicService)
+    ? () => {
+        sendToTab({
+          name: ControllerMessageType.TOGGLE_DISLIKE
+        });
+      }
+    : undefined;
+
   const queueCount = useMemo(
     () => playbackState?.queue?.length ?? 0,
     [playbackState]
@@ -54,6 +85,8 @@ const useControllerScreen = () => {
   return {
     currentSongInfo,
     expanded,
+    handleDislikeClick,
+    handleLikeClick,
     queueCount,
     setExpanded,
     showQueue,

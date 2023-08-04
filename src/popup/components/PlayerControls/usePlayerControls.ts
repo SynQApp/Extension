@@ -52,6 +52,12 @@ export const usePlayerControls = () => {
     });
   };
 
+  const handleToggleMute = () => {
+    sendToTab({
+      name: ControllerMessageType.TOGGLE_MUTE
+    });
+  };
+
   return {
     currentSongInfo,
     expanded,
@@ -62,6 +68,7 @@ export const usePlayerControls = () => {
     handlePrevious,
     handleSeek,
     handleToggleRepeat,
-    handleChangeVolume
+    handleChangeVolume,
+    handleToggleMute
   };
 };

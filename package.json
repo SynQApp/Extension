@@ -14,7 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@plasmohq/messaging": "^0.3.3",
-    "@synq/ui": "0.0.4",
+    "@synq/ui": "0.0.4-main-screen-queue.13",
     "plasmo": "0.75.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",

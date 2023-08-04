@@ -68,24 +68,6 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
       });
     }
 
-    const likeButton = document.querySelector(
-      '.ytmusic-like-button-renderer.like'
-    );
-    if (likeButton) {
-      playerStateObserver.observe(likeButton, {
-        attributeFilter: ['aria-pressed']
-      });
-    }
-
-    const dislikeButton = document.querySelector(
-      '.ytmusic-like-button-renderer.dislike'
-    );
-    if (dislikeButton) {
-      playerStateObserver.observe(dislikeButton, {
-        attributeFilter: ['aria-pressed']
-      });
-    }
-
     const volumeElement = document.getElementById('volume-slider');
     if (volumeElement) {
       playerStateObserver.observe(volumeElement, {
@@ -111,6 +93,28 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
     this._controller
       .getPlayer()
       .addEventListener('videodatachange', this._onVideoDataChangeHandler);
+
+    const songInfoObserver = new MutationObserver(async () => {
+      await this._sendSongInfoUpdatedMessage();
+    });
+
+    const likeButton = document.querySelector(
+      '.ytmusic-player-bar #button-shape-like'
+    );
+    if (likeButton) {
+      songInfoObserver.observe(likeButton, {
+        attributeFilter: ['aria-pressed']
+      });
+    }
+
+    const dislikeButton = document.querySelector(
+      '.ytmusic-player-bar #button-shape-dislike'
+    );
+    if (dislikeButton) {
+      songInfoObserver.observe(dislikeButton, {
+        attributeFilter: ['aria-pressed']
+      });
+    }
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {

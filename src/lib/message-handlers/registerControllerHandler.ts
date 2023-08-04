@@ -53,6 +53,10 @@ export const registerControllerHandler = (controller: IController) => {
           await controller.toggleDislike();
           break;
 
+        case ControllerMessageType.TOGGLE_MUTE:
+          await controller.toggleMute();
+          break;
+
         case ControllerMessageType.SET_VOLUME:
           await controller.setVolume(message.body.volume);
           break;

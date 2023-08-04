@@ -1,5 +1,5 @@
 import type { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, SongInfo } from '~types/PlayerState';
+import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import type { ValueOrPromise } from '~types/Util';
 
 export interface IController {
@@ -44,6 +44,11 @@ export interface IController {
   toggleDislike(): ValueOrPromise<void>;
 
   /**
+   * Toggle the mute state.
+   */
+  toggleMute(): ValueOrPromise<void>;
+
+  /**
    * Set the volume.
    */
   setVolume(volume: number): ValueOrPromise<void>;
@@ -78,7 +83,7 @@ export interface IController {
   /**
    * Get the queue.
    */
-  getQueue(): ValueOrPromise<SongInfo[]>;
+  getQueue(): ValueOrPromise<QueueItem[]>;
 
   /**
    * Check if the controller is ready for use.

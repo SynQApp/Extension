@@ -8,12 +8,6 @@ import { MarqueeText } from '../MarqueeText';
 import { TrackSeeker } from '../TrackSeeker';
 import { usePlayerControls } from './usePlayerControls';
 
-const MAX_TRACK_TITLE_COLLAPSED_LENGTH = 20;
-const MAX_TRACK_TITLE_EXPANDED_LENGTH = 22;
-
-const MAX_TRACK_ARTIST_COLLAPSED_LENGTH = 28;
-const MAX_TRACK_ARTIST_EXPANDED_LENGTH = 35;
-
 export const PlayerControls = () => {
   const {
     expanded,
@@ -24,7 +18,8 @@ export const PlayerControls = () => {
     handlePrevious,
     handleSeek,
     handleToggleRepeat,
-    handleChangeVolume
+    handleChangeVolume,
+    handleToggleMute
   } = usePlayerControls();
 
   return (
@@ -61,6 +56,7 @@ export const PlayerControls = () => {
           onPrevious={handlePrevious}
           onRepeatModeChange={handleToggleRepeat}
           onVolumeChange={handleChangeVolume}
+          onVolumeClick={handleToggleMute}
         />
       </ControlButtonsContainer>
     </PlayerControlsContainer>
