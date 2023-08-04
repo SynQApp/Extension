@@ -16,6 +16,7 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;
   private _unsubscribeStoreObserver: () => void;
+  private _paused = true;
 
   private _currentState: {
     trackId: string;
@@ -58,6 +59,14 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     }, 500);
   }
 
+  public pause(): void {
+    this._paused = true;
+  }
+
+  public resume(): void {
+    this._paused = false;
+  }
+
   public async unobserve(): Promise<void> {
     const maestro = await this._controller.getMaestroInstance();
 
@@ -96,6 +105,10 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     const maestro = await this._controller.getMaestroInstance();
 
     this._unsubscribeStoreObserver = store.subscribe(async () => {
+      if (this._paused) {
+        return;
+      }
+
       const state = store.getState();
 
       if (state.Storage?.RATINGS?.TRACK_RATING !== this._currentState.rating) {
@@ -126,6 +139,10 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.SONG_INFO_UPDATED,
       body: {
@@ -135,6 +152,10 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.PLAYBACK_UPDATED,
       body: {

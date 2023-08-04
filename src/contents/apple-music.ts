@@ -2,6 +2,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { AppleMusicController } from '~lib/controllers/AppleMusicController';
 import { registerControllerHandler } from '~lib/message-handlers/registerControllerHandler';
+import { registerObserverEmitter } from '~lib/message-handlers/registerObserverEmitter';
 import { AppleMusicObserverEmitter } from '~lib/observer-emitters/AppleMusicObserverEmitter';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -18,6 +19,8 @@ const initialize = () => {
   const observer = new AppleMusicObserverEmitter(controller);
 
   registerControllerHandler(controller);
+  registerObserverEmitter(observer);
+
   observer.observe();
 };
 

@@ -9,6 +9,7 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
   private _onStateChangeHandler: () => void;
   private _onVideoDataChangeHandler: () => void;
   private _mutationObservers: MutationObserver[] = [];
+  private _paused = true;
 
   constructor(controller: YouTubeMusicController) {
     this._controller = controller;
@@ -23,6 +24,14 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
         this._setupSongInfoObserver();
       }
     }, 500);
+  }
+
+  public pause(): void {
+    this._paused = true;
+  }
+
+  public resume(): void {
+    this._paused = false;
   }
 
   public unobserve(): void {
@@ -105,6 +114,10 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.SONG_INFO_UPDATED,
       body: {
@@ -114,6 +127,10 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.PLAYBACK_UPDATED,
       body: {

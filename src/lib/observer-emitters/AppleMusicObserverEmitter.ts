@@ -17,6 +17,7 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
   private _controller: AppleMusicController;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
+  private _paused = true;
 
   constructor(controller: AppleMusicController) {
     this._controller = controller;
@@ -58,6 +59,14 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
     }, 500);
   }
 
+  public pause(): void {
+    this._paused = true;
+  }
+
+  public resume(): void {
+    this._paused = false;
+  }
+
   public unobserve(): void {
     this._controller
       .getPlayer()
@@ -74,6 +83,10 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.SONG_INFO_UPDATED,
       body: {
@@ -83,6 +96,10 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
+    if (this._paused) {
+      return;
+    }
+
     await mainWorldToBackground({
       name: EventMessageType.PLAYBACK_UPDATED,
       body: {
