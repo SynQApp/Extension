@@ -2,6 +2,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
+import { ContentEvent } from '~types/ContentEvent';
 import { generateRequestId } from '~util/generateRequestId';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -34,7 +35,7 @@ const initialize = () => {
   // Listen for messages from the background script and dispatch them to the page
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const requestId = generateRequestId();
-    const event = new CustomEvent('SynQEvent:ToContent', {
+    const event = new CustomEvent(ContentEvent.TO_CONTENT, {
       detail: {
         requestId,
         body: message
@@ -43,7 +44,7 @@ const initialize = () => {
 
     if (message.body?.awaitResponse) {
       window.addEventListener(
-        `SynQEvent:FromContent:${requestId}`,
+        `${ContentEvent.FROM_CONTENT}:${requestId}`,
         (event: CustomEvent) => {
           sendResponse(event.detail.body);
         }
@@ -57,13 +58,13 @@ const initialize = () => {
 
   // Listen for messages from the page and dispatch them to the background script
   window.addEventListener(
-    'SynQEvent:ToBackground',
+    ContentEvent.TO_BACKGROUND,
     async (event: CustomEvent<SendEventDetail>) => {
       const response = await sendToBackground(event.detail.message);
 
       if (response) {
         const responseEvent = new CustomEvent(
-          `SynQEvent:FromBackground:${event.detail.requestId}`,
+          `${ContentEvent.FROM_BACKGROUND}:${event.detail.requestId}`,
           {
             detail: {
               body: response

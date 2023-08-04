@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
 import { AutoplayMessage } from '~types/AutoplayMessage';
+import { ContentEvent } from '~types/ContentEvent';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
 
@@ -18,17 +19,17 @@ const Popup = () => {
       }
     };
 
-    window.addEventListener('SynQEvent:ToContent', handler);
+    window.addEventListener(ContentEvent.TO_CONTENT, handler);
 
     return () => {
-      window.removeEventListener('SynQEvent:ToContent', handler);
+      window.removeEventListener(ContentEvent.TO_CONTENT, handler);
     };
   }, []);
 
   const handleEnableClick = () => {
     setShowPopup(false);
 
-    const event = new CustomEvent('SynQEvent:ToContent', {
+    const event = new CustomEvent(ContentEvent.TO_CONTENT, {
       detail: {
         body: {
           name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY

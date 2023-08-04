@@ -1,6 +1,8 @@
+import { ContentEvent } from '~types/ContentEvent';
+
 export const sendMessageResponse = (response: any, requestId: string) => {
   window.dispatchEvent(
-    new CustomEvent(`SynQEvent:FromContent:${requestId}`, {
+    new CustomEvent(`${ContentEvent.FROM_CONTENT}:${requestId}`, {
       detail: {
         body: response
       }
