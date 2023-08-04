@@ -4,19 +4,20 @@ import { styled } from 'styled-components';
 
 import { ExpandedProvider } from '~player-ui/contexts/Expanded';
 
+import { ContextProvidersWrapper } from './ContextProvidersWrapper';
 import Layout from './Layout';
 import SidebarRoutes from './Routes';
 
 export const Sidebar = () => {
   return (
     <MemoryRouter>
-      <ExpandedProvider expanded={false}>
+      <ContextProvidersWrapper>
         <SidebarContainer>
           <Layout>
             <SidebarRoutes />
           </Layout>
         </SidebarContainer>
-      </ExpandedProvider>
+      </ContextProvidersWrapper>
     </MemoryRouter>
   );
 };
