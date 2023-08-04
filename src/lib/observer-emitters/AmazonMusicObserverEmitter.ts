@@ -2,7 +2,7 @@ import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicCo
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
 const playbackStateChangedEvents = [
   'playpause',
@@ -11,7 +11,7 @@ const playbackStateChangedEvents = [
   'timeupdate'
 ];
 
-export class AmazonMusicObserverEmitter implements IObserverEmitter {
+export class AmazonMusicObserverEmitter implements ObserverEmitter {
   private _controller: AmazonMusicController;
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;

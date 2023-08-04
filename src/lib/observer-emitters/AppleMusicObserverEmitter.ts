@@ -2,7 +2,7 @@ import type { AppleMusicController } from '~lib/music-controllers/AppleMusicCont
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',
@@ -13,7 +13,7 @@ const playbackStateChangedEvents = [
   'repeatModeDidChange'
 ];
 
-export class AppleMusicObserverEmitter implements IObserverEmitter {
+export class AppleMusicObserverEmitter implements ObserverEmitter {
   private _controller: AppleMusicController;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;

@@ -1,9 +1,9 @@
-import type { IObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
+import type { ObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
 import { ContentEvent } from '~types/ContentEvent';
 import { PopupMessage } from '~types/PopupMessage';
 
 export const createObserverEmitterHandler = (
-  observerEmitter: IObserverEmitter
+  observerEmitter: ObserverEmitter
 ) => {
   window.addEventListener(
     ContentEvent.TO_CONTENT,

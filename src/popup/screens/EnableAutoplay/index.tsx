@@ -2,13 +2,13 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
+import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useTabs } from '~player-ui/contexts/Tabs';
-import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {
   const { selectedTab } = useTabs();
-  const musicService = useMusicService();
+  const { musicService } = useMusicService();
 
   const handleEnableClick = () => {
     // Switch to selected tab

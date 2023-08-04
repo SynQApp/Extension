@@ -1,16 +1,14 @@
 import { useMemo } from 'react';
 
+import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
-import { useTabs } from '~player-ui/contexts/Tabs';
-import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 
 export const useQueue = () => {
   const playbackState = usePlaybackState();
-  const musicService = useMusicService();
-  const { sendToTab } = useTabs();
+  const { sendMessage, musicService } = useMusicService();
 
   const queue = useMemo(() => playbackState?.queue || [], [playbackState]);
 
@@ -26,7 +24,7 @@ export const useQueue = () => {
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
-    sendToTab({
+    sendMessage({
       name: MusicControllerMessage.PLAY_QUEUE_TRACK,
       body: {
         trackId,

@@ -35,7 +35,7 @@ const SidebarEntry = ({ anchor }: PlasmoCSUIProps) => {
       <StyleSheetManager
         target={anchor.element.firstElementChild.shadowRoot as any}
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
       </StyleSheetManager>
     </UiProvider>
   );

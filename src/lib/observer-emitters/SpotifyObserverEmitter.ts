@@ -5,9 +5,9 @@ import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { waitForElement } from '~util/waitForElement';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
-export class SpotifyObserverEmitter implements IObserverEmitter {
+export class SpotifyObserverEmitter implements ObserverEmitter {
   private _controller: SpotifyController;
   private _mutationObservers: MutationObserver[] = [];
   private _paused = true;

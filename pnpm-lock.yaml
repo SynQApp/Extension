@@ -11,8 +11,8 @@ dependencies:
     specifier: ^0.2.0
     version: 0.2.0(@fortawesome/fontawesome-svg-core@6.4.0)(react@18.2.0)
   '@plasmohq/messaging':
-    specifier: ^0.3.3
-    version: 0.3.3(react@18.2.0)
+    specifier: ^0.5.0
+    version: 0.5.0(react@18.2.0)
   '@synq/ui':
     specifier: 0.0.4-main-screen-queue.13
     version: 0.0.4-main-screen-queue.13(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3)
@@ -2997,8 +2997,8 @@ packages:
     resolution: {integrity: sha512-zJVtRJiyqrxCfBhd0sUaJG/M0jhXlRjXQAekyCSrbgZWUFJNT08WyAwVmeIgS9Y3NoTY5kwT0mBuJb7Kykv0ag==}
     dev: false
 
-  /@plasmohq/messaging@0.3.3(react@18.2.0):
-    resolution: {integrity: sha512-QXwOgrGTVCv5QyfmLZXqJwzcS+YcfWyjvH/ronJbBftroToGuIpzAkgEqWZki9h+y90sHRvTcGYWEKx0hheNtQ==}
+  /@plasmohq/messaging@0.5.0(react@18.2.0):
+    resolution: {integrity: sha512-cYF750rguJDvnyJls2IHVAJTPVFtCEaMHMhnRsENfGaNqcRfXVfzwBGOABPg3k1iSBWBYLySh3Ht7QvFSnB3RQ==}
     peerDependencies:
       react: ^16.8.6 || ^17 || ^18
     peerDependenciesMeta:

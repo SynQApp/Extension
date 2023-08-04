@@ -2,9 +2,9 @@ import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusic
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
-export class YouTubeMusicObserverEmitter implements IObserverEmitter {
+export class YouTubeMusicObserverEmitter implements ObserverEmitter {
   private _controller: YouTubeMusicController;
   private _onStateChangeHandler: () => void;
   private _onVideoDataChangeHandler: () => void;

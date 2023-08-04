@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { ALL_URL_MATCHES } from '~constants/urls';
 
-interface TabsContextValue {
+export interface TabsContextValue {
   selectedTab: chrome.tabs.Tab | null;
   sendToTab: (message: any) => Promise<any>;
   setSelectedTab: React.Dispatch<React.SetStateAction<number | null>>;
@@ -14,6 +14,7 @@ const TabsContext = createContext<TabsContextValue | null>(null);
 
 interface SelectedTabsProviderProps {
   children: React.ReactNode;
+  value: TabsContextValue;
 }
 
 /**
@@ -21,50 +22,10 @@ interface SelectedTabsProviderProps {
  * Automatically selects the tab if there is only one. Otherwise, the tab
  * must be selected manually.
  */
-export const TabsProvider = ({ children }: SelectedTabsProviderProps) => {
-  const [selectedTab, _setSelectedTab] = useState<chrome.tabs.Tab | null>(null);
-  const [allTabs, setAllTabs] = useState<chrome.tabs.Tab[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    chrome.tabs.query({ url: ALL_URL_MATCHES }, (tabs) => {
-      setAllTabs(tabs);
-
-      if (tabs.length === 1) {
-        _setSelectedTab(tabs[0]);
-      }
-
-      setLoading(false);
-    });
-  }, []);
-
-  const setSelectedTab = (tabId: number | null) => {
-    if (tabId === null) {
-      _setSelectedTab(null);
-      return;
-    }
-
-    chrome.tabs.get(tabId, (tab) => {
-      _setSelectedTab(tab);
-    });
-  };
-
-  const sendToTab = (message: any) => {
-    if (selectedTab === null) {
-      return;
-    }
-
-    return chrome.tabs.sendMessage(selectedTab.id!, message);
-  };
-
-  const value = {
-    selectedTab,
-    sendToTab,
-    setSelectedTab,
-    allTabs,
-    loading
-  };
-
+export const TabsProvider = ({
+  children,
+  value
+}: SelectedTabsProviderProps) => {
   return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;
 };
 

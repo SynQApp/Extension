@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
+import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
 import { useTabs } from '~player-ui/contexts/Tabs';
-import { useMusicService } from '~player-ui/hooks/useMusicService';
 import { AutoplayMessage } from '~types/AutoplayMessage';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { MusicService } from '~types/MusicService';
@@ -27,7 +27,7 @@ const useControllerScreen = () => {
   const currentSongInfo = useCurrentSongInfo();
   const navigate = useNavigate();
   const playbackState = usePlaybackState();
-  const musicService = useMusicService();
+  const { musicService } = useMusicService();
 
   const [showQueue, setShowQueue] = useState(false);
 
