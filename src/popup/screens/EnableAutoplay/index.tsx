@@ -1,4 +1,4 @@
-import { Button, Text, token } from '@synq/ui';
+import { Button, Flex, Text, token } from '@synq/ui';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -21,22 +21,19 @@ export const EnableAutoplayScreen = () => {
   );
 
   return (
-    <Container>
+    <AutoplayScreenFlex align="center" direction="column">
       <Title type="subtitle" size="md">
         Please enable SynQ to continue.
       </Title>
       <Button variant="secondary" size="small" onClick={handleEnableClick}>
         {musicServiceName} →
       </Button>
-    </Container>
+    </AutoplayScreenFlex>
   );
 };
 
-const Container = styled.div`
-  align-items: center;
+const AutoplayScreenFlex = styled(Flex)`
   background-color: ${token('colors.background')};
-  display: flex;
-  flex-direction: column;
   height: 100%;
   padding-bottom: ${token('spacing.lg')};
   padding-top: ${token('spacing.sm')};

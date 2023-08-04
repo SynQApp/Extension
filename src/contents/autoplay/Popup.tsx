@@ -1,4 +1,4 @@
-import { Button, Text, token } from '@synq/ui';
+import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
@@ -49,7 +49,7 @@ const Popup = () => {
   return (
     <>
       <PopupOverlay onClick={handleOverlayClick} />
-      <Modal>
+      <Modal align="center" direction="column" justify="center">
         <DescriptionText type="subtitle" size="md">
           Click the button below to enable SynQ to control{' '}
           {getMusicServiceNameFromUrl(window.location.href)}.
@@ -69,14 +69,10 @@ const PopupOverlay = styled.div`
   z-index: 100;
 `;
 
-const Modal = styled.div`
-  align-items: center;
+const Modal = styled(Flex)`
   background: ${token('colors.surface')};
   border-radius: ${token('radii.lg')};
-  display: flex;
-  flex-direction: column;
   height: 150px;
-  justify-content: center;
   left: calc(50% - 200px);
   padding: ${token('spacing.lg')};
   position: fixed;

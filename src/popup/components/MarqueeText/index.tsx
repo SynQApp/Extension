@@ -1,4 +1,4 @@
-import { Text, token } from '@synq/ui';
+import { Flex, Text, token } from '@synq/ui';
 import type { TextProps } from '@synq/ui';
 import { useEffect, useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
@@ -78,7 +78,7 @@ export const MarqueeText = ({
           <Space />
         </Marquee>
       ) : (
-        <StaticTextContainer>
+        <StaticTextFlex align="center">
           <StaticText
             className="text"
             ref={textRef}
@@ -87,7 +87,7 @@ export const MarqueeText = ({
           >
             {children}
           </StaticText>
-        </StaticTextContainer>
+        </StaticTextFlex>
       )}
     </div>
   );
@@ -98,9 +98,7 @@ const Space = styled.span`
   width: ${token('spacing.md')};
 `;
 
-const StaticTextContainer = styled.div`
-  align-items: center;
-  display: flex;
+const StaticTextFlex = styled(Flex)`
   overflow: hidden;
 `;
 
