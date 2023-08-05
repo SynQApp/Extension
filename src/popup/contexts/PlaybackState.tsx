@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { ControllerMessageType } from '~types/ControllerMessageType';
 import { EventMessageType } from '~types/Events';
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import type { PlayerState } from '~types/PlayerState';
 
 import { useTabs } from './Tabs';
@@ -33,7 +33,7 @@ export const PlaybackStateProvider = ({
 
     const getPlaybackState = async () => {
       let info = await chrome.tabs.sendMessage(selectedTab.id, {
-        name: ControllerMessageType.GET_PLAYER_STATE,
+        name: MusicControllerMessage.GET_PLAYER_STATE,
         body: {
           awaitResponse: true
         }

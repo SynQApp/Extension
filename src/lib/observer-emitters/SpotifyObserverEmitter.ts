@@ -1,6 +1,6 @@
 import wait from 'waait';
 
-import type { SpotifyController } from '~lib/controllers/SpotifyController';
+import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { waitForElement } from '~util/waitForElement';

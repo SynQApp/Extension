@@ -2,7 +2,7 @@ import type { NotReadyReason } from '~types/NotReadyReason';
 import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
 import type { ValueOrPromise } from '~types/Util';
 
-export interface IController {
+export interface MusicController {
   /**
    * Play the current track.
    */

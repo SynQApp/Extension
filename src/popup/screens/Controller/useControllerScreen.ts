@@ -6,8 +6,8 @@ import { useExpanded } from '~popup/contexts/Expanded';
 import { usePlaybackState } from '~popup/contexts/PlaybackState';
 import { useTabs } from '~popup/contexts/Tabs';
 import { useMusicService } from '~popup/hooks/useMusicService';
-import { AutoplayMessageType } from '~types/AutoplayMessageType';
-import { ControllerMessageType } from '~types/ControllerMessageType';
+import { AutoplayMessage } from '~types/AutoplayMessage';
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { MusicService } from '~types/MusicService';
 
 const LIKE_ENABLED_SERVICES = new Set([
@@ -47,7 +47,7 @@ const useControllerScreen = () => {
   useEffect(() => {
     const checkAutoplayReady = async () => {
       const res = await sendToTab({
-        name: AutoplayMessageType.CHECK_AUTOPLAY_READY,
+        name: AutoplayMessage.CHECK_AUTOPLAY_READY,
         body: {
           awaitResponse: true
         }
@@ -64,7 +64,7 @@ const useControllerScreen = () => {
   const handleLikeClick = LIKE_ENABLED_SERVICES.has(musicService)
     ? () => {
         sendToTab({
-          name: ControllerMessageType.TOGGLE_LIKE
+          name: MusicControllerMessage.TOGGLE_LIKE
         });
       }
     : undefined;
@@ -72,7 +72,7 @@ const useControllerScreen = () => {
   const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(musicService)
     ? () => {
         sendToTab({
-          name: ControllerMessageType.TOGGLE_DISLIKE
+          name: MusicControllerMessage.TOGGLE_DISLIKE
         });
       }
     : undefined;

@@ -2,9 +2,9 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
-import { AutoplayMessageType } from '~types/AutoplayMessageType';
+import { AutoplayMessage } from '~types/AutoplayMessage';
 import { ContentEvent } from '~types/ContentEvent';
-import { ControllerMessageType } from '~types/ControllerMessageType';
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
 
 const Popup = () => {
@@ -14,7 +14,7 @@ const Popup = () => {
     const handler = (e: CustomEvent) => {
       const message = e.detail.body;
 
-      if (message.name === AutoplayMessageType.DISPLAY_AUTOPLAY_POPUP) {
+      if (message.name === AutoplayMessage.DISPLAY_AUTOPLAY_POPUP) {
         setShowPopup(true);
       }
     };
@@ -32,7 +32,7 @@ const Popup = () => {
     const event = new CustomEvent(ContentEvent.TO_CONTENT, {
       detail: {
         body: {
-          name: ControllerMessageType.PREPARE_FOR_AUTOPLAY
+          name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
         }
       }
     });

@@ -1,4 +1,4 @@
-import type { YouTubeMusicController } from '~lib/controllers/YouTubeMusicController';
+import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 

@@ -1,105 +1,94 @@
-import type { IController } from '~lib/controllers/IController';
+import type { MusicController } from '~lib/music-controllers/MusicController';
 import { ContentEvent } from '~types/ContentEvent';
-import { ControllerMessageType } from '~types/ControllerMessageType';
-import { generateRequestId } from '~util/generateRequestId';
-
-const sendResponse = (response: any, requestId: string) => {
-  window.dispatchEvent(
-    new CustomEvent(`${ContentEvent.FROM_CONTENT}:${requestId}`, {
-      detail: {
-        requestId: generateRequestId(),
-        body: response
-      }
-    })
-  );
-};
+import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { sendMessageResponse } from '~util/sendMessageResponse';
 
 /**
  * Register a controller handler that handles events from other components
  * in the extension.
  */
-export const registerControllerHandler = (controller: IController) => {
+export const createMusicControllerHandler = (controller: MusicController) => {
   window.addEventListener(
     ContentEvent.TO_CONTENT,
     async (event: CustomEvent) => {
       const message = event.detail.body;
 
       switch (message.name) {
-        case ControllerMessageType.PLAY:
+        case MusicControllerMessage.PLAY:
           await controller.play();
           break;
 
-        case ControllerMessageType.PLAY_PAUSE:
+        case MusicControllerMessage.PLAY_PAUSE:
           await controller.playPause();
           break;
 
-        case ControllerMessageType.PAUSE:
+        case MusicControllerMessage.PAUSE:
           await controller.pause();
           break;
 
-        case ControllerMessageType.NEXT:
+        case MusicControllerMessage.NEXT:
           await controller.next();
           break;
 
-        case ControllerMessageType.PREVIOUS:
+        case MusicControllerMessage.PREVIOUS:
           await controller.previous();
           break;
 
-        case ControllerMessageType.TOGGLE_LIKE:
+        case MusicControllerMessage.TOGGLE_LIKE:
           await controller.toggleLike();
           break;
 
-        case ControllerMessageType.TOGGLE_DISLIKE:
+        case MusicControllerMessage.TOGGLE_DISLIKE:
           await controller.toggleDislike();
           break;
 
-        case ControllerMessageType.TOGGLE_MUTE:
+        case MusicControllerMessage.TOGGLE_MUTE:
           await controller.toggleMute();
           break;
 
-        case ControllerMessageType.SET_VOLUME:
+        case MusicControllerMessage.SET_VOLUME:
           await controller.setVolume(message.body.volume);
           break;
 
-        case ControllerMessageType.SEEK_TO:
+        case MusicControllerMessage.SEEK_TO:
           await controller.seekTo(message.body.time);
           break;
 
-        case ControllerMessageType.START_TRACK:
+        case MusicControllerMessage.START_TRACK:
           await controller.startTrack(
             message.body.trackId,
             message.body.albumId
           );
           break;
 
-        case ControllerMessageType.TOGGLE_REPEAT_MODE:
+        case MusicControllerMessage.TOGGLE_REPEAT_MODE:
           await controller.toggleRepeatMode();
           break;
 
-        case ControllerMessageType.PREPARE_FOR_SESSION:
+        case MusicControllerMessage.PREPARE_FOR_SESSION:
           await controller.prepareForSession();
           break;
 
-        case ControllerMessageType.PREPARE_FOR_AUTOPLAY:
+        case MusicControllerMessage.PREPARE_FOR_AUTOPLAY:
           await controller.prepareForAutoplay();
           break;
 
-        case ControllerMessageType.GET_PLAYER_STATE:
+        case MusicControllerMessage.GET_PLAYER_STATE:
           const playerState = await controller.getPlayerState();
-          sendResponse(playerState, event.detail.requestId);
+          sendMessageResponse(playerState, event.detail.requestId);
           break;
 
-        case ControllerMessageType.GET_CURRENT_SONG_INFO:
+        case MusicControllerMessage.GET_CURRENT_SONG_INFO:
           const currentSongInfo = await controller.getCurrentSongInfo();
-          sendResponse(currentSongInfo, event.detail.requestId);
+          sendMessageResponse(currentSongInfo, event.detail.requestId);
           break;
 
-        case ControllerMessageType.GET_QUEUE:
+        case MusicControllerMessage.GET_QUEUE:
           const queue = await controller.getQueue();
-          sendResponse(queue, event.detail.requestId);
+          sendMessageResponse(queue, event.detail.requestId);
           break;
 
-        case ControllerMessageType.PLAY_QUEUE_TRACK:
+        case MusicControllerMessage.PLAY_QUEUE_TRACK:
           await controller.playQueueTrack(
             message.body.trackId,
             message.body.duplicateIndex

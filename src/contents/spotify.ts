@@ -1,9 +1,9 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { SpotifyController } from '~lib/controllers/SpotifyController';
-import { registerAutoplayReadyHandler } from '~lib/message-handlers/registerAutoplayReadyHandler';
-import { registerControllerHandler } from '~lib/message-handlers/registerControllerHandler';
-import { registerObserverEmitter } from '~lib/message-handlers/registerObserverEmitter';
+import { createAutoplayReadyHandler } from '~lib/message-handlers/createAutoplayReadyHandler';
+import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
+import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
+import { SpotifyController } from '~lib/music-controllers/SpotifyController';
 import { SpotifyObserverEmitter } from '~lib/observer-emitters/SpotifyObserverEmitter';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -18,9 +18,9 @@ const initialize = () => {
   const controller = new SpotifyController();
   const observer = new SpotifyObserverEmitter(controller);
 
-  registerControllerHandler(controller);
-  registerObserverEmitter(observer);
-  registerAutoplayReadyHandler(controller);
+  createMusicControllerHandler(controller);
+  createObserverEmitterHandler(observer);
+  createAutoplayReadyHandler(controller);
 
   observer.observe();
 };

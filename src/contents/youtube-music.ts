@@ -1,8 +1,8 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { YouTubeMusicController } from '~lib/controllers/YouTubeMusicController';
-import { registerControllerHandler } from '~lib/message-handlers/registerControllerHandler';
-import { registerObserverEmitter } from '~lib/message-handlers/registerObserverEmitter';
+import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
+import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
+import { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import { YouTubeMusicObserverEmitter } from '~lib/observer-emitters/YouTubeMusicObserverEmitter';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -18,8 +18,8 @@ const initialize = () => {
   const controller = new YouTubeMusicController();
   const observer = new YouTubeMusicObserverEmitter(controller);
 
-  registerControllerHandler(controller);
-  registerObserverEmitter(observer);
+  createMusicControllerHandler(controller);
+  createObserverEmitterHandler(observer);
 
   observer.observe();
 };

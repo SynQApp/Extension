@@ -1,16 +1,16 @@
-import type { IController } from '~lib/controllers/IController';
-import { AutoplayMessageType } from '~types/AutoplayMessageType';
+import type { MusicController } from '~lib/music-controllers/MusicController';
+import { AutoplayMessage } from '~types/AutoplayMessage';
 import { ContentEvent } from '~types/ContentEvent';
 import { NotReadyReason } from '~types/NotReadyReason';
 
-export const registerAutoplayReadyHandler = (controller: IController) => {
+export const createAutoplayReadyHandler = (controller: MusicController) => {
   window.addEventListener(
     ContentEvent.TO_CONTENT,
     async (event: CustomEvent) => {
       const message = event.detail.body;
 
       switch (message.name) {
-        case AutoplayMessageType.CHECK_AUTOPLAY_READY:
+        case AutoplayMessage.CHECK_AUTOPLAY_READY:
           const controllerReady = await controller.isReady();
           const autoPlayReady =
             controllerReady !== NotReadyReason.AUTOPLAY_NOT_READY;
@@ -19,7 +19,7 @@ export const registerAutoplayReadyHandler = (controller: IController) => {
             const displayPopupEvent = new CustomEvent(ContentEvent.TO_CONTENT, {
               detail: {
                 body: {
-                  name: AutoplayMessageType.DISPLAY_AUTOPLAY_POPUP
+                  name: AutoplayMessage.DISPLAY_AUTOPLAY_POPUP
                 }
               }
             });

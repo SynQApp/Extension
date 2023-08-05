@@ -1,4 +1,4 @@
-import type { AppleMusicController } from '~lib/controllers/AppleMusicController';
+import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
 import { EventMessageType } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 

@@ -1,4 +1,4 @@
-export enum ControllerMessageType {
+export enum MusicControllerMessage {
   PLAY = 'PLAY',
   PLAY_PAUSE = 'PLAY_PAUSE',
   PAUSE = 'PAUSE',

@@ -4,7 +4,7 @@ import { RepeatMode } from '~types/RepeatMode';
 import type { ValueOrPromise } from '~types/Util';
 import { findIndexes } from '~util/findIndexes';
 
-import type { IController } from './IController';
+import type { MusicController } from './MusicController';
 
 declare let window: Window & {
   MusicKit: any;
@@ -21,7 +21,7 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  * already exposed on the window object. Then we can call methods on the instance to
  * control playback.
  */
-export class AppleMusicController implements IController {
+export class AppleMusicController implements MusicController {
   private _unmuteVolume = 50;
 
   public play(): void {
