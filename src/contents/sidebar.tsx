@@ -4,12 +4,6 @@ import { StyleSheetManager } from 'styled-components';
 
 import Sidebar from '~sidebar/Sidebar';
 
-(() => {
-  if (window.location.href.includes('youtube')) {
-    document.querySelector('html').style.fontSize = '1rem';
-  }
-})();
-
 export const config: PlasmoCSConfig = {
   matches: [
     '*://music.apple.com/*',
