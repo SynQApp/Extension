@@ -1,12 +1,10 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Text, token } from '@synq/ui';
+import { Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
-import { AlbumArt } from '~player-ui/components/AlbumArt';
-import { PlayerControls } from '~player-ui/components/PlayerControls';
+import { Player } from '~player-ui/components/Player';
 import { Queue } from '~player-ui/components/Queue';
-import { expandedStyle } from '~player-ui/util/expandedStyle';
 import type { Expandable } from '~popup/types';
 
 import useControllerScreen from './useControllerScreen';
@@ -14,15 +12,8 @@ import useControllerScreen from './useControllerScreen';
 const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
-  const {
-    currentSongInfo,
-    expanded,
-    queueCount,
-    handleDislikeClick,
-    handleLikeClick,
-    showQueue,
-    setShowQueue
-  } = useControllerScreen();
+  const { expanded, queueCount, showQueue, setShowQueue } =
+    useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
     setShowQueue(!showQueue);
@@ -32,25 +23,7 @@ const ControllerScreen = () => {
     <>
       <PlayerSection>
         <div>
-          <Flex
-            direction={expanded ? 'column' : 'row'}
-            justify={expanded ? 'flex-start' : 'space-between'}
-            align="center"
-          >
-            <AlbumArtContainer $expanded={expanded}>
-              <AlbumArt
-                liked={currentSongInfo?.isLiked}
-                disliked={currentSongInfo?.isDisliked}
-                onLikeClick={handleLikeClick}
-                onDislikeClick={handleDislikeClick}
-                trackName={currentSongInfo?.trackName}
-                src={currentSongInfo?.albumCoverUrl}
-              />
-            </AlbumArtContainer>
-            <PlayerControlsContainer $expanded={expanded}>
-              <PlayerControls />
-            </PlayerControlsContainer>
-          </Flex>
+          <Player />
         </div>
         <ExpandButton onClick={handleShowQueueButtonPress}>
           <ExpandIcon
@@ -74,42 +47,6 @@ const PlayerSection = styled.section`
   height: ${PLAYER_HEIGHT}px;
   padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
   position: relative;
-`;
-
-const AlbumArtContainer = styled.div<Expandable>`
-  height: 105px;
-  max-height: 105px;
-  max-width: 105px;
-  min-height: 105px;
-  min-width: 105px;
-  width: 105px;
-
-  ${expandedStyle(
-    css`
-      height: 170px;
-      max-height: initial;
-      max-width: initial;
-      min-height: initial;
-      min-width: initial;
-      width: 170px;
-    `
-  )}
-
-  margin: 0 auto;
-`;
-
-const PlayerControlsContainer = styled.div<Expandable>`
-  margin-left: ${token('spacing.sm')};
-  margin-top: ${token('spacing.none')};
-  width: calc(100% - 105px - ${token('spacing.sm')});
-
-  ${expandedStyle(
-    css`
-      margin-left: ${token('spacing.none')};
-      margin-top: ${token('spacing.md')};
-      width: 100%;
-    `
-  )}
 `;
 
 const ExpandButton = styled.button`

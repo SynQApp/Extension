@@ -1,45 +1,43 @@
 import { useEffect, useState } from 'react';
 
-import type { PlaybackState } from '~player-ui/contexts/PlaybackState';
-import { useTabs } from '~player-ui/contexts/Tabs';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types/Events';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
 
-export const usePlaybackState = () => {
-  const [playbackState, setPlaybackState] = useState<PlaybackState | null>(
-    null
-  );
+import { useTabs } from './useTabs';
+
+export const useChromeMusicController = <T>(
+  initialCommand: MusicControllerMessage,
+  eventMessage: EventMessage
+) => {
+  const [state, setState] = useState<T | null>(null);
   const { selectedTab } = useTabs();
 
   useEffect(() => {
     if (!selectedTab) {
-      setPlaybackState(null);
+      setState(null);
       return;
     }
 
-    const getPlaybackState = async () => {
+    const getInitialState = async () => {
       let info = await chrome.tabs.sendMessage(selectedTab.id, {
-        name: MusicControllerMessage.GET_PLAYER_STATE,
+        name: initialCommand,
         body: {
           awaitResponse: true
         }
       });
 
-      setPlaybackState(info);
+      setState(info);
     };
 
-    getPlaybackState();
+    getInitialState();
 
     const handleMessage = (
       message: any,
       sender: chrome.runtime.MessageSender,
       sendResponse
     ) => {
-      if (
-        message.name === EventMessageType.PLAYBACK_UPDATED &&
-        sender.tab?.id === selectedTab.id
-      ) {
-        setPlaybackState(message.body.playbackState);
+      if (message.name === eventMessage && sender.tab?.id === selectedTab.id) {
+        setState(message.body);
         sendResponse(undefined);
       }
     };
@@ -51,5 +49,5 @@ export const usePlaybackState = () => {
     };
   }, [selectedTab]);
 
-  return playbackState;
+  return state;
 };

@@ -23,11 +23,10 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 
 const useControllerScreen = () => {
   const expanded = useExpanded();
-  const { allTabs, loading: tabsLoading, sendToTab } = useTabs();
-  const currentSongInfo = useCurrentSongInfo();
+  const { allTabs, loading: tabsLoading } = useTabs();
   const navigate = useNavigate();
   const playbackState = usePlaybackState();
-  const { musicService } = useMusicService();
+  const { sendMessage } = useMusicService();
 
   const [showQueue, setShowQueue] = useState(false);
 
@@ -45,7 +44,7 @@ const useControllerScreen = () => {
 
   useEffect(() => {
     const checkAutoplayReady = async () => {
-      const res = await sendToTab({
+      const res = await sendMessage({
         name: AutoplayMessage.CHECK_AUTOPLAY_READY,
         body: {
           awaitResponse: true
@@ -58,23 +57,7 @@ const useControllerScreen = () => {
     };
 
     checkAutoplayReady();
-  }, [sendToTab]);
-
-  const handleLikeClick = LIKE_ENABLED_SERVICES.has(musicService)
-    ? () => {
-        sendToTab({
-          name: MusicControllerMessage.TOGGLE_LIKE
-        });
-      }
-    : undefined;
-
-  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(musicService)
-    ? () => {
-        sendToTab({
-          name: MusicControllerMessage.TOGGLE_DISLIKE
-        });
-      }
-    : undefined;
+  }, [sendMessage]);
 
   const queueCount = useMemo(
     () => playbackState?.queue?.length ?? 0,
@@ -82,10 +65,7 @@ const useControllerScreen = () => {
   );
 
   return {
-    currentSongInfo,
     expanded,
-    handleDislikeClick,
-    handleLikeClick,
     queueCount,
     showQueue,
     setShowQueue

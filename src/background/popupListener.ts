@@ -16,12 +16,12 @@ export const popupListener = () => {
       });
     });
 
-    port.onDisconnect.addListener(async () => {
-      tabs.forEach((tab) => {
-        chrome.tabs.sendMessage(tab.id, {
-          name: PopupMessage.POPUP_CLOSED
-        });
-      });
-    });
+    // port.onDisconnect.addListener(async () => {
+    //   tabs.forEach((tab) => {
+    //     chrome.tabs.sendMessage(tab.id, {
+    //       name: PopupMessage.POPUP_CLOSED
+    //     });
+    //   });
+    // });
   });
 };

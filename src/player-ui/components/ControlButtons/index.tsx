@@ -31,7 +31,7 @@ export const ControlButtons = ({
   volume
 }: ControlButtonsProps) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const { expanded } = useExpanded();
+  const expanded = useExpanded();
 
   const handleVolumeMouseEnter = () => {
     setShowVolumeSlider(true);
@@ -249,8 +249,8 @@ const VolumeSliderContainer = styled(Flex)<VolumeSliderContainerProps>`
   position: absolute;
   z-index: 0;
   width: 80%;
-  right: 0;
-  padding-left: 10px;
+  right: ${token('spacing.2xs')};
+  padding-left: ${token('spacing.xs')};
 
   ${({ $show }) =>
     $show &&
@@ -262,6 +262,7 @@ const VolumeSliderContainer = styled(Flex)<VolumeSliderContainerProps>`
   ${expandedStyle(
     css`
       width: 85%;
+      padding-left: ${token('spacing.md')};
     `
   )};
 `;

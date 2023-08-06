@@ -1,5 +1,5 @@
 import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { ObserverEmitter } from './IObserverEmitter';
@@ -123,10 +123,8 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.SONG_INFO_UPDATED,
-      body: {
-        songInfo: this._controller.getCurrentSongInfo()
-      }
+      name: EventMessage.SONG_INFO_UPDATED,
+      body: this._controller.getCurrentSongInfo()
     });
   }
 
@@ -136,10 +134,8 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.PLAYBACK_UPDATED,
-      body: {
-        playbackState: this._controller.getPlayerState()
-      }
+      name: EventMessage.PLAYBACK_UPDATED,
+      body: this._controller.getPlayerState()
     });
   }
 }

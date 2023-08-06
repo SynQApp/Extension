@@ -13,8 +13,7 @@ const MusicServiceContext = createContext<MusicServiceContextValue | null>(
 
 interface MusicServiceProviderProps {
   children: React.ReactNode;
-  musicService: MusicService;
-  sendMessage: (message: any) => Promise<any>;
+  value: MusicServiceContextValue;
 }
 
 /**
@@ -24,14 +23,8 @@ interface MusicServiceProviderProps {
  */
 export const MusicServiceProvider = ({
   children,
-  musicService,
-  sendMessage
+  value
 }: MusicServiceProviderProps) => {
-  const value: MusicServiceContextValue = {
-    musicService,
-    sendMessage
-  };
-
   return (
     <MusicServiceContext.Provider value={value}>
       {children}

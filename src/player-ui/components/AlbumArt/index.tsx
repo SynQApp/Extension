@@ -43,15 +43,19 @@ export const AlbumArt = ({
       >
         {onLikeClick && (
           <>
-            <ThumbButton onClick={onLikeClick}>
-              <ThumbIcon icon={liked ? faThumbsUpSolid : faThumbsUp} />
+            <ThumbButton onClick={onLikeClick} $expanded={expanded}>
+              <ThumbIcon
+                icon={liked ? faThumbsUpSolid : faThumbsUp}
+                $expanded={expanded}
+              />
             </ThumbButton>
             {onDislikeClick && (
               <>
                 <Line />
-                <ThumbButton onClick={onDislikeClick}>
+                <ThumbButton onClick={onDislikeClick} $expanded={expanded}>
                   <ThumbIcon
                     icon={disliked ? faThumbsDownSolid : faThumbsDown}
+                    $expanded={expanded}
                   />
                 </ThumbButton>
               </>
@@ -111,6 +115,7 @@ const AlbumGlow = styled.div<AlbumGlowProps>`
 const AlbumArtImg = styled(Image)`
   border-radius: ${token('radii.lg')};
   border: 1px solid ${token('colors.onBackground')}24;
+  color: transparent;
   height: 100%;
   position: absolute;
   width: 100%;
@@ -138,7 +143,7 @@ const ThumbsContainer = styled(Stack)`
   transform: rotate(45deg);
 `;
 
-const ThumbButton = styled.button`
+const ThumbButton = styled.button<Expandable>`
   align-items: center;
   background: transparent;
   border-radius: 50%;
@@ -149,13 +154,23 @@ const ThumbButton = styled.button`
   outline: none;
   justify-content: center;
   width: 35px;
+
+  ${expandedStyle(css`
+    height: 50px;
+    width: 50px;
+  `)}
 `;
 
-const ThumbIcon = styled(FontAwesomeIcon)`
+const ThumbIcon = styled(FontAwesomeIcon)<Expandable>`
   color: ${token('colors.onBackground')};
   width: 30px;
   height: 30px;
   transform: rotate(-45deg);
+
+  ${expandedStyle(css`
+    width: 45px;
+    height: 45px;
+  `)}
 `;
 
 const Line = styled.div`

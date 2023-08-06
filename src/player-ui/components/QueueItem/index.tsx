@@ -90,7 +90,7 @@ export const QueueItem = ({
       >
         <FontAwesomeIcon
           icon={faEllipsisV}
-          size="lg"
+          height="16px"
           color={theme.colors.onBackground}
         />
       </SecondaryActionMenuButton>

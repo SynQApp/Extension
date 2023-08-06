@@ -1,6 +1,6 @@
 import type { PlayerState, SongInfo } from './PlayerState';
 
-export enum EventMessageType {
+export enum EventMessage {
   SONG_INFO_UPDATED = 'SONG_INFO_UPDATED',
   PLAYBACK_UPDATED = 'PLAYBACK_UPDATED'
 }

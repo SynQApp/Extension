@@ -30,14 +30,14 @@ export const PlayerControls = () => {
         forwardedAs="h2"
         $expanded={expanded}
       >
-        {currentSongInfo?.trackName}
+        {currentSongInfo?.trackName ?? '-'}
       </TrackTitle>
       <TrackArtist
         type="body"
         size={expanded ? 'sm' : 'xs'}
         $expanded={expanded}
       >
-        {currentSongInfo?.artistName}
+        {currentSongInfo?.artistName ?? '-'}
       </TrackArtist>
       <TrackSeekerContainer>
         <TrackSeeker

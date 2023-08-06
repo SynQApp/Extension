@@ -107,4 +107,5 @@ const StaticText = styled(Text)`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  margin: 0;
 `;

@@ -1,7 +1,7 @@
 import wait from 'waait';
 
 import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types/Events';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { waitForElement } from '~util/waitForElement';
 
@@ -135,10 +135,8 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
       }
 
       await mainWorldToBackground({
-        name: EventMessageType.SONG_INFO_UPDATED,
-        body: {
-          songInfo
-        }
+        name: EventMessage.SONG_INFO_UPDATED,
+        body: songInfo
       });
     }
   }
@@ -149,10 +147,8 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.PLAYBACK_UPDATED,
-      body: {
-        playbackState: await this._controller.getPlayerState()
-      }
+      name: EventMessage.PLAYBACK_UPDATED,
+      body: await this._controller.getPlayerState()
     });
   }
 }
