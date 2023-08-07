@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
+import { useSessionDetails } from '~player-ui/contexts/SessionContext';
 import { UiStateMessage } from '~types/PopupMessage';
 
 import SidebarRoutes from './Routes';
@@ -14,6 +15,7 @@ export const Sidebar = () => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const { sendMessage } = useMusicService();
+  const sessionDetails = useSessionDetails();
 
   const handleToggleButtonClick = () => {
     const newShow = !show;
@@ -28,22 +30,26 @@ export const Sidebar = () => {
   };
 
   return (
-    <SidebarContainer $show={show}>
-      <SidebarRoutes />
-      <ToggleButton onClick={handleToggleButtonClick} $show={show}>
-        <ToggleButtonContent $show={show}>
-          {show ? (
-            <FontAwesomeIcon
-              icon={faChevronRight}
-              color={theme.colors.onBackgroundMedium}
-              height="18px"
-            />
-          ) : (
-            <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
-          )}
-        </ToggleButtonContent>
-      </ToggleButton>
-    </SidebarContainer>
+    <>
+      {sessionDetails && (
+        <SidebarContainer $show={show}>
+          <SidebarRoutes />
+          <ToggleButton onClick={handleToggleButtonClick} $show={show}>
+            <ToggleButtonContent $show={show}>
+              {show ? (
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  color={theme.colors.onBackgroundMedium}
+                  height="18px"
+                />
+              ) : (
+                <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
+              )}
+            </ToggleButtonContent>
+          </ToggleButton>
+        </SidebarContainer>
+      )}
+    </>
   );
 };
 
