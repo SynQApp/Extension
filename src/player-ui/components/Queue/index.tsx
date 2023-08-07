@@ -4,8 +4,16 @@ import { styled } from 'styled-components';
 import { QueueItem } from '../QueueItem';
 import { useQueue } from './useQueue';
 
-export const Queue = () => {
-  const { queueItems, handlePlayQueueTrack, musicServiceName } = useQueue();
+interface QueueProps {
+  startAt?: 'top' | 'next';
+  count?: number;
+}
+
+export const Queue = ({ startAt = 'top', count }: QueueProps) => {
+  const { queueItems, handlePlayQueueTrack, musicServiceName } = useQueue(
+    startAt,
+    count
+  );
 
   return (
     <QueueList>

@@ -6,7 +6,7 @@
   "author": "SynQ, LLC",
   "scripts": {
     "dev": "plasmo dev",
-    "build": "plasmo build",
+    "build": "npx rimraf ./build ./.plasmo && plasmo build",
     "package": "plasmo package"
   },
   "dependencies": {
@@ -14,7 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@plasmohq/messaging": "^0.5.0",
-    "@synq/ui": "0.0.4-main-screen-queue.13",
+    "@synq/ui": "0.0.4-side-bar-main-screen.2",
     "plasmo": "0.75.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -32,6 +32,7 @@
     "@types/react-dom": "18.0.11",
     "@types/styled-components": "^5.1.26",
     "prettier": "2.8.7",
+    "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },
   "manifest": {

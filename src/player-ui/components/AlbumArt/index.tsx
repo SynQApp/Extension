@@ -8,8 +8,8 @@ import { Flex, Image, Stack, token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
+import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
-import type { Expandable } from '~popup/types';
 
 interface AlbumArtProps {
   disliked: boolean;

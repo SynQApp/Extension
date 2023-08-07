@@ -3,15 +3,20 @@ import { css, styled } from 'styled-components';
 
 import Header from '../player-ui/components/Header';
 import { useExpanded } from '../player-ui/contexts/Expanded';
+import { type Expandable } from '../player-ui/types';
 import { expandedStyle } from '../player-ui/util/expandedStyle';
-import { type Expandable } from './types';
 
 const Layout = ({ children }) => {
   const expanded = useExpanded();
 
   return (
     <Container $expanded={expanded}>
-      <Header />
+      <Header
+        actionButton={{
+          name: 'Start Session',
+          onClick: () => console.log('Start session')
+        }}
+      />
       <Content>{children}</Content>
     </Container>
   );

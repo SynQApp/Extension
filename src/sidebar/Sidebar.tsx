@@ -3,44 +3,47 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { useState } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { css, styled, useTheme } from 'styled-components';
 
-import { ContextProvidersWrapper } from './ContextProvidersWrapper';
-import Layout from './Layout';
+import { useMusicService } from '~player-ui/contexts/MusicService';
+import { UiStateMessage } from '~types/PopupMessage';
+
 import SidebarRoutes from './Routes';
 
 export const Sidebar = () => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
+  const { sendMessage } = useMusicService();
 
   const handleToggleButtonClick = () => {
-    setShow(!show);
+    const newShow = !show;
+
+    setShow(newShow);
+
+    sendMessage({
+      name: newShow
+        ? UiStateMessage.SIDEBAR_OPENED
+        : UiStateMessage.SIDEBAR_CLOSED
+    });
   };
 
   return (
-    <MemoryRouter>
-      <ContextProvidersWrapper>
-        <SidebarContainer $show={show}>
-          <Layout>
-            <SidebarRoutes />
-          </Layout>
-          <ToggleButton onClick={handleToggleButtonClick} $show={show}>
-            <ToggleButtonContent $show={show}>
-              {show ? (
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  color={theme.colors.onBackgroundMedium}
-                  height="18px"
-                />
-              ) : (
-                <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
-              )}
-            </ToggleButtonContent>
-          </ToggleButton>
-        </SidebarContainer>
-      </ContextProvidersWrapper>
-    </MemoryRouter>
+    <SidebarContainer $show={show}>
+      <SidebarRoutes />
+      <ToggleButton onClick={handleToggleButtonClick} $show={show}>
+        <ToggleButtonContent $show={show}>
+          {show ? (
+            <FontAwesomeIcon
+              icon={faChevronRight}
+              color={theme.colors.onBackgroundMedium}
+              height="18px"
+            />
+          ) : (
+            <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
+          )}
+        </ToggleButtonContent>
+      </ToggleButton>
+    </SidebarContainer>
   );
 };
 

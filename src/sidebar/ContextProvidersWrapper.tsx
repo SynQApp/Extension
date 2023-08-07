@@ -5,6 +5,7 @@ import {
   type PlaybackState,
   PlaybackStateProvider
 } from '~player-ui/contexts/PlaybackState';
+import { SessionDetailsProvider } from '~player-ui/contexts/SessionContext';
 import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
 import { EventMessage } from '~types/Events';
 import { MusicControllerMessage } from '~types/MusicControllerMessage';
@@ -12,12 +13,19 @@ import type { SongInfo } from '~types/PlayerState';
 
 import { useDocumentMusicController } from './hooks/useDocumentMusicController';
 import { useMusicService } from './hooks/useMusicService';
+import { useSessionDetails } from './hooks/useSessionDetails';
+import { useWindowSize } from './hooks/useWindowSize';
+
+const VERTICAL_BREAKPOINT = 775;
 
 interface ContextsWrapperProps {
   children: React.ReactNode;
 }
 
 export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
+  const { height } = useWindowSize();
+  const expanded = height > VERTICAL_BREAKPOINT;
+
   const musicService = useMusicService();
 
   const currentSongInfo = useDocumentMusicController<SongInfo>(
@@ -30,15 +38,19 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
     EventMessage.PLAYBACK_UPDATED
   );
 
+  const sessionDetails = useSessionDetails();
+
   return (
     <MusicServiceProvider value={musicService}>
-      <PlaybackStateProvider playbackState={playbackState}>
-        <CurrentSongInfoProvider currentSongInfo={currentSongInfo}>
-          <ExpandedProvider expanded={true}>
-            <MarqueeStylesProvider>{children}</MarqueeStylesProvider>
-          </ExpandedProvider>
-        </CurrentSongInfoProvider>
-      </PlaybackStateProvider>
+      <SessionDetailsProvider sessionDetails={sessionDetails}>
+        <PlaybackStateProvider playbackState={playbackState}>
+          <CurrentSongInfoProvider currentSongInfo={currentSongInfo}>
+            <ExpandedProvider expanded={expanded}>
+              <MarqueeStylesProvider>{children}</MarqueeStylesProvider>
+            </ExpandedProvider>
+          </CurrentSongInfoProvider>
+        </PlaybackStateProvider>
+      </SessionDetailsProvider>
     </MusicServiceProvider>
   );
 };

@@ -1,18 +1,27 @@
 import { Button, Flex, token } from '@synq/ui';
 import { Icon } from '@synq/ui';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Logo from '../Logo';
 
-const Header = () => {
+interface HeaderProps {
+  actionButton?: {
+    name: string;
+    onClick: () => void;
+  };
+}
+
+const Header = ({ actionButton }: HeaderProps) => {
   return (
     <HeaderStyled>
       <Flex align="center">
         <Logo />
         <Flex align="center" justify="flex-end">
-          <SessionButton size="small" rounded>
-            Start session
-          </SessionButton>
+          {actionButton && (
+            <SessionButton size="small" rounded onClick={actionButton.onClick}>
+              {actionButton.name}
+            </SessionButton>
+          )}
           <SettingsIcon icon="settings" />
         </Flex>
       </Flex>
