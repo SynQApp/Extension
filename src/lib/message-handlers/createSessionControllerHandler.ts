@@ -1,6 +1,5 @@
 import type { SessionController } from '~lib/session/SessionController';
-import { ContentEvent } from '~types/ContentEvent';
-import { SessionControllerMessage } from '~types/SessionControllerMessage';
+import { ContentEvent, SessionControllerMessage } from '~types';
 import { sendMessageResponse } from '~util/sendMessageResponse';
 
 /**

@@ -1,7 +1,5 @@
 import type { MusicController } from '~lib/music-controllers/MusicController';
-import { AutoplayMessage } from '~types/AutoplayMessage';
-import { ContentEvent } from '~types/ContentEvent';
-import { NotReadyReason } from '~types/NotReadyReason';
+import { AutoplayMessage, ContentEvent, NotReadyReason } from '~types';
 
 export const createAutoplayReadyHandler = (controller: MusicController) => {
   window.addEventListener(

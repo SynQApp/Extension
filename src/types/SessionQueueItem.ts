@@ -1,5 +1,4 @@
-import type { MusicService } from './MusicService';
-import type { QueueItem } from './PlayerState';
+import type { MusicService, QueueItem } from '.';
 
 export interface SessionQueueItem extends QueueItem {
   id: string;

@@ -7,7 +7,7 @@ import { css, styled, useTheme } from 'styled-components';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useSessionDetails } from '~player-ui/contexts/SessionContext';
-import { UiStateMessage } from '~types/PopupMessage';
+import { UiStateMessage } from '~types';
 
 import SidebarRoutes from './Routes';
 

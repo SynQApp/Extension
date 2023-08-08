@@ -1,7 +1,5 @@
-import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import { RepeatMode } from '~types/RepeatMode';
-import type { ValueOrPromise } from '~types/Util';
+import { NotReadyReason, RepeatMode } from '~types';
+import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 
 import type { MusicController } from './MusicController';
@@ -176,6 +174,10 @@ export class AppleMusicController implements MusicController {
     const trackIndex = trackIndexes[duplicateIndex];
 
     this.getPlayer().changeToMediaAtIndex(trackIndex);
+  }
+
+  public searchTracks(query: string): Promise<SongInfo> {
+    throw new Error('Method not implemented.');
   }
 
   private async _isPremiumUser(): Promise<boolean> {

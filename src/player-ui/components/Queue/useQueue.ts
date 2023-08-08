@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 

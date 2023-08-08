@@ -1,7 +1,5 @@
-import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import { RepeatMode } from '~types/RepeatMode';
-import type { ValueOrPromise } from '~types/Util';
+import { NotReadyReason, RepeatMode } from '~types';
+import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -241,6 +239,10 @@ export class YouTubeMusicController implements MusicController {
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
+  }
+
+  public searchTracks(query: string): Promise<SongInfo> {
+    throw new Error('Method not implemented.');
   }
 
   private _createNavigationRequestInstance(trackId: string): any {

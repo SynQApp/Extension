@@ -1,6 +1,5 @@
 import type { ObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
-import { ContentEvent } from '~types/ContentEvent';
-import { UiStateMessage } from '~types/PopupMessage';
+import { ContentEvent, UiStateMessage } from '~types';
 
 const UI_STATE = {
   popupOpen: false,

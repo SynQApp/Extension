@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
 import { useTabs } from '~player-ui/contexts/Tabs';
-import { AutoplayMessage } from '~types/AutoplayMessage';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import { MusicService } from '~types/MusicService';
+import { AutoplayMessage, MusicService } from '~types';
 
 const LIKE_ENABLED_SERVICES = new Set([
   MusicService.AMAZON_MUSIC,

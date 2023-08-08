@@ -1,4 +1,4 @@
-import type { RepeatMode } from './RepeatMode';
+import type { QueueItem, RepeatMode } from '.';
 
 export interface PlayerState {
   isPlaying: boolean;
@@ -6,20 +6,4 @@ export interface PlayerState {
   volume: number;
   repeatMode: RepeatMode;
   queue: QueueItem[];
-}
-
-export interface QueueItem {
-  isPlaying: boolean;
-  songInfo: SongInfo;
-}
-
-export interface SongInfo {
-  trackId: string;
-  trackName: string;
-  artistName: string;
-  albumName: string;
-  albumCoverUrl: string;
-  isLiked?: boolean;
-  isDisliked?: boolean;
-  duration: number;
 }

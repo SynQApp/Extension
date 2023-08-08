@@ -7,9 +7,8 @@ import {
 } from '~player-ui/contexts/PlaybackState';
 import { SessionDetailsProvider } from '~player-ui/contexts/SessionContext';
 import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
-import { EventMessage } from '~types/Events';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import type { SongInfo } from '~types/PlayerState';
+import type { SongInfo } from '~types';
+import { EventMessage, MusicControllerMessage } from '~types';
 
 import { useDocumentMusicController } from './hooks/useDocumentMusicController';
 import { useMusicService } from './hooks/useMusicService';

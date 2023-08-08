@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { ContentEvent } from '~types/ContentEvent';
-import { EventMessage } from '~types/Events';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import { UiStateMessage } from '~types/PopupMessage';
+import {
+  ContentEvent,
+  EventMessage,
+  MusicControllerMessage,
+  UiStateMessage
+} from '~types';
 import { generateRequestId } from '~util/generateRequestId';
 
 export const useDocumentMusicController = <T>(

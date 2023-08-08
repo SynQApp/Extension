@@ -1,9 +1,7 @@
 import type { Store } from 'redux';
 
-import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import { RepeatMode } from '~types/RepeatMode';
-import type { ValueOrPromise } from '~types/Util';
+import { NotReadyReason, RepeatMode } from '~types';
+import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { waitForElement } from '~util/waitForElement';
@@ -305,6 +303,10 @@ export class AmazonMusicController implements MusicController {
     );
 
     this.getStore().dispatch(playTrackAction);
+  }
+
+  public searchTracks(query: string): Promise<SongInfo> {
+    throw new Error('Method not implemented.');
   }
 
   private async _fetchQueue(): Promise<any> {
