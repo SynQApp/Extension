@@ -1,10 +1,9 @@
-import { Avatar, Button, Flex, Scrollable, Text, token } from '@synq/ui';
+import { Button, Flex, Scrollable, Text, token } from '@synq/ui';
 import { Link } from 'react-router-dom';
 import { css, styled } from 'styled-components';
 
 import { Player } from '~player-ui/components/Player';
 import { Queue } from '~player-ui/components/Queue';
-import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
 import Layout from '~sidebar/Layout';
@@ -36,7 +35,11 @@ export const ControllerScreen = () => {
           <Scrollable>
             <Queue startAt="next" count={queueDisplayCount} />
           </Scrollable>
-          <QueueFooter to="/queue">See All</QueueFooter>
+          <QueueFooter to="/queue">
+            <Text type="body" size="sm" gradient as="span">
+              See All
+            </Text>
+          </QueueFooter>
         </>
       );
     }
@@ -48,7 +51,7 @@ export const ControllerScreen = () => {
           variant="secondary"
           size="small"
         >
-          See Queue
+          See Queue →
         </Button>
       </QueueHiddenFlex>
     );
@@ -60,8 +63,7 @@ export const ControllerScreen = () => {
         <Player />
       </PlayerSection>
       <SessionSection>
-        <Flex align="center" justify="space-between">
-          <AvatarContainer justify="space-between"> </AvatarContainer>
+        <Flex align="center" justify="flex-end">
           <SessionLink to="/session">Session →</SessionLink>
         </Flex>
       </SessionSection>
@@ -95,10 +97,6 @@ const SessionSection = styled.section`
   background: ${token('colors.gradient')};
   height: 45px;
   padding: 0 ${token('spacing.sm')};
-`;
-
-const AvatarContainer = styled(Flex)`
-  width: 100px;
 `;
 
 const SessionLink = styled(Link)`
@@ -153,11 +151,8 @@ const QueueFooter = styled(Link)`
   text-align: right;
   text-decoration: none;
   display: block;
-  color: ${token('colors.base.orange.4')};
   cursor: pointer;
-  font-family: ${token('typography.fontFamilies.body')};
   font-weight: ${token('typography.fontWeights.bold')};
-  font-size: ${token('typography.fontSizes.sm')};
 `;
 
 export default ControllerScreen;
