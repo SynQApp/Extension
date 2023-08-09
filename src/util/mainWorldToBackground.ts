@@ -1,6 +1,6 @@
 import { sendToBackground } from '@plasmohq/messaging';
 
-import { ContentEvent } from '~types/ContentEvent';
+import { ContentEvent } from '~types';
 
 import { generateRequestId } from './generateRequestId';
 

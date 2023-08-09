@@ -1,6 +1,5 @@
 import type { MusicController } from '~lib/music-controllers/MusicController';
-import { ContentEvent } from '~types/ContentEvent';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { ContentEvent, MusicControllerMessage } from '~types';
 import { sendMessageResponse } from '~util/sendMessageResponse';
 
 /**

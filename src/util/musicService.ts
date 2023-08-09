@@ -1,4 +1,4 @@
-import { MusicService } from '~types/MusicService';
+import { MusicService } from '~types';
 
 const URL_MUSIC_SERVICE_MAP: Record<string, MusicService> = {
   apple: MusicService.APPLE_MUSIC,

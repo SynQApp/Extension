@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 
-import type { MusicService } from '~types/MusicService';
+import type { MusicService } from '~types';
 
 export interface MusicServiceContextValue {
   musicService: MusicService;

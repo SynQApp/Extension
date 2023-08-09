@@ -1,5 +1,5 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
-import { EventMessage } from '~types/Events';
+import { EventMessage } from '~types';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { ObserverEmitter } from './IObserverEmitter';

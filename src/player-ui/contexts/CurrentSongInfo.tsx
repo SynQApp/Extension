@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import type { SongInfo } from '~types/PlayerState';
+import type { SongInfo } from '~types';
 
 const CurrentSongInfoContext = createContext<SongInfo | null>(null);
 

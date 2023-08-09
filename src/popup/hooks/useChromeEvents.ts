@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { EventMessage } from '~types/Events';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { EventMessage, MusicControllerMessage } from '~types';
 
 import { useTabs } from './useTabs';
 

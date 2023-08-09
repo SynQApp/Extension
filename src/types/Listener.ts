@@ -1,4 +1,4 @@
-import type { MusicService } from './MusicService';
+import type { MusicService } from '.';
 
 export interface Listener {
   id: string;

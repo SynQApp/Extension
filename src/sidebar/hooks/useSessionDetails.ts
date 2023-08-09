@@ -1,5 +1,5 @@
-import { RepeatMode } from '~types/RepeatMode';
-import type { SessionDetails } from '~types/SessionDetails';
+import { RepeatMode } from '~types';
+import type { SessionDetails } from '~types';
 
 const mockActiveSession: SessionDetails = {
   hostId: '',

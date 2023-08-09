@@ -1,6 +1,6 @@
 import { POPUP_PORT } from '~constants/port';
 import { ALL_URL_MATCHES } from '~constants/urls';
-import { UiStateMessage } from '~types/PopupMessage';
+import { UiStateMessage } from '~types';
 
 export const popupListener = () => {
   chrome.runtime.onConnect.addListener(async (port) => {

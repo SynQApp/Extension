@@ -2,9 +2,7 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
-import { AutoplayMessage } from '~types/AutoplayMessage';
-import { ContentEvent } from '~types/ContentEvent';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { AutoplayMessage, ContentEvent, MusicControllerMessage } from '~types';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
 
 const Popup = () => {

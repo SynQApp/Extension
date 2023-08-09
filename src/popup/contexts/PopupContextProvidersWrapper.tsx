@@ -7,9 +7,8 @@ import {
 } from '~player-ui/contexts/PlaybackState';
 import { useChromeMusicController } from '~popup/hooks/useChromeEvents';
 import { useMusicService } from '~popup/hooks/useMusicService';
-import { EventMessage } from '~types/Events';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import type { SongInfo } from '~types/PlayerState';
+import { EventMessage, MusicControllerMessage } from '~types';
+import type { SongInfo } from '~types';
 
 export const PopupContextProvidersWrapper = ({ children }: any) => {
   const currentSongInfo = useChromeMusicController<SongInfo>(
