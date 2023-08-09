@@ -75,6 +75,11 @@ const SidebarContainer = styled.div<Showable>`
       right: 0;
       box-shadow: 0 0 12px 0 black;
     `}
+
+  * {
+    // YouTube Music uses anti-aliasing that messes with our font rendering. This resets it for the full sidebar.
+    -webkit-font-smoothing: initial;
+  }
 `;
 
 const ToggleButton = styled.button<Showable>`

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import type { MusicServiceContextValue } from '~player-ui/contexts/MusicService';
 import { ContentEvent } from '~types';
+import { generateRequestId } from '~util/generateRequestId';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
 export const useMusicService = () => {
@@ -14,13 +15,26 @@ export const useMusicService = () => {
   );
 
   const sendMessage = async (message: any) => {
-    const event = new CustomEvent(ContentEvent.TO_CONTENT, {
-      detail: {
-        body: message
-      }
-    });
+    return new Promise((resolve, reject) => {
+      const requestId = generateRequestId();
+      const event = new CustomEvent(ContentEvent.TO_CONTENT, {
+        detail: {
+          requestId,
+          body: message
+        }
+      });
 
-    window.dispatchEvent(event);
+      if (message?.body?.awaitResponse) {
+        window.addEventListener(
+          `${ContentEvent.FROM_CONTENT}:${requestId}`,
+          (event: CustomEvent) => {
+            resolve(event.detail.body);
+          }
+        );
+      }
+
+      window.dispatchEvent(event);
+    });
   };
 
   const musicServiceValue: MusicServiceContextValue = {

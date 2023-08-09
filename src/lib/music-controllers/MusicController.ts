@@ -5,6 +5,7 @@ import type {
   SongInfo,
   ValueOrPromise
 } from '~types';
+import type { TrackSearchResult } from '~types/TrackSearchResult';
 
 export interface MusicController {
   /**
@@ -104,5 +105,5 @@ export interface MusicController {
   /**
    * Search for tracks matching the query.
    */
-  searchTracks(query: string): Promise<SongInfo>;
+  searchTracks(query: string): Promise<TrackSearchResult[]>;
 }

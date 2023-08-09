@@ -1,3 +1,4 @@
+import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -176,8 +177,19 @@ export class AppleMusicController implements MusicController {
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
-  public searchTracks(query: string): Promise<SongInfo> {
-    throw new Error('Method not implemented.');
+  public async searchTracks(query: string): Promise<SongInfo[]> {
+    const player = this.getPlayer();
+
+    const results = await player.api.search(query, {
+      limit: SEARCH_LIMIT,
+      types: 'songs'
+    });
+
+    const tracks = results?.songs?.data?.map((song: any) => {
+      return this._mediaItemToSongInfo(song);
+    });
+
+    return tracks ?? [];
   }
 
   private async _isPremiumUser(): Promise<boolean> {

@@ -14,7 +14,8 @@ const Layout = ({ children }) => {
       <Header
         actionButton={{
           name: 'Start Session',
-          onClick: () => console.log('Start session')
+          // TODO: Implement session start handler
+          onClick: () => console.info('Start session')
         }}
       />
       <Content>{children}</Content>

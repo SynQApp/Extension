@@ -1,5 +1,8 @@
+import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
+
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type { TrackSearchResult } from '~types/TrackSearchResult';
 import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -44,14 +47,15 @@ export class YouTubeMusicController implements MusicController {
    * play the song.
    */
   private _shouldPlayOnNavigation = true;
-
   private _curtain: HTMLDivElement;
-
   private _unmuteVolume: number = 50;
+  private _ytmServiceClient: YoutubeMusicServiceClient;
 
   constructor() {
     this._createNavigationWrapper();
     this._addCurtainStyles();
+
+    this._ytmServiceClient = new YoutubeMusicServiceClient();
   }
 
   public prepareForAutoplay(): ValueOrPromise<void> {
@@ -241,8 +245,19 @@ export class YouTubeMusicController implements MusicController {
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
-  public searchTracks(query: string): Promise<SongInfo> {
-    throw new Error('Method not implemented.');
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
+    const searchResults = await this._ytmServiceClient.search(query);
+
+    return searchResults.results.map((result) => {
+      const trackSearchResult: TrackSearchResult = {
+        trackId: result.id,
+        trackName: result.trackName,
+        artistName: result.artists.join(', '),
+        albumCoverUrl: result.albumCoverUrl
+      };
+
+      return trackSearchResult;
+    });
   }
 
   private _createNavigationRequestInstance(trackId: string): any {

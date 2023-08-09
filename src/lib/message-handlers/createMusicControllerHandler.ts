@@ -94,6 +94,15 @@ export const createMusicControllerHandler = (controller: MusicController) => {
           );
           break;
 
+        case MusicControllerMessage.SEARCH_TRACKS:
+          const searchResults = await controller.searchTracks(
+            message.body.query
+          );
+
+          sendMessageResponse(searchResults, event.detail.requestId);
+
+          break;
+
         default:
           break;
       }

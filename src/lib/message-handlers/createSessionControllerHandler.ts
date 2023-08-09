@@ -38,32 +38,8 @@ export const createMusicControllerHandler = (controller: SessionController) => {
           sendMessageResponse(sessionDetails, event.detail.requestId);
           break;
 
-        case SessionControllerMessage.PLAY_PAUSE_SESSION:
-          controller.playPauseSession();
-          break;
-
-        case SessionControllerMessage.PLAY_SESSION:
-          controller.playSession();
-          break;
-
-        case SessionControllerMessage.PAUSE_SESSION:
-          controller.pauseSession();
-          break;
-
-        case SessionControllerMessage.NEXT_SESSION:
-          controller.nextSession();
-          break;
-
-        case SessionControllerMessage.PREVIOUS_SESSION:
-          controller.previousSession();
-          break;
-
         case SessionControllerMessage.TOGGLE_SESSION_REPEAT_MODE:
           controller.toggleSessionRepeatMode();
-          break;
-
-        case SessionControllerMessage.SEEK_TO_SESSION:
-          controller.seekToSession(message.body.time);
           break;
 
         case SessionControllerMessage.UPDATE_SESSION_QUEUE_ITEM_POSITION:

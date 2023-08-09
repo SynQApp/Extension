@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 import { useWindowSize } from '~sidebar/hooks/useWindowSize';
 
 const NON_EXPANDED_OFFSET = 325;
@@ -15,6 +16,7 @@ export const useControllerScreen = () => {
   const navigate = useNavigate();
   const { height } = useWindowSize();
   const playbackState = usePlaybackState();
+  const sidebarRoot = useSidebarRoot();
 
   const shouldDisplayQueue = useMemo(() => {
     return height > SHOW_QUEUE_BREAKPOINT;
@@ -46,6 +48,7 @@ export const useControllerScreen = () => {
     expanded,
     handleNavigateToSearch,
     handleNavigateToQueue,
+    sidebarRoot,
     queueDisplayCount,
     shouldDisplayQueue
   };

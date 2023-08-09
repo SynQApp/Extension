@@ -3,13 +3,15 @@ import { styled } from 'styled-components';
 
 import { Queue } from '~player-ui/components/Queue';
 import Layout from '~sidebar/Layout';
-import { GradientAddButton } from '~sidebar/components/AddGradientIcon';
+import { GradientAddButton } from '~sidebar/components/GradientAddButton';
 import { ScreenHeader } from '~sidebar/components/ScreenHeader';
+import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 
 import { useQueue } from './useQueue';
 
 export const QueueScreen = () => {
   const { handleNavigateToSearch } = useQueue();
+  const sidebarRoot = useSidebarRoot();
 
   return (
     <Layout
@@ -25,7 +27,7 @@ export const QueueScreen = () => {
       }
     >
       <Scrollable height="calc(100% - 5px)">
-        <Queue />
+        <Queue documentContainer={sidebarRoot} />
       </Scrollable>
     </Layout>
   );
