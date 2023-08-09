@@ -1,3 +1,4 @@
+import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, SongInfo } from '~types';
@@ -30,12 +31,17 @@ export class SpotifyController implements MusicController {
       }
     | undefined = undefined;
   private _currentTrackId: string | undefined = undefined;
+  private _market: string;
 
   constructor() {
     const sessionElement = document.getElementById('session');
     const session = JSON.parse(sessionElement.innerText);
 
     this._accessToken = session.accessToken;
+
+    const configElement = document.getElementById('config');
+    const config = JSON.parse(configElement.innerText);
+    this._market = config.market;
   }
 
   public async play(): Promise<void> {
@@ -355,8 +361,25 @@ export class SpotifyController implements MusicController {
     return;
   }
 
-  public searchTracks(query: string): Promise<SongInfo> {
-    throw new Error('Method not implemented.');
+  public async searchTracks(query: string): Promise<SongInfo[]> {
+    const queryParams = new URLSearchParams({
+      q: query,
+      type: 'track',
+      limit: SEARCH_LIMIT.toString(),
+      offset: SEARCH_OFFSET.toString(),
+      market: this._market
+    });
+
+    const results = await this._fetchSpotify(
+      `${SpotifyEndpoints.SEARCH}?${queryParams.toString()}`,
+      'GET'
+    );
+
+    const tracks = results.tracks.items.map((item: any) =>
+      this._itemToSongInfo(item)
+    );
+
+    return tracks;
   }
 
   private _getVolume(): number {
@@ -400,14 +423,6 @@ export class SpotifyController implements MusicController {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     body?: any
   ) {
-    return this._rawFetchSpotify(url, method, body);
-  }
-
-  private async _rawFetchSpotify(
-    url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    body?: any
-  ) {
     return fetch(url, {
       method,
       headers: {
@@ -424,7 +439,7 @@ export class SpotifyController implements MusicController {
   }
 
   private async _isPlayerReady() {
-    const playerState = await this._rawFetchSpotify(
+    const playerState = await this._fetchSpotify(
       SpotifyEndpoints.PLAYER_STATE,
       'GET'
     );
@@ -441,7 +456,7 @@ export class SpotifyController implements MusicController {
     const isPlayerReady = await this._isPlayerReady();
 
     if (!isPlayerReady) {
-      const remotePlayer = await this._rawFetchSpotify(
+      const remotePlayer = await this._fetchSpotify(
         SpotifyEndpoints.PLAYER_STATE,
         'GET'
       );

@@ -7,7 +7,8 @@ import { Queue } from '~player-ui/components/Queue';
 import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
 import Layout from '~sidebar/Layout';
-import { GradientAddButton } from '~sidebar/components/AddGradientIcon';
+import { EmptyText } from '~sidebar/components/EmptyText';
+import { GradientAddButton } from '~sidebar/components/GradientAddButton';
 
 import { useControllerScreen } from './useControllerScreen';
 
@@ -16,6 +17,7 @@ export const ControllerScreen = () => {
     expanded,
     handleNavigateToSearch,
     handleNavigateToQueue,
+    sidebarRoot,
     queueDisplayCount,
     shouldDisplayQueue
   } = useControllerScreen();
@@ -23,9 +25,9 @@ export const ControllerScreen = () => {
   const renderQueueSection = () => {
     if (queueDisplayCount === 0) {
       return (
-        <QueueEmptyStateText size="sm" type="body">
+        <EmptyText size="sm" type="body">
           No songs in the queue. Add songs to start listening with friends!
-        </QueueEmptyStateText>
+        </EmptyText>
       );
     }
 
@@ -33,7 +35,11 @@ export const ControllerScreen = () => {
       return (
         <>
           <Scrollable>
-            <Queue startAt="next" count={queueDisplayCount} />
+            <Queue
+              startAt="next"
+              count={queueDisplayCount}
+              documentContainer={sidebarRoot}
+            />
           </Scrollable>
           <QueueFooter to="/queue">
             <Text type="body" size="sm" gradient as="span">
@@ -70,7 +76,7 @@ export const ControllerScreen = () => {
       <QueueSection $expanded={expanded}>
         <QueueHeaderFlex align="center">
           <QueueHeaderText type="display" size="lg">
-            Session Queue
+            Queue
           </QueueHeaderText>
           <GradientAddButton onClick={handleNavigateToSearch} />
         </QueueHeaderFlex>
@@ -137,12 +143,6 @@ const QueueHeaderText = styled(Text)`
 const QueueHiddenFlex = styled(Flex)`
   height: unset;
   margin-top: ${token('spacing.md')};
-`;
-
-const QueueEmptyStateText = styled(Text)`
-  color: ${token('colors.onBackgroundMedium')};
-  text-align: center;
-  margin: ${token('spacing.sm')} ${token('spacing.md')};
 `;
 
 const QueueFooter = styled(Link)`

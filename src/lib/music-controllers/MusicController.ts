@@ -3,6 +3,7 @@ import type {
   PlayerState,
   QueueItem,
   SongInfo,
+  TrackSearchResult,
   ValueOrPromise
 } from '~types';
 
@@ -104,5 +105,5 @@ export interface MusicController {
   /**
    * Search for tracks matching the query.
    */
-  searchTracks(query: string): Promise<SongInfo>;
+  searchTracks(query: string): Promise<TrackSearchResult[]>;
 }

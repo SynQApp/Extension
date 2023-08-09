@@ -37,7 +37,7 @@ const ControllerScreen = () => {
           <QueueHeader type="display" size="lg">
             Queue ({queueCount})
           </QueueHeader>
-          <Queue />
+          <Queue documentContainer={document.body} />
         </Scrollable>
       </QueueSection>
     </>

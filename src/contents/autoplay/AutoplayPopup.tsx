@@ -5,7 +5,7 @@ import { styled } from 'styled-components';
 import { AutoplayMessage, ContentEvent, MusicControllerMessage } from '~types';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
 
-const Popup = () => {
+const AutoplayPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
@@ -85,4 +85,4 @@ const DescriptionText = styled(Text)`
   text-align: center;
 `;
 
-export default Popup;
+export default AutoplayPopup;
