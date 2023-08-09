@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-import type { PlayerState } from '~types/PlayerState';
+import type { PlayerState } from '~types';
 
 export type PlaybackState = Omit<PlayerState, 'songInfo'>;
 

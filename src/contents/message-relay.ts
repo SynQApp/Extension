@@ -2,7 +2,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
-import { ContentEvent } from '~types/ContentEvent';
+import { ContentEvent } from '~types';
 import { generateRequestId } from '~util/generateRequestId';
 import { onDocumentReady } from '~util/onDocumentReady';
 

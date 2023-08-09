@@ -1,5 +1,4 @@
-import type { MusicController } from '~lib/music-controllers/MusicController';
-import type { ValueOrPromise } from '~types/Util';
+import type { ValueOrPromise } from '~types';
 
 /**
  * Observer emitters are responsible for observing the state of the music player

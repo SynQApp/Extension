@@ -3,9 +3,9 @@ import { useState } from 'react';
 import styled, { css, useTheme } from 'styled-components';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
+import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
-import type { Expandable } from '~popup/types';
-import { RepeatMode } from '~types/RepeatMode';
+import { RepeatMode } from '~types';
 
 interface ControlButtonsProps {
   isPlaying: boolean;

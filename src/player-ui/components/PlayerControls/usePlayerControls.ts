@@ -2,7 +2,7 @@ import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { MusicControllerMessage } from '~types';
 
 export const usePlayerControls = () => {
   const expanded = useExpanded();

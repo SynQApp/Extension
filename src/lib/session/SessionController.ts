@@ -1,6 +1,4 @@
-import type { Listener } from '~types/Listener';
-import type { SessionDetails } from '~types/SessionDetails';
-import type { SessionQueueItem } from '~types/SessionQueueItem';
+import type { Listener, SessionDetails, SessionQueueItem } from '~types';
 
 class NotImplementedError extends Error {
   constructor() {

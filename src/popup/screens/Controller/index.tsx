@@ -1,11 +1,11 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Text, token } from '@synq/ui';
+import { Scrollable, Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
 import { Player } from '~player-ui/components/Player';
 import { Queue } from '~player-ui/components/Queue';
-import type { Expandable } from '~popup/types';
+import type { Expandable } from '~player-ui/types';
 
 import useControllerScreen from './useControllerScreen';
 
@@ -33,10 +33,12 @@ const ControllerScreen = () => {
         </ExpandButton>
       </PlayerSection>
       <QueueSection $show={showQueue}>
-        <QueueHeader type="display" size="lg">
-          Queue ({queueCount})
-        </QueueHeader>
-        <Queue />
+        <Scrollable height="100%">
+          <QueueHeader type="display" size="lg">
+            Queue ({queueCount})
+          </QueueHeader>
+          <Queue />
+        </Scrollable>
       </QueueSection>
     </>
   );
@@ -78,8 +80,6 @@ interface QueueSectionProps {
 const QueueSection = styled.section<QueueSectionProps>`
   background: ${token('colors.surface')};
   height: 0px;
-  overflow-x: hidden;
-  overflow-y: scroll;
   width: 100%;
   transition: height 0.2s ease-in-out, padding-top 0.2s ease-in-out;
 
@@ -88,31 +88,6 @@ const QueueSection = styled.section<QueueSectionProps>`
     css`
       height: 390px;
     `}
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${token('colors.surface01')};
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      ${token('colors.base.orange.4')} 0%,
-      ${token('colors.base.pink.4')} 100%
-    );
-    border-radius: 10px;
-
-    &:hover {
-      background: linear-gradient(
-        to bottom,
-        ${token('colors.base.orange.5')} 0%,
-        ${token('colors.base.pink.5')} 100%
-      );
-    }
-  }
 `;
 
 const QueueHeader = styled(Text)`

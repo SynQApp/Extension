@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import type { MusicServiceContextValue } from '~player-ui/contexts/MusicService';
-import { ContentEvent } from '~types/ContentEvent';
+import { ContentEvent } from '~types';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
 export const useMusicService = () => {

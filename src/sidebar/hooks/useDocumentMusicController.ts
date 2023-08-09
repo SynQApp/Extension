@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { ContentEvent } from '~types/ContentEvent';
-import { EventMessage } from '~types/Events';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import { PopupMessage } from '~types/PopupMessage';
+import {
+  ContentEvent,
+  EventMessage,
+  MusicControllerMessage,
+  UiStateMessage
+} from '~types';
 import { generateRequestId } from '~util/generateRequestId';
 
 export const useDocumentMusicController = <T>(
@@ -44,7 +46,7 @@ export const useDocumentMusicController = <T>(
     const popupEvent = new CustomEvent(ContentEvent.TO_CONTENT, {
       detail: {
         body: {
-          name: PopupMessage.POPUP_OPENED
+          name: UiStateMessage.POPUP_OPENED
         }
       }
     });

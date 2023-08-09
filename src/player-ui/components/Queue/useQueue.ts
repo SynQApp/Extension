@@ -1,16 +1,40 @@
 import { useMemo } from 'react';
 
+import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 
-export const useQueue = () => {
+export const useQueue = (startAt: 'top' | 'next', count?: number) => {
+  const currentSongInfo = useCurrentSongInfo();
   const playbackState = usePlaybackState();
   const { sendMessage, musicService } = useMusicService();
 
-  const queue = useMemo(() => playbackState?.queue || [], [playbackState]);
+  const queue = useMemo(() => {
+    if (!playbackState?.queue) {
+      return [];
+    }
+
+    let { queue } = playbackState;
+
+    if (startAt === 'top') {
+      queue = queue.slice(0);
+    } else {
+      const currentTrackIndex = queue.findIndex(
+        (item) => item.songInfo.trackId === currentSongInfo?.trackId
+      );
+
+      queue = queue.slice(currentTrackIndex);
+    }
+
+    if (count) {
+      queue = queue.slice(0, count);
+    }
+
+    return queue;
+  }, [playbackState]);
 
   const musicServiceName = useMemo(
     () => getMusicServiceName(musicService),

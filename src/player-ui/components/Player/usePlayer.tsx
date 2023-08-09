@@ -1,8 +1,7 @@
 import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
-import { MusicService } from '~types/MusicService';
+import { MusicControllerMessage, MusicService } from '~types';
 
 const LIKE_ENABLED_SERVICES = new Set([
   MusicService.AMAZON_MUSIC,

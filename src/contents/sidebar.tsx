@@ -2,7 +2,7 @@ import { UiProvider } from '@synq/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { StyleSheetManager } from 'styled-components';
 
-import Sidebar from '~sidebar/Sidebar';
+import Sidebar from '~sidebar';
 
 export const config: PlasmoCSConfig = {
   matches: [

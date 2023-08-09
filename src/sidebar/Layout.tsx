@@ -1,16 +1,22 @@
 import { token } from '@synq/ui';
+import type React from 'react';
 import { styled } from 'styled-components';
 
 import Header from '~player-ui/components/Header';
 import { useExpanded } from '~player-ui/contexts/Expanded';
-import type { Expandable } from '~popup/types';
+import type { Expandable } from '~player-ui/types';
 
-const Layout = ({ children }) => {
+interface LayoutProps {
+  children: React.ReactNode;
+  header?: React.ReactNode;
+}
+
+const Layout = ({ children, header }: LayoutProps) => {
   const expanded = useExpanded();
 
   return (
     <Container $expanded={expanded}>
-      <Header />
+      {header ?? <Header />}
       <Content>{children}</Content>
     </Container>
   );

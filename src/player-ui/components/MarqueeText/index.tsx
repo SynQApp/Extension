@@ -94,7 +94,7 @@ export const MarqueeText = ({
 };
 
 const Space = styled.span`
-  display: inline-block;
+  display: block;
   width: ${token('spacing.md')};
 `;
 

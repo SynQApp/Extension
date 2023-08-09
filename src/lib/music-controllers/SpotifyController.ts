@@ -1,9 +1,6 @@
-import wait from 'waait';
-
 import { SpotifyEndpoints } from '~constants/spotify';
-import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import { RepeatMode } from '~types/RepeatMode';
+import { NotReadyReason, RepeatMode } from '~types';
+import type { PlayerState, QueueItem, SongInfo } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { waitForElement } from '~util/waitForElement';
@@ -356,6 +353,10 @@ export class SpotifyController implements MusicController {
     }
 
     return;
+  }
+
+  public searchTracks(query: string): Promise<SongInfo> {
+    throw new Error('Method not implemented.');
   }
 
   private _getVolume(): number {

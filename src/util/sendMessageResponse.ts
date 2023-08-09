@@ -1,4 +1,4 @@
-import { ContentEvent } from '~types/ContentEvent';
+import { ContentEvent } from '~types';
 
 export const sendMessageResponse = (response: any, requestId: string) => {
   window.dispatchEvent(

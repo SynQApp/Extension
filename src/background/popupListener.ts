@@ -1,6 +1,6 @@
 import { POPUP_PORT } from '~constants/port';
 import { ALL_URL_MATCHES } from '~constants/urls';
-import { PopupMessage } from '~types/PopupMessage';
+import { UiStateMessage } from '~types';
 
 export const popupListener = () => {
   chrome.runtime.onConnect.addListener(async (port) => {
@@ -12,14 +12,14 @@ export const popupListener = () => {
 
     tabs.forEach((tab) => {
       chrome.tabs.sendMessage(tab.id, {
-        name: PopupMessage.POPUP_OPENED
+        name: UiStateMessage.POPUP_OPENED
       });
     });
 
     port.onDisconnect.addListener(async () => {
       tabs.forEach((tab) => {
         chrome.tabs.sendMessage(tab.id, {
-          name: PopupMessage.POPUP_CLOSED
+          name: UiStateMessage.POPUP_CLOSED
         });
       });
     });
