@@ -1,29 +1,19 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Text, token } from '@synq/ui';
+import { Scrollable, Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
-import { AlbumArt } from '~popup/components/AlbumArt';
-import { PlayerControls } from '~popup/components/PlayerControls';
-import { Queue } from '~popup/components/Queue';
-import type { Expandable } from '~popup/types';
-import { expandedStyle } from '~popup/util/expandedStyle';
+import { Player } from '~player-ui/components/Player';
+import { Queue } from '~player-ui/components/Queue';
+import type { Expandable } from '~player-ui/types';
 
 import useControllerScreen from './useControllerScreen';
 
 const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
-  const {
-    currentSongInfo,
-    expanded,
-    queueCount,
-    handleDislikeClick,
-    handleLikeClick,
-    setExpanded,
-    showQueue,
-    setShowQueue
-  } = useControllerScreen();
+  const { expanded, queueCount, showQueue, setShowQueue } =
+    useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
     setShowQueue(!showQueue);
@@ -33,25 +23,7 @@ const ControllerScreen = () => {
     <>
       <PlayerSection>
         <div>
-          <Flex
-            direction={expanded ? 'column' : 'row'}
-            justify={expanded ? 'flex-start' : 'space-between'}
-            align="center"
-          >
-            <AlbumArtContainer $expanded={expanded}>
-              <AlbumArt
-                liked={currentSongInfo?.isLiked}
-                disliked={currentSongInfo?.isDisliked}
-                onLikeClick={handleLikeClick}
-                onDislikeClick={handleDislikeClick}
-                trackName={currentSongInfo?.trackName}
-                src={currentSongInfo?.albumCoverUrl}
-              />
-            </AlbumArtContainer>
-            <PlayerControlsContainer $expanded={expanded}>
-              <PlayerControls />
-            </PlayerControlsContainer>
-          </Flex>
+          <Player />
         </div>
         <ExpandButton onClick={handleShowQueueButtonPress}>
           <ExpandIcon
@@ -61,10 +33,12 @@ const ControllerScreen = () => {
         </ExpandButton>
       </PlayerSection>
       <QueueSection $show={showQueue}>
-        <QueueHeader type="display" size="lg">
-          Queue ({queueCount})
-        </QueueHeader>
-        <Queue start="next" />
+        <Scrollable height="100%">
+          <QueueHeader type="display" size="lg">
+            Queue ({queueCount})
+          </QueueHeader>
+          <Queue documentContainer={document.body} />
+        </Scrollable>
       </QueueSection>
     </>
   );
@@ -75,42 +49,6 @@ const PlayerSection = styled.section`
   height: ${PLAYER_HEIGHT}px;
   padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
   position: relative;
-`;
-
-const AlbumArtContainer = styled.div<Expandable>`
-  height: 105px;
-  max-height: 105px;
-  max-width: 105px;
-  min-height: 105px;
-  min-width: 105px;
-  width: 105px;
-
-  ${expandedStyle(
-    css`
-      height: 170px;
-      max-height: initial;
-      max-width: initial;
-      min-height: initial;
-      min-width: initial;
-      width: 170px;
-    `
-  )}
-
-  margin: 0 auto;
-`;
-
-const PlayerControlsContainer = styled.div<Expandable>`
-  margin-left: ${token('spacing.sm')};
-  margin-top: ${token('spacing.none')};
-  width: calc(100% - 105px - ${token('spacing.sm')});
-
-  ${expandedStyle(
-    css`
-      margin-left: ${token('spacing.none')};
-      margin-top: ${token('spacing.md')};
-      width: 100%;
-    `
-  )}
 `;
 
 const ExpandButton = styled.button`
@@ -142,8 +80,6 @@ interface QueueSectionProps {
 const QueueSection = styled.section<QueueSectionProps>`
   background: ${token('colors.surface')};
   height: 0px;
-  overflow-x: hidden;
-  overflow-y: scroll;
   width: 100%;
   transition: height 0.2s ease-in-out, padding-top 0.2s ease-in-out;
 
@@ -152,31 +88,6 @@ const QueueSection = styled.section<QueueSectionProps>`
     css`
       height: 390px;
     `}
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${token('colors.surface01')};
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      to bottom,
-      ${token('colors.base.orange.4')} 0%,
-      ${token('colors.base.pink.4')} 100%
-    );
-    border-radius: 10px;
-
-    &:hover {
-      background: linear-gradient(
-        to bottom,
-        ${token('colors.base.orange.5')} 0%,
-        ${token('colors.base.pink.5')} 100%
-      );
-    }
-  }
 `;
 
 const QueueHeader = styled(Text)`

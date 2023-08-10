@@ -1,10 +1,10 @@
 import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
-export class YouTubeMusicObserverEmitter implements IObserverEmitter {
+export class YouTubeMusicObserverEmitter implements ObserverEmitter {
   private _controller: YouTubeMusicController;
   private _onStateChangeHandler: () => void;
   private _onVideoDataChangeHandler: () => void;
@@ -123,10 +123,8 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.SONG_INFO_UPDATED,
-      body: {
-        songInfo: this._controller.getCurrentSongInfo()
-      }
+      name: EventMessage.SONG_INFO_UPDATED,
+      body: this._controller.getCurrentSongInfo()
     });
   }
 
@@ -136,10 +134,8 @@ export class YouTubeMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.PLAYBACK_UPDATED,
-      body: {
-        playbackState: this._controller.getPlayerState()
-      }
+      name: EventMessage.PLAYBACK_UPDATED,
+      body: this._controller.getPlayerState()
     });
   }
 }

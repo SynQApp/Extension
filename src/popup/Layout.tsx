@@ -1,17 +1,23 @@
 import { token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
-import Header from './components/Header';
-import { useExpanded } from './contexts/Expanded';
-import { type Expandable } from './types';
-import { expandedStyle } from './util/expandedStyle';
+import Header from '../player-ui/components/Header';
+import { useExpanded } from '../player-ui/contexts/Expanded';
+import { type Expandable } from '../player-ui/types';
+import { expandedStyle } from '../player-ui/util/expandedStyle';
 
 const Layout = ({ children }) => {
-  const { expanded } = useExpanded();
+  const expanded = useExpanded();
 
   return (
     <Container $expanded={expanded}>
-      <Header />
+      <Header
+        actionButton={{
+          name: 'Start Session',
+          // TODO: Implement session start handler
+          onClick: () => console.info('Start session')
+        }}
+      />
       <Content>{children}</Content>
     </Container>
   );

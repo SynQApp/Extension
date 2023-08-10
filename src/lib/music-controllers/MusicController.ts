@@ -1,6 +1,11 @@
-import type { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import type { ValueOrPromise } from '~types/Util';
+import type {
+  NotReadyReason,
+  PlayerState,
+  QueueItem,
+  SongInfo,
+  TrackSearchResult,
+  ValueOrPromise
+} from '~types';
 
 export interface MusicController {
   /**
@@ -96,4 +101,9 @@ export interface MusicController {
    * @param duplicateIndex If there are multiple items with the same ID, this is the duplicate index of the item to play.
    */
   playQueueTrack(id: string, duplicateIndex?: number): ValueOrPromise<void>;
+
+  /**
+   * Search for tracks matching the query.
+   */
+  searchTracks(query: string): Promise<TrackSearchResult[]>;
 }

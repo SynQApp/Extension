@@ -1,8 +1,8 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',
@@ -13,7 +13,7 @@ const playbackStateChangedEvents = [
   'repeatModeDidChange'
 ];
 
-export class AppleMusicObserverEmitter implements IObserverEmitter {
+export class AppleMusicObserverEmitter implements ObserverEmitter {
   private _controller: AppleMusicController;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
@@ -88,10 +88,8 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.SONG_INFO_UPDATED,
-      body: {
-        songInfo: this._controller.getCurrentSongInfo()
-      }
+      name: EventMessage.SONG_INFO_UPDATED,
+      body: this._controller.getCurrentSongInfo()
     });
   }
 
@@ -101,10 +99,8 @@ export class AppleMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.PLAYBACK_UPDATED,
-      body: {
-        playbackState: this._controller.getPlayerState()
-      }
+      name: EventMessage.PLAYBACK_UPDATED,
+      body: this._controller.getPlayerState()
     });
   }
 }

@@ -12,7 +12,7 @@ import {
   YOUTUBE_MUSIC_URL,
   YOUTUBE_MUSIC_URL_MATCH
 } from '~constants/urls';
-import MusicServiceButton from '~popup/components/MusicServiceButton';
+import MusicServiceButton from '~player-ui/components/MusicServiceButton';
 
 const SelectPlatformScreen = () => {
   return (

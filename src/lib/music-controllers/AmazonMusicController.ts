@@ -1,10 +1,11 @@
 import type { Store } from 'redux';
 
-import { NotReadyReason } from '~types/NotReadyReason';
-import type { PlayerState, QueueItem, SongInfo } from '~types/PlayerState';
-import { RepeatMode } from '~types/RepeatMode';
-import type { ValueOrPromise } from '~types/Util';
+import { BASE_API_URL, BASE_APP_URL } from '~constants/amazon';
+import { NotReadyReason, RepeatMode } from '~types';
+import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type { TrackSearchResult } from '~types';
 import { findIndexes } from '~util/findIndexes';
+import { convertToAscii, generateRequestId } from '~util/skyfireUtils';
 import { lengthTextToSeconds } from '~util/time';
 import { waitForElement } from '~util/waitForElement';
 
@@ -307,6 +308,40 @@ export class AmazonMusicController implements MusicController {
     this.getStore().dispatch(playTrackAction);
   }
 
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
+    const apiResponse = await fetch(`${BASE_API_URL}/searchCatalogTracks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        headers: JSON.stringify(this._createApiHeaders()),
+        keyword: query,
+        userHash: JSON.stringify({ level: 'HD_MEMBER' })
+      })
+    }).then((res) => res.json());
+
+    return this._parseSearchResponse(apiResponse);
+  }
+
+  private _parseSearchResponse(response: any): TrackSearchResult[] {
+    const tracks = response?.methods?.[0]?.template?.widgets?.[0]
+      ?.items as any[];
+
+    return (
+      tracks?.map((track) => {
+        const primaryUrl = new URL(track.primaryLink, BASE_APP_URL);
+
+        return {
+          albumCoverUrl: track.image,
+          trackName: track.primaryText?.text,
+          artistName: track.secondaryText,
+          trackId: primaryUrl.searchParams.get('trackAsin')
+        };
+      }) ?? []
+    );
+  }
+
   private async _fetchQueue(): Promise<any> {
     const appState = this.getStore().getState();
 
@@ -514,6 +549,62 @@ export class AmazonMusicController implements MusicController {
         }
       },
       type: 'ENQUEUE_SKYFIRE_METHOD'
+    };
+  }
+
+  private _createApiHeaders() {
+    const appState = this.getStore().getState();
+    const config = window.amznMusic.appConfig;
+
+    const headers = {
+      'x-amzn-authentication': JSON.stringify(
+        this._createAuthenticationHeader()
+      ),
+      'x-amzn-device-model': 'WEBPLAYER',
+      'x-amzn-device-width': '1920',
+      'x-amzn-device-family': 'WebPlayer',
+      'x-amzn-device-id': config.deviceId,
+      'x-amzn-user-agent': convertToAscii(window.navigator.userAgent),
+      'x-amzn-session-id': config.sessionId,
+      'x-amzn-device-height': '1080',
+      'x-amzn-request-id': generateRequestId(),
+      'x-amzn-device-language': config.displayLanguage,
+      'x-amzn-currency-of-preference': 'USD',
+      'x-amzn-os-version': '1.0',
+      'x-amzn-application-version': config.version,
+      'x-amzn-device-time-zone':
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+      'x-amzn-timestamp': new Date().getTime().toString(),
+      'x-amzn-csrf': JSON.stringify(this._createCsrfTokenHeader()),
+      'x-amzn-music-domain': 'music.amazon.com',
+      'x-amzn-referer': 'music.amazon.com',
+      'x-amzn-affiliate-tags': '',
+      'x-amzn-ref-marker': '',
+      'x-amzn-page-url': `${BASE_APP_URL}/search/`,
+      'x-amzn-weblab-id-overrides': '',
+      'x-amzn-video-player-token':
+        appState?.Authentication?.videoPlayerToken?.header,
+      'x-amzn-feature-flags': 'hd-supported'
+    };
+
+    return headers;
+  }
+
+  private _createAuthenticationHeader() {
+    return {
+      interface: 'ClientAuthenticationInterface.v1_0.ClientTokenElement',
+      accessToken: window.amznMusic.appConfig.accessToken
+    };
+  }
+
+  private _createCsrfTokenHeader() {
+    const csrfToken = window.amznMusic.appConfig.csrf;
+
+    return {
+      interface: 'CSRFInterface.v1_0.CSRFHeaderElement',
+      token: csrfToken.token,
+      timestamp: csrfToken.ts,
+      rndNonce: csrfToken.rnd
     };
   }
 

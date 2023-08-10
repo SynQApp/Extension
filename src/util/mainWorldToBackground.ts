@@ -1,6 +1,6 @@
 import { sendToBackground } from '@plasmohq/messaging';
 
-import { ContentEvent } from '~types/ContentEvent';
+import { ContentEvent } from '~types';
 
 import { generateRequestId } from './generateRequestId';
 
@@ -24,13 +24,19 @@ export const mainWorldToBackground: typeof sendToBackground = (
 
     window.dispatchEvent(event);
 
+    const eventName = `${ContentEvent.FROM_BACKGROUND}:${requestId}`;
+
+    const responseListener = (event: CustomEvent) => {
+      window.removeEventListener(eventName, responseListener);
+
+      const { body } = event.detail;
+      resolve(body as string);
+    };
+
     // Listen for the response from the background script
-    window.addEventListener(
-      `${ContentEvent.FROM_BACKGROUND}:${requestId}`,
-      (event: CustomEvent) => {
-        const { body } = event.detail;
-        resolve(body as string);
-      }
-    );
+    window.addEventListener(eventName, (event: CustomEvent) => {
+      const { body } = event.detail;
+      resolve(body as string);
+    });
   });
 };

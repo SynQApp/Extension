@@ -1,6 +1,5 @@
 import type { MusicController } from '~lib/music-controllers/MusicController';
-import { ContentEvent } from '~types/ContentEvent';
-import { MusicControllerMessage } from '~types/MusicControllerMessage';
+import { ContentEvent, MusicControllerMessage } from '~types';
 import { sendMessageResponse } from '~util/sendMessageResponse';
 
 /**
@@ -93,6 +92,15 @@ export const createMusicControllerHandler = (controller: MusicController) => {
             message.body.trackId,
             message.body.duplicateIndex
           );
+          break;
+
+        case MusicControllerMessage.SEARCH_TRACKS:
+          const searchResults = await controller.searchTracks(
+            message.body.query
+          );
+
+          sendMessageResponse(searchResults, event.detail.requestId);
+
           break;
 
         default:

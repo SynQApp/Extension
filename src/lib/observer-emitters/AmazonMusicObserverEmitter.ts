@@ -1,8 +1,8 @@
 import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
-import { EventMessageType } from '~types/Events';
+import { EventMessage } from '~types';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
-import type { IObserverEmitter } from './IObserverEmitter';
+import type { ObserverEmitter } from './IObserverEmitter';
 
 const playbackStateChangedEvents = [
   'playpause',
@@ -11,7 +11,7 @@ const playbackStateChangedEvents = [
   'timeupdate'
 ];
 
-export class AmazonMusicObserverEmitter implements IObserverEmitter {
+export class AmazonMusicObserverEmitter implements ObserverEmitter {
   private _controller: AmazonMusicController;
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;
@@ -144,10 +144,8 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.SONG_INFO_UPDATED,
-      body: {
-        songInfo: this._controller.getCurrentSongInfo()
-      }
+      name: EventMessage.SONG_INFO_UPDATED,
+      body: this._controller.getCurrentSongInfo()
     });
   }
 
@@ -157,10 +155,8 @@ export class AmazonMusicObserverEmitter implements IObserverEmitter {
     }
 
     await mainWorldToBackground({
-      name: EventMessageType.PLAYBACK_UPDATED,
-      body: {
-        playbackState: await this._controller.getPlayerState()
-      }
+      name: EventMessage.PLAYBACK_UPDATED,
+      body: await this._controller.getPlayerState()
     });
   }
 }

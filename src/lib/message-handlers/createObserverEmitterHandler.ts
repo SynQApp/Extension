@@ -1,9 +1,13 @@
-import type { IObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
-import { ContentEvent } from '~types/ContentEvent';
-import { PopupMessage } from '~types/PopupMessage';
+import type { ObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
+import { ContentEvent, UiStateMessage } from '~types';
+
+const UI_STATE = {
+  popupOpen: false,
+  sidebarOpen: false
+};
 
 export const createObserverEmitterHandler = (
-  observerEmitter: IObserverEmitter
+  observerEmitter: ObserverEmitter
 ) => {
   window.addEventListener(
     ContentEvent.TO_CONTENT,
@@ -11,12 +15,32 @@ export const createObserverEmitterHandler = (
       const message = event.detail.body;
 
       switch (message.name) {
-        case PopupMessage.POPUP_OPENED:
+        case UiStateMessage.POPUP_OPENED:
+          UI_STATE.popupOpen = true;
           await observerEmitter.resume();
           break;
 
-        case PopupMessage.POPUP_CLOSED:
-          await observerEmitter.pause();
+        case UiStateMessage.POPUP_CLOSED:
+          UI_STATE.popupOpen = false;
+
+          if (!UI_STATE.sidebarOpen) {
+            await observerEmitter.pause();
+          }
+
+          break;
+
+        case UiStateMessage.SIDEBAR_OPENED:
+          UI_STATE.sidebarOpen = true;
+          await observerEmitter.resume();
+          break;
+
+        case UiStateMessage.SIDEBAR_CLOSED:
+          UI_STATE.sidebarOpen = false;
+
+          if (!UI_STATE.popupOpen) {
+            await observerEmitter.pause();
+          }
+
           break;
       }
     }

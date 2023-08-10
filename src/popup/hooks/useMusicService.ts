@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { useTabs } from '~popup/contexts/Tabs';
+import type { MusicServiceContextValue } from '~player-ui/contexts/MusicService';
+import { useTabs } from '~player-ui/contexts/Tabs';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
 export const useMusicService = () => {
@@ -11,5 +12,18 @@ export const useMusicService = () => {
     [selectedTab]
   );
 
-  return musicService;
+  const sendMessage = async (message: any) => {
+    if (!selectedTab) {
+      return;
+    }
+
+    await chrome.tabs.sendMessage(selectedTab.id, message);
+  };
+
+  const musicServiceValue: MusicServiceContextValue = {
+    sendMessage,
+    musicService
+  };
+
+  return musicServiceValue;
 };
