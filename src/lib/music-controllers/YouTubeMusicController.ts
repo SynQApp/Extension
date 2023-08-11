@@ -67,7 +67,6 @@ export class YouTubeMusicController implements MusicController {
   }
 
   public async prepareForSession() {
-    console.log('prepareForSession', this._navigationRequestInstance);
     if (!this._navigationRequestInstance) {
       await this._forceCaptureNavigationRequest();
     }

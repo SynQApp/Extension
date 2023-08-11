@@ -5,7 +5,6 @@ const handler: PlasmoMessaging.MessageHandler<PubSubMessage> = async (
   req,
   res
 ) => {
-  console.log('BROADCAST', req.body);
   broadcast(req.body);
   res.send(undefined);
 };

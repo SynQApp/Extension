@@ -38,12 +38,6 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
     return container as HTMLElement;
   }, [anchor]);
 
-  useEffect(() => {
-    sendToBackground({
-      name: 'MY_TAB_ID'
-    }).then((res) => console.log('tabId', res));
-  }, []);
-
   return (
     <SidebarRootProvider sidebarRoot={container}>
       <Provider store={store}>
