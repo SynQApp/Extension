@@ -7,22 +7,27 @@ interface SearchSliceState {
   loading: boolean;
 }
 
-const initialState: SearchSliceState | null = null;
+const initialState: SearchSliceState = {
+  results: [],
+  loading: false
+};
 
 const searchSlice = createSlice({
   name: 'search',
   initialState: initialState,
   reducers: {
-    setResults: (state, action: PayloadAction<TrackSearchResult[]>) => {
+    setSearchResults: (state, action: PayloadAction<TrackSearchResult[]>) => {
       state.results = action.payload;
       state.loading = false;
     },
-    setLoading: (state, action: PayloadAction<boolean>) => {
+    setSearchLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
-    }
+    },
+    clearSearchResults: () => initialState
   }
 });
 
-export const { setResults, setLoading } = searchSlice.actions;
+export const { setSearchResults, setSearchLoading, clearSearchResults } =
+  searchSlice.actions;
 
 export default searchSlice.reducer;

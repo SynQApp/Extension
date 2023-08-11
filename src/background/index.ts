@@ -1,16 +1,9 @@
 import { startHub } from '@plasmohq/messaging/pub-sub';
 
-import { store } from '~store';
-
 import { popupListener } from './popupListener';
+import { registerHubMessageHandlers } from './registerHubMessageHandlers';
 
 popupListener();
 startHub();
 
-chrome.runtime.onConnectExternal.addListener((port) => {
-  port.onMessage.addListener((message) => {
-    if (message.name === 'DISPATCH') {
-      store.dispatch(message.body);
-    }
-  });
-});
+registerHubMessageHandlers();

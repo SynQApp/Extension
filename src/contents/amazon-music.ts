@@ -22,9 +22,9 @@ const initialize = (extensionId: string) => {
   const controller = new AmazonMusicController();
   const observer = new AmazonMusicObserverEmitter(controller, hub);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
-  createAutoplayReadyHandler(controller);
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
+  createAutoplayReadyHandler(controller, hub);
 
   observer.observe();
 };

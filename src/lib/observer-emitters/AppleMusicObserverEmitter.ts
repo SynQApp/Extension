@@ -1,9 +1,7 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
 import { setPlayerState } from '~store/slices/playerState';
-import { EventMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { ObserverEmitter } from './IObserverEmitter';
 
@@ -70,6 +68,9 @@ export class AppleMusicObserverEmitter implements ObserverEmitter {
 
   public resume(): void {
     this._paused = false;
+
+    this._sendPlaybackUpdatedMessage();
+    this._sendSongInfoUpdatedMessage();
   }
 
   public unobserve(): void {

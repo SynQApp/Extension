@@ -1,8 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import type { Session } from '~types';
+import { RepeatMode, type Session } from '~types';
 
-const initialState: Session | null = null;
+const mockActiveSession: Session = {
+  hostId: '',
+  locked: false,
+  repeatMode: RepeatMode.NO_REPEAT,
+  listeners: []
+};
+
+const initialState: Session | null = mockActiveSession;
 
 const sessionSlice = createSlice({
   name: 'session',

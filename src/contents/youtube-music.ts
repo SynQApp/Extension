@@ -18,13 +18,17 @@ const initialize = (extensionId: string) => {
 
   const hub = connectToReduxHub(extensionId);
 
-  const controller = new YouTubeMusicController();
+  const controller = new YouTubeMusicController(hub);
   const observer = new YouTubeMusicObserverEmitter(controller, hub);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
 
   observer.observe();
+
+  setTimeout(async () => {
+    await controller.prepareForSession();
+  }, 5000);
 };
 
 onDocumentReady(() => {

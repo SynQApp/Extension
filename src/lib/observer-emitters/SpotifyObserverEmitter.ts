@@ -3,9 +3,7 @@ import wait from 'waait';
 import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
 import { setPlayerState } from '~store/slices/playerState';
-import { EventMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { waitForElement } from '~util/waitForElement';
 
 import type { ObserverEmitter } from './IObserverEmitter';
@@ -34,6 +32,9 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
 
   public resume(): void {
     this._paused = false;
+
+    this._sendPlaybackUpdatedMessage();
+    this._sendSongInfoUpdatedMessage();
   }
 
   public unobserve(): void {
@@ -90,12 +91,16 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     this._mutationObservers.push(playerStateObserver);
   }
 
+  private _getNowPlayingText() {
+    const nowPlayingWidget = document.querySelector(
+      'div[data-testid="now-playing-widget"]'
+    );
+    return nowPlayingWidget?.getAttribute('aria-label') ?? '';
+  }
+
   private async _setupSongInfoObserver() {
     const songInfoObserver = new MutationObserver(async () => {
-      const nowPlayingWidget = document.querySelector(nowPlayingWidgetSelector);
-      await this._sendSongInfoUpdatedMessage(
-        nowPlayingWidget?.getAttribute('aria-label') ?? ''
-      );
+      await this._sendSongInfoUpdatedMessage();
     });
 
     const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
@@ -124,9 +129,9 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
    * song info. This method will retry up to 5 times to get the current song info that
    * matches the UI's song info.
    */
-  private async _sendSongInfoUpdatedMessage(
-    nowPlayingText: string
-  ): Promise<void> {
+  private async _sendSongInfoUpdatedMessage(): Promise<void> {
+    const nowPlayingText = this._getNowPlayingText();
+
     if (this._paused) {
       return;
     }

@@ -22,9 +22,9 @@ const initialize = (extensionId: string) => {
   const controller = new SpotifyController();
   const observer = new SpotifyObserverEmitter(controller, hub);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
-  createAutoplayReadyHandler(controller);
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
+  createAutoplayReadyHandler(controller, hub);
 
   observer.observe();
 };

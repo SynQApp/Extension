@@ -21,8 +21,8 @@ const initialize = (extensionId: string) => {
   const controller = new AppleMusicController();
   const observer = new AppleMusicObserverEmitter(controller, hub);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
 
   observer.observe();
 };

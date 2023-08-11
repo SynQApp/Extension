@@ -3,6 +3,7 @@ import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types/TrackSearchResult';
+import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -50,12 +51,15 @@ export class YouTubeMusicController implements MusicController {
   private _curtain: HTMLDivElement;
   private _unmuteVolume: number = 50;
   private _ytmServiceClient: YoutubeMusicServiceClient;
+  private _hub: ReduxHub;
 
-  constructor() {
+  constructor(hub: ReduxHub) {
     this._createNavigationWrapper();
     this._addCurtainStyles();
 
     this._ytmServiceClient = new YoutubeMusicServiceClient();
+
+    this._hub = hub;
   }
 
   public prepareForAutoplay(): ValueOrPromise<void> {
@@ -63,6 +67,7 @@ export class YouTubeMusicController implements MusicController {
   }
 
   public async prepareForSession() {
+    console.log('prepareForSession', this._navigationRequestInstance);
     if (!this._navigationRequestInstance) {
       await this._forceCaptureNavigationRequest();
     }
@@ -378,7 +383,7 @@ export class YouTubeMusicController implements MusicController {
   }
 
   private async _addCurtain() {
-    const screenshot = await mainWorldToBackground({ name: 'SCREENSHOT' });
+    const screenshot = await this._hub.asyncPostMessage({ name: 'SCREENSHOT' });
 
     this._curtain = document.createElement('div');
     this._curtain.className = 'synq-curtain';

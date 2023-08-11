@@ -2,21 +2,18 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
-import { useWindowSize } from 'usehooks-ts';
 
-import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
+import { sendMessage } from '~util/sendMessage';
 
 import SidebarRoutes from './Routes';
 
 export const Sidebar = () => {
-  const { height } = useWindowSize();
   const [show, setShow] = useState(false);
   const theme = useTheme();
-  const { sendMessage } = useMusicService();
   const sessionDetails = useAppSelector((state) => state.session);
 
   const handleToggleButtonClick = () => {

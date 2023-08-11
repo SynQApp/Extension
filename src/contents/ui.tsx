@@ -1,10 +1,14 @@
 import { UiProvider } from '@synq/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { useEffect, useMemo } from 'react';
+import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
+
+import { sendToBackground } from '@plasmohq/messaging';
 
 import Sidebar from '~sidebar';
 import { SidebarRootProvider } from '~sidebar/contexts/SidebarRoot';
+import { store } from '~store';
 
 import AutoplayPopup from './autoplay/AutoplayPopup';
 
@@ -34,16 +38,24 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
     return container as HTMLElement;
   }, [anchor]);
 
+  useEffect(() => {
+    sendToBackground({
+      name: 'MY_TAB_ID'
+    }).then((res) => console.log('tabId', res));
+  }, []);
+
   return (
     <SidebarRootProvider sidebarRoot={container}>
-      <UiProvider>
-        <StyleSheetManager
-          target={anchor.element.firstElementChild.shadowRoot as any}
-        >
-          <Sidebar />
-          <AutoplayPopup />
-        </StyleSheetManager>
-      </UiProvider>
+      <Provider store={store}>
+        <UiProvider>
+          <StyleSheetManager
+            target={anchor.element.firstElementChild.shadowRoot as any}
+          >
+            <Sidebar />
+            <AutoplayPopup />
+          </StyleSheetManager>
+        </UiProvider>
+      </Provider>
     </SidebarRootProvider>
   );
 };

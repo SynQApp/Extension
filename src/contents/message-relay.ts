@@ -78,4 +78,4 @@ const initialize = () => {
   );
 };
 
-onDocumentReady(initialize);
+// onDocumentReady(initialize);
