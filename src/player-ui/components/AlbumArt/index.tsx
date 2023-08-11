@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Image, Stack, token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
-import { useAppSelector } from '~store';
 
 interface AlbumArtProps {
   disliked: boolean;
@@ -28,7 +28,7 @@ export const AlbumArt = ({
   src,
   trackName
 }: AlbumArtProps) => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
 
   return (
     <AlbumArtContainer justify="center" align="center">

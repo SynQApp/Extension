@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useTabs } from '~player-ui/contexts/Tabs';
 import { useAppSelector } from '~store';
 import { AutoplayMessage } from '~types';
 
 const useControllerScreen = () => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
   const { allTabs, loading: tabsLoading } = useTabs();
   const navigate = useNavigate();
   const playerState = useAppSelector((state) => state.playerState);

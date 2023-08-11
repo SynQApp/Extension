@@ -1,9 +1,10 @@
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 
 export const usePlayerControls = () => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
   const { sendMessage } = useMusicService();

@@ -1,3 +1,4 @@
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage, MusicService } from '~types';
@@ -14,7 +15,7 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 ]);
 
 export const usePlayer = () => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicService, sendMessage } = useMusicService();
 

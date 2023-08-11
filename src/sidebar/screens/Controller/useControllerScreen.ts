@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 import { useWindowSize } from '~sidebar/hooks/useWindowSize';
 import { useAppSelector } from '~store';
@@ -11,7 +12,7 @@ const QUEUE_ITEM_HEIGHT = 78;
 const SHOW_QUEUE_BREAKPOINT = 560;
 
 export const useControllerScreen = () => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
   const navigate = useNavigate();
   const { height } = useWindowSize();
   const playerState = useAppSelector((state) => state.playerState);

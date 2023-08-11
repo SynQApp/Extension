@@ -7,13 +7,10 @@ import { css, styled, useTheme } from 'styled-components';
 import { useWindowSize } from 'usehooks-ts';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
-import { useAppDispatch, useAppSelector } from '~store';
-import { collapse, expand } from '~store/slices/expanded';
+import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
 
 import SidebarRoutes from './Routes';
-
-const VERTICAL_BREAKPOINT = 775;
 
 export const Sidebar = () => {
   const { height } = useWindowSize();
@@ -21,16 +18,6 @@ export const Sidebar = () => {
   const theme = useTheme();
   const { sendMessage } = useMusicService();
   const sessionDetails = useAppSelector((state) => state.session);
-  const expanded = useAppSelector((state) => state.expanded);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (height > VERTICAL_BREAKPOINT && !expanded) {
-      dispatch(expand());
-    } else if (height <= VERTICAL_BREAKPOINT && expanded) {
-      dispatch(collapse());
-    }
-  }, [height]);
 
   const handleToggleButtonClick = () => {
     const newShow = !show;

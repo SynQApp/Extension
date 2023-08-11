@@ -3,6 +3,7 @@ import type React from 'react';
 import { styled } from 'styled-components';
 
 import Header from '~player-ui/components/Header';
+import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
 import { useAppSelector } from '~store';
 
@@ -12,7 +13,7 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, header }: LayoutProps) => {
-  const expanded = useAppSelector((state) => state.expanded);
+  const expanded = useExpanded();
 
   return (
     <Container $expanded={expanded}>
