@@ -7,7 +7,6 @@ import { css, styled, useTheme } from 'styled-components';
 import { useWindowSize } from 'usehooks-ts';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
-import { useSessionDetails } from '~player-ui/contexts/SessionContext';
 import { useAppDispatch, useAppSelector } from '~store';
 import { collapse, expand } from '~store/slices/expanded';
 import { UiStateMessage } from '~types';
@@ -21,9 +20,9 @@ export const Sidebar = () => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const { sendMessage } = useMusicService();
-  const sessionDetails = useSessionDetails();
-  const dispatch = useAppDispatch();
+  const sessionDetails = useAppSelector((state) => state.session);
   const expanded = useAppSelector((state) => state.expanded);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (height > VERTICAL_BREAKPOINT && !expanded) {
