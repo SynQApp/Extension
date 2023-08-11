@@ -1,4 +1,4 @@
-import type { PlayerState, SongInfo } from '.';
+import type { PlayerState, Track } from '.';
 
 export enum EventMessage {
   SONG_INFO_UPDATED = 'SONG_INFO_UPDATED',
@@ -6,7 +6,7 @@ export enum EventMessage {
 }
 
 export interface SongInfoUpdatedEventBody {
-  songInfo: SongInfo;
+  songInfo: Track;
 }
 
 export interface PlaybackUpdatedEventBody {
@@ -14,5 +14,5 @@ export interface PlaybackUpdatedEventBody {
 }
 
 export interface QueueUpdatedEventBody {
-  queue: SongInfo[];
+  queue: Track[];
 }

@@ -23,7 +23,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
       queue = queue.slice(0);
     } else {
       const currentTrackIndex = queue.findIndex(
-        (item) => item.songInfo.trackId === currentSongInfo?.trackId
+        (item) => item.songInfo.id === currentSongInfo?.id
       );
 
       queue = queue.slice(currentTrackIndex);
@@ -44,7 +44,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
     const trackIndexes = findIndexes(
       queue,
-      (item) => item.songInfo.trackId === trackId
+      (item) => item.songInfo.id === trackId
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 

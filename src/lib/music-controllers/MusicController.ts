@@ -2,7 +2,7 @@ import type {
   NotReadyReason,
   PlayerState,
   QueueItem,
-  SongInfo,
+  Track,
   TrackSearchResult,
   ValueOrPromise
 } from '~types';
@@ -83,7 +83,7 @@ export interface MusicController {
   /**
    * Get the currently-playing song info.
    */
-  getCurrentSongInfo(): ValueOrPromise<SongInfo | undefined>;
+  getCurrentSongInfo(): ValueOrPromise<Track | undefined>;
 
   /**
    * Get the queue.

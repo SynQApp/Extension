@@ -25,7 +25,7 @@ export const Player = () => {
           disliked={currentSongInfo?.isDisliked}
           onLikeClick={handleLikeClick}
           onDislikeClick={handleDislikeClick}
-          trackName={currentSongInfo?.trackName}
+          trackName={currentSongInfo?.name}
           src={currentSongInfo?.albumCoverUrl}
         />
       </AlbumArtContainer>

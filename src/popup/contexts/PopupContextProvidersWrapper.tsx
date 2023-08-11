@@ -8,10 +8,10 @@ import {
 import { useChromeMusicController } from '~popup/hooks/useChromeEvents';
 import { useMusicService } from '~popup/hooks/useMusicService';
 import { EventMessage, MusicControllerMessage } from '~types';
-import type { SongInfo } from '~types';
+import type { Track } from '~types';
 
 export const PopupContextProvidersWrapper = ({ children }: any) => {
-  const currentSongInfo = useChromeMusicController<SongInfo>(
+  const currentSongInfo = useChromeMusicController<Track>(
     MusicControllerMessage.GET_CURRENT_SONG_INFO,
     EventMessage.SONG_INFO_UPDATED
   );

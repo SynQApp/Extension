@@ -1,6 +1,6 @@
-import type { SongInfo } from './SongInfo';
+import type { Track } from './Track';
 
 export type TrackSearchResult = Pick<
-  SongInfo,
+  Track,
   'trackId' | 'trackName' | 'artistName' | 'albumCoverUrl'
 >;

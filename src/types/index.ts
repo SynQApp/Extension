@@ -11,7 +11,7 @@ export * from './RepeatMode';
 export * from './SessionControllerMessage';
 export * from './SessionDetails';
 export * from './SessionQueueItem';
-export * from './SongInfo';
+export * from './Track';
 export * from './TrackSearchResult';
 export * from './UIStateMessage';
 export * from './Util';

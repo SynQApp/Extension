@@ -30,7 +30,7 @@ export const PlayerControls = () => {
         forwardedAs="h2"
         $expanded={expanded}
       >
-        {currentSongInfo?.trackName ?? '-'}
+        {currentSongInfo?.name ?? '-'}
       </TrackTitle>
       <TrackArtist
         type="body"

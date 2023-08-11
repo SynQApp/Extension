@@ -1,7 +1,7 @@
 import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
 
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types/TrackSearchResult';
 import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
@@ -175,7 +175,7 @@ export class YouTubeMusicController implements MusicController {
     };
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+  public getCurrentSongInfo(): ValueOrPromise<Track> {
     const videoDetails = this._appState.player?.playerResponse?.videoDetails;
     const trackId = videoDetails.videoId;
 
@@ -185,7 +185,7 @@ export class YouTubeMusicController implements MusicController {
       return rendererData?.videoId === trackId;
     });
 
-    const songInfo: SongInfo = this._queueItemToSongInfo(queueItem);
+    const songInfo: Track = this._queueItemToSongInfo(queueItem);
 
     const isLiked =
       (
@@ -236,10 +236,7 @@ export class YouTubeMusicController implements MusicController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(
-      queue,
-      (item) => item.songInfo.trackId === id
-    );
+    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
@@ -250,8 +247,8 @@ export class YouTubeMusicController implements MusicController {
 
     return searchResults.results.map((result) => {
       const trackSearchResult: TrackSearchResult = {
-        trackId: result.id,
-        trackName: result.trackName,
+        id: result.id,
+        name: result.trackName,
         artistName: result.artists.join(', '),
         albumCoverUrl: result.albumCoverUrl
       };
@@ -312,7 +309,7 @@ export class YouTubeMusicController implements MusicController {
     return thumbnails.find((thumbnail) => thumbnail.width >= 100).url;
   }
 
-  private _queueItemToSongInfo(queueItem: any): SongInfo {
+  private _queueItemToSongInfo(queueItem: any): Track {
     const rendererData = this._getQueueItemRendererData(queueItem);
 
     const trackId = rendererData.videoId;
@@ -326,8 +323,8 @@ export class YouTubeMusicController implements MusicController {
 
     return {
       duration: lengthTextToSeconds(rendererData.lengthText.runs[0].text),
-      trackId,
-      trackName,
+      id: trackId,
+      name: trackName,
       artistName: artist,
       albumName: album,
       albumCoverUrl

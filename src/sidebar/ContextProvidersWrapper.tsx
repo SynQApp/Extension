@@ -7,7 +7,7 @@ import {
 } from '~player-ui/contexts/PlaybackState';
 import { SessionDetailsProvider } from '~player-ui/contexts/SessionContext';
 import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
-import type { SongInfo } from '~types';
+import type { Track } from '~types';
 import { EventMessage, MusicControllerMessage } from '~types';
 
 import { useDocumentMusicController } from './hooks/useDocumentMusicController';
@@ -27,7 +27,7 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
 
   const musicService = useMusicService();
 
-  const currentSongInfo = useDocumentMusicController<SongInfo>(
+  const currentSongInfo = useDocumentMusicController<Track>(
     MusicControllerMessage.GET_CURRENT_SONG_INFO,
     EventMessage.SONG_INFO_UPDATED
   );

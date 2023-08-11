@@ -129,7 +129,7 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     for (let i = 0; i < 5; i++) {
       const songInfo = await this._controller.getCurrentSongInfo();
 
-      if (!nowPlayingText.includes(songInfo.trackName)) {
+      if (!nowPlayingText.includes(songInfo.name)) {
         await wait(1000);
         continue;
       }

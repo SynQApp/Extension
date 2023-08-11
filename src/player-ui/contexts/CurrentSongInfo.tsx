@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react';
 
-import type { SongInfo } from '~types';
+import type { Track } from '~types';
 
-const CurrentSongInfoContext = createContext<SongInfo | null>(null);
+const CurrentSongInfoContext = createContext<Track | null>(null);
 
 interface CurrentSongInfoProviderProps {
   children: React.ReactNode;
-  currentSongInfo: SongInfo | null;
+  currentSongInfo: Track | null;
 }
 
 /**
