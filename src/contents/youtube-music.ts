@@ -25,10 +25,6 @@ const initialize = (extensionId: string) => {
   createObserverEmitterHandler(observer, hub);
 
   observer.observe();
-
-  setTimeout(async () => {
-    await controller.prepareForSession();
-  }, 5000);
 };
 
 onDocumentReady(() => {

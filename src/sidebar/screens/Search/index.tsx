@@ -97,17 +97,17 @@ export const SearchScreen = () => {
             <ListStyled>
               {tracks.map((track, index) => (
                 <SearchResultListItem
-                  added={addedTracks.includes(track?.trackId)}
+                  added={addedTracks.includes(track?.id)}
                   albumCoverUrl={track?.albumCoverUrl}
                   artistName={track?.artistName}
                   key={index}
                   menuPortalContainer={sidebarRoot}
-                  onAddClick={() => handleOnAddClick(track?.trackId)}
+                  onAddClick={() => handleOnAddClick(track?.id)}
                   // TODO: Implement play now handler
                   onPlayNowClick={() => console.info('Play now')}
                   // TODO: Implement play next handler
                   onPlayNextClick={() => console.info('Play next')}
-                  trackName={track?.trackName}
+                  trackName={track?.name}
                 />
               ))}
             </ListStyled>

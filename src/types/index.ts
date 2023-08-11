@@ -4,6 +4,7 @@ export * from './Events';
 export * from './Listener';
 export * from './MusicControllerMessage';
 export * from './MusicService';
+export * from './MusicServiceTab';
 export * from './NotReadyReason';
 export * from './PlayerState';
 export * from './QueueItem';

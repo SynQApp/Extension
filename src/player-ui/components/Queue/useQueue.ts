@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 
-import { useMusicService } from '~player-ui/contexts/MusicService';
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
+import { sendMessage } from '~util/sendMessage';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
-  const { sendMessage, musicService } = useMusicService();
+  const tab = useMusicServiceTab();
 
   const queue = useMemo(() => {
     if (!playerState?.queue) {
@@ -36,8 +37,8 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   }, [playerState]);
 
   const musicServiceName = useMemo(
-    () => getMusicServiceName(musicService),
-    [musicService]
+    () => (tab ? getMusicServiceName(tab.musicService) : ''),
+    [tab]
   );
 
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {

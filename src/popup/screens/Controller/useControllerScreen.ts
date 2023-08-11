@@ -2,33 +2,26 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
-import { useMusicService } from '~player-ui/contexts/MusicService';
-import { useTabs } from '~player-ui/contexts/Tabs';
 import { useAppSelector } from '~store';
 import { AutoplayMessage } from '~types';
 import { sendMessage } from '~util/sendMessage';
 
 const useControllerScreen = () => {
   const expanded = useExpanded();
-  const { allTabs, loading: tabsLoading } = useTabs();
+  const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
   const navigate = useNavigate();
   const playerState = useAppSelector((state) => state.playerState);
   const autoplayReady = useAppSelector((state) => state.autoplayReady);
-  // const { sendMessage } = useMusicService();
 
   const [showQueue, setShowQueue] = useState(false);
 
   useEffect(() => {
-    if (tabsLoading) {
-      return;
-    }
-
-    if (!allTabs || allTabs.length === 0) {
+    if (!musicServiceTabs || musicServiceTabs.length === 0) {
       navigate('/select-platform');
-    } else if (allTabs.length > 1) {
+    } else if (musicServiceTabs.length > 1) {
       navigate('/select-tab');
     }
-  }, [tabsLoading]);
+  }, [musicServiceTabs]);
 
   useEffect(() => {
     if (!autoplayReady) {

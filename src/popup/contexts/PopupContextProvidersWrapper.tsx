@@ -1,15 +1,15 @@
 import { ExpandedProvider } from '~player-ui/contexts/Expanded';
-import { MusicServiceProvider } from '~player-ui/contexts/MusicService';
-import { useMusicService } from '~popup/hooks/useMusicService';
+import { MusicServiceTabProvider } from '~player-ui/contexts/MusicServiceTab';
+import { usePopupMusicServiceTab } from '~popup/hooks/usePopupMusicServiceTab';
 
 export const PopupContextProvidersWrapper = ({ children }: any) => {
-  const musicService = useMusicService();
+  const musicServiceTab = usePopupMusicServiceTab();
 
   return (
     <ExpandedProvider expanded={false}>
-      <MusicServiceProvider value={musicService}>
+      <MusicServiceTabProvider value={musicServiceTab}>
         {children}
-      </MusicServiceProvider>
+      </MusicServiceTabProvider>
     </ExpandedProvider>
   );
 };

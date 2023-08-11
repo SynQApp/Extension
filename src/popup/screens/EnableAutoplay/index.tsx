@@ -2,22 +2,20 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import { useMusicService } from '~player-ui/contexts/MusicService';
-import { useTabs } from '~player-ui/contexts/Tabs';
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {
-  const { selectedTab } = useTabs();
-  const { musicService } = useMusicService();
+  const tab = useMusicServiceTab();
 
   const handleEnableClick = () => {
     // Switch to selected tab
-    chrome.tabs.update(selectedTab?.id, { active: true });
+    chrome.tabs.update(tab?.tabId, { active: true });
   };
 
   const musicServiceName = useMemo(
-    () => (selectedTab?.url ? getMusicServiceName(musicService) : ''),
-    [selectedTab]
+    () => getMusicServiceName(tab.musicService),
+    [tab]
   );
 
   return (

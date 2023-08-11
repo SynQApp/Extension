@@ -10,6 +10,9 @@ import { expandedStyle } from '../player-ui/util/expandedStyle';
 
 const Layout = ({ children }) => {
   const expanded = useExpanded();
+  const tabs = useAppSelector((state) => state.musicServiceTabs);
+
+  console.log({ tabs });
 
   return (
     <Container $expanded={expanded}>

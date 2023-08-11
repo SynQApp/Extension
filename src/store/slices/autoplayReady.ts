@@ -1,10 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { RepeatMode, type Session } from '~types';
-
 const autoplayReadySlice = createSlice({
   name: 'autoplayReady',
-  initialState: false,
+  initialState: true,
   reducers: {
     setAutoplayReady: (_, action) => action.payload
   }

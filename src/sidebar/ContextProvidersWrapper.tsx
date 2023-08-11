@@ -1,10 +1,10 @@
 import { useWindowSize } from 'usehooks-ts';
 
 import { ExpandedProvider } from '~player-ui/contexts/Expanded';
-import { MusicServiceProvider } from '~player-ui/contexts/MusicService';
+import { MusicServiceTabProvider } from '~player-ui/contexts/MusicServiceTab';
 import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
 
-import { useMusicService } from './hooks/useMusicService';
+import { useSidebarMusicServiceTab } from './hooks/useSidebarMusicServiceTab';
 
 const VERTICAL_BREAKPOINT = 775;
 
@@ -16,13 +16,13 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
   const { height } = useWindowSize();
   const expanded = height > VERTICAL_BREAKPOINT;
 
-  const musicService = useMusicService();
+  const musicServiceTab = useSidebarMusicServiceTab();
 
   return (
     <ExpandedProvider expanded={expanded}>
-      <MusicServiceProvider value={musicService}>
+      <MusicServiceTabProvider value={musicServiceTab}>
         <MarqueeStylesProvider>{children}</MarqueeStylesProvider>
-      </MusicServiceProvider>
+      </MusicServiceTabProvider>
     </ExpandedProvider>
   );
 };

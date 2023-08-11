@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
-import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 import { useAppDispatch, useAppSelector } from '~store';
 import { clearSearchResults } from '~store/slices/search';
@@ -10,8 +9,6 @@ import { sendMessage } from '~util/sendMessage';
 
 export const useSearchScreen = () => {
   const [query, setQuery] = useState('');
-  // const [tracks, setTracks] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const loading = useAppSelector((state) => state.search?.loading);
   const tracks = useAppSelector((state) => state.search?.results);
   const [addedTracks, setAddedTracks] = useState([]);
@@ -22,7 +19,6 @@ export const useSearchScreen = () => {
   );
   const sidebarRoot = useSidebarRoot();
   const dispatch = useAppDispatch();
-  // const { sendMessage } = useMusicService();
 
   const search = useCallback(async (searchQuery: string) => {
     setShowRecentSearches(false);
