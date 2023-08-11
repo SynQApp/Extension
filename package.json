@@ -54,6 +54,14 @@
     "permissions": [
       "tabs",
       "activeTab"
-    ]
+    ],
+    "externally_connectable": {
+      "matches": [
+        "*://music.apple.com/*",
+        "*://*.spotify.com/*",
+        "*://music.youtube.com/*",
+        "*://music.amazon.com/*"
+      ]
+    }
   }
 }

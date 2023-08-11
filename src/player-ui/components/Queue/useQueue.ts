@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 
-import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
-  const currentSongInfo = useCurrentSongInfo();
+  const currentTrack = useAppSelector((state) => state.currentTrack);
   const playbackState = usePlaybackState();
   const { sendMessage, musicService } = useMusicService();
 
@@ -23,7 +23,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
       queue = queue.slice(0);
     } else {
       const currentTrackIndex = queue.findIndex(
-        (item) => item.songInfo.id === currentSongInfo?.id
+        (item) => item.songInfo.id === currentTrack?.id
       );
 
       queue = queue.slice(currentTrackIndex);

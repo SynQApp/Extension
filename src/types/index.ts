@@ -9,7 +9,7 @@ export * from './PlayerState';
 export * from './QueueItem';
 export * from './RepeatMode';
 export * from './SessionControllerMessage';
-export * from './SessionDetails';
+export * from './Session';
 export * from './SessionQueueItem';
 export * from './Track';
 export * from './TrackSearchResult';

@@ -1,6 +1,6 @@
-import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import { useMusicService } from '~player-ui/contexts/MusicService';
+import { useAppSelector } from '~store';
 import { MusicControllerMessage, MusicService } from '~types';
 
 const LIKE_ENABLED_SERVICES = new Set([
@@ -16,7 +16,7 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 
 export const usePlayer = () => {
   const expanded = useExpanded();
-  const currentSongInfo = useCurrentSongInfo();
+  const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicService, sendMessage } = useMusicService();
 
   const handleLikeClick = LIKE_ENABLED_SERVICES.has(musicService)
@@ -37,7 +37,7 @@ export const usePlayer = () => {
 
   return {
     expanded,
-    currentSongInfo,
+    currentTrack,
     handleLikeClick,
     handleDislikeClick
   };

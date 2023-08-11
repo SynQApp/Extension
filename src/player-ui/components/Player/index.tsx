@@ -10,7 +10,7 @@ import { PlayerControls } from '../PlayerControls';
 import { usePlayer } from './usePlayer';
 
 export const Player = () => {
-  const { expanded, currentSongInfo, handleDislikeClick, handleLikeClick } =
+  const { expanded, currentTrack, handleDislikeClick, handleLikeClick } =
     usePlayer();
 
   return (
@@ -21,12 +21,12 @@ export const Player = () => {
     >
       <AlbumArtContainer $expanded={expanded}>
         <AlbumArt
-          liked={currentSongInfo?.isLiked}
-          disliked={currentSongInfo?.isDisliked}
+          liked={currentTrack?.isLiked}
+          disliked={currentTrack?.isDisliked}
           onLikeClick={handleLikeClick}
           onDislikeClick={handleDislikeClick}
-          trackName={currentSongInfo?.name}
-          src={currentSongInfo?.albumCoverUrl}
+          trackName={currentTrack?.name}
+          src={currentTrack?.albumCoverUrl}
         />
       </AlbumArtContainer>
       <PlayerControlsContainer $expanded={expanded}>

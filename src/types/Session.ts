@@ -1,6 +1,6 @@
 import type { Listener, RepeatMode } from '.';
 
-export interface SessionDetails {
+export interface Session {
   hostId: string;
   locked: boolean;
   repeatMode: RepeatMode;

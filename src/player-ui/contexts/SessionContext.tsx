@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react';
 
-import type { SessionDetails } from '~types';
+import type { Session } from '~types';
 
-const SessionDetailsContext = createContext<SessionDetails | null>(null);
+const SessionDetailsContext = createContext<Session | null>(null);
 
 interface SessionDetailsProviderProps {
   children: React.ReactNode;
-  sessionDetails: SessionDetails | null;
+  sessionDetails: Session | null;
 }
 
 /**

@@ -1,7 +1,9 @@
 import { UiProvider } from '@synq/ui';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 
 import { TabsProvider } from '~player-ui/contexts/Tabs';
+import { store } from '~store';
 
 import AppRoutes from './AppRoutes';
 import Layout from './Layout';
@@ -13,15 +15,17 @@ const App = () => {
 
   return (
     <MemoryRouter>
-      <TabsProvider value={tabs}>
-        <PopupContextProvidersWrapper>
-          <UiProvider>
-            <Layout>
-              <AppRoutes />
-            </Layout>
-          </UiProvider>
-        </PopupContextProvidersWrapper>
-      </TabsProvider>
+      <Provider store={store}>
+        <TabsProvider value={tabs}>
+          <PopupContextProvidersWrapper>
+            <UiProvider>
+              <Layout>
+                <AppRoutes />
+              </Layout>
+            </UiProvider>
+          </PopupContextProvidersWrapper>
+        </TabsProvider>
+      </Provider>
     </MemoryRouter>
   );
 };
