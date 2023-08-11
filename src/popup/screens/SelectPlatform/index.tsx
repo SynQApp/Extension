@@ -58,6 +58,7 @@ const SelectPlatformScreen = () => {
 const Container = styled.div`
   background-color: ${token('colors.background')};
   padding-top: ${token('spacing.md')};
+  padding-bottom: ${token('spacing.lg')};
   height: 100%;
   width: 100%;
 `;

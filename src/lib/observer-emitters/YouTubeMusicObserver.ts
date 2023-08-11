@@ -1,11 +1,12 @@
 import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
+import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
 import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { ObserverEmitter } from './IObserverEmitter';
+import type { MusicServiceObserver } from './MusicServiceObserver';
 
-export class YouTubeMusicObserverEmitter implements ObserverEmitter {
+export class YouTubeMusicObserver implements MusicServiceObserver {
   private _controller: YouTubeMusicController;
   private _hub: ReduxHub;
   private _onStateChangeHandler: () => void;
@@ -128,12 +129,26 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    const currentTrack = this._controller.getCurrentSongInfo();
-    this._hub.dispatch(setCurrentTrack(currentTrack));
+    const currentTrack = this._controller.getCurrentTrack();
+
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+      name: 'GET_SELF_TAB'
+    });
+
+    this._hub.dispatch(
+      updateMusicServiceTabPreview({
+        tabId: tab.id,
+        preview: currentTrack
+      })
+    );
+
+    if (window._SYNQ_SELECTED_TAB) {
+      this._hub.dispatch(setCurrentTrack(currentTrack));
+    }
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
-    if (this._paused) {
+    if (this._paused || !window._SYNQ_SELECTED_TAB) {
       return;
     }
 

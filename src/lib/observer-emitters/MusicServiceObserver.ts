@@ -4,7 +4,7 @@ import type { ValueOrPromise } from '~types';
  * Observer emitters are responsible for observing the state of the music player
  * and emitting events when the state changes.
  */
-export interface ObserverEmitter {
+export interface MusicServiceObserver {
   /**
    * Begin observing the music player and emitting events when the state changes.
    */

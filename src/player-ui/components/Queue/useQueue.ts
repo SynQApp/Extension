@@ -10,7 +10,7 @@ import { sendMessage } from '~util/sendMessage';
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
-  const tab = useMusicServiceTab();
+  const { musicServiceTab } = useMusicServiceTab();
 
   const queue = useMemo(() => {
     if (!playerState?.queue) {
@@ -37,8 +37,9 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   }, [playerState]);
 
   const musicServiceName = useMemo(
-    () => (tab ? getMusicServiceName(tab.musicService) : ''),
-    [tab]
+    () =>
+      musicServiceTab ? getMusicServiceName(musicServiceTab.musicService) : '',
+    [musicServiceTab]
   );
 
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {

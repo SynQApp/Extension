@@ -20,7 +20,11 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
 
   return (
     <ExpandedProvider expanded={expanded}>
-      <MusicServiceTabProvider value={musicServiceTab}>
+      <MusicServiceTabProvider
+        value={{
+          musicServiceTab
+        }}
+      >
         <MarqueeStylesProvider>{children}</MarqueeStylesProvider>
       </MusicServiceTabProvider>
     </ExpandedProvider>

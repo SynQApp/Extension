@@ -1,5 +1,5 @@
-import type { ObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
-import { ContentEvent, UiStateMessage } from '~types';
+import type { MusicServiceObserver } from '~lib/observer-emitters/MusicServiceObserver';
+import { UiStateMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
 const UI_STATE = {
@@ -8,7 +8,7 @@ const UI_STATE = {
 };
 
 export const createObserverEmitterHandler = (
-  observerEmitter: ObserverEmitter,
+  observerEmitter: MusicServiceObserver,
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {

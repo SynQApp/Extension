@@ -6,7 +6,8 @@ const mockActiveSession: Session = {
   hostId: '',
   locked: false,
   repeatMode: RepeatMode.NO_REPEAT,
-  listeners: []
+  listeners: [],
+  tabId: 0
 };
 
 const initialState: Session | null = mockActiveSession;

@@ -1,9 +1,10 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
+import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
 import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { ObserverEmitter } from './IObserverEmitter';
+import type { MusicServiceObserver } from './MusicServiceObserver';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',
@@ -14,7 +15,7 @@ const playbackStateChangedEvents = [
   'repeatModeDidChange'
 ];
 
-export class AppleMusicObserverEmitter implements ObserverEmitter {
+export class AppleMusicObserver implements MusicServiceObserver {
   private _controller: AppleMusicController;
   private _hub: ReduxHub;
   private _nowPlayingItemDidChangeHandler: () => void;
@@ -93,12 +94,26 @@ export class AppleMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    const currentTrack = this._controller.getCurrentSongInfo();
-    this._hub.dispatch(setCurrentTrack(currentTrack));
+    const currentTrack = this._controller.getCurrentTrack();
+
+    const tab = await this._hub.asyncPostMessage({
+      name: 'GET_SELF_TAB'
+    });
+
+    this._hub.dispatch(
+      updateMusicServiceTabPreview({
+        tabId: tab.id,
+        preview: currentTrack
+      })
+    );
+
+    if (window._SYNQ_SELECTED_TAB) {
+      this._hub.dispatch(setCurrentTrack(currentTrack));
+    }
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
-    if (this._paused) {
+    if (this._paused || !window._SYNQ_SELECTED_TAB) {
       return;
     }
 

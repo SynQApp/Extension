@@ -16,14 +16,6 @@ const useControllerScreen = () => {
   const [showQueue, setShowQueue] = useState(false);
 
   useEffect(() => {
-    if (!musicServiceTabs || musicServiceTabs.length === 0) {
-      navigate('/select-platform');
-    } else if (musicServiceTabs.length > 1) {
-      navigate('/select-tab');
-    }
-  }, [musicServiceTabs]);
-
-  useEffect(() => {
     if (!autoplayReady) {
       navigate('/enable-autoplay');
     }

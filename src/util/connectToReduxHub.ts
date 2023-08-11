@@ -8,7 +8,7 @@ export interface ReduxHub {
     listener: (message: any, from?: number, to?: number) => void
   ) => void;
   postMessage: (message: any) => void;
-  asyncPostMessage: (message: any) => Promise<any>;
+  asyncPostMessage: <T = any>(message: any) => Promise<T>;
   port: chrome.runtime.Port;
 }
 

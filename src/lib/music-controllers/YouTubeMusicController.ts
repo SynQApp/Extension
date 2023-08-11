@@ -5,7 +5,6 @@ import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types/TrackSearchResult';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
 
@@ -179,8 +178,13 @@ export class YouTubeMusicController implements MusicController {
     };
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<Track> {
+  public getCurrentTrack(): Track {
     const videoDetails = this._appState.player?.playerResponse?.videoDetails;
+
+    if (!videoDetails) {
+      return null;
+    }
+
     const trackId = videoDetails.videoId;
 
     const queueItem = this._appState.queue.items.find((queueItem) => {

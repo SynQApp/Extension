@@ -6,16 +6,16 @@ import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {
-  const tab = useMusicServiceTab();
+  const { musicServiceTab } = useMusicServiceTab();
 
   const handleEnableClick = () => {
     // Switch to selected tab
-    chrome.tabs.update(tab?.tabId, { active: true });
+    chrome.tabs.update(musicServiceTab?.tabId, { active: true });
   };
 
   const musicServiceName = useMemo(
-    () => getMusicServiceName(tab.musicService),
-    [tab]
+    () => getMusicServiceName(musicServiceTab.musicService),
+    [musicServiceTab]
   );
 
   return (

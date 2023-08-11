@@ -3,11 +3,11 @@ import { MusicServiceTabProvider } from '~player-ui/contexts/MusicServiceTab';
 import { usePopupMusicServiceTab } from '~popup/hooks/usePopupMusicServiceTab';
 
 export const PopupContextProvidersWrapper = ({ children }: any) => {
-  const musicServiceTab = usePopupMusicServiceTab();
+  const musicServiceTabValue = usePopupMusicServiceTab();
 
   return (
     <ExpandedProvider expanded={false}>
-      <MusicServiceTabProvider value={musicServiceTab}>
+      <MusicServiceTabProvider value={musicServiceTabValue}>
         {children}
       </MusicServiceTabProvider>
     </ExpandedProvider>

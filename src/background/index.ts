@@ -6,8 +6,14 @@ import { updateMusicServiceTabs } from './updateMusicServiceTabs';
 
 popupListener();
 startHub();
+updateMusicServiceTabs();
 
 chrome.runtime.onConnectExternal.addListener((port) => {
   registerHubMessageHandlers(port);
-  updateMusicServiceTabs(port);
+
+  updateMusicServiceTabs();
+
+  port.onDisconnect.addListener(() => {
+    updateMusicServiceTabs();
+  });
 });

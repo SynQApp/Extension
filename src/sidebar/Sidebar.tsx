@@ -5,8 +5,11 @@ import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
 import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
+import { TabsMessage } from '~types/TabsMessage';
 import { sendMessage } from '~util/sendMessage';
 
 import SidebarRoutes from './Routes';
@@ -16,7 +19,7 @@ export const Sidebar = () => {
   const theme = useTheme();
   const sessionDetails = useAppSelector((state) => state.session);
 
-  const handleToggleButtonClick = () => {
+  const handleToggleButtonClick = async () => {
     const newShow = !show;
 
     setShow(newShow);
@@ -25,6 +28,16 @@ export const Sidebar = () => {
       name: newShow
         ? UiStateMessage.SIDEBAR_OPENED
         : UiStateMessage.SIDEBAR_CLOSED
+    });
+
+    // TODO: Remove this as it is only needed for testing purposes
+    const tab = await sendToBackground({
+      name: 'GET_SELF_TAB'
+    });
+
+    sendMessage({
+      name: TabsMessage.SET_SELECTED_TAB,
+      body: tab.id
     });
   };
 

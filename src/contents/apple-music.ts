@@ -2,8 +2,9 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
+import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
 import { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
-import { AppleMusicObserverEmitter } from '~lib/observer-emitters/AppleMusicObserverEmitter';
+import { AppleMusicObserver } from '~lib/observer-emitters/AppleMusicObserver';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
@@ -19,10 +20,11 @@ const initialize = (extensionId: string) => {
   const hub = connectToReduxHub(extensionId);
 
   const controller = new AppleMusicController();
-  const observer = new AppleMusicObserverEmitter(controller, hub);
+  const observer = new AppleMusicObserver(controller, hub);
 
   createMusicControllerHandler(controller, hub);
   createObserverEmitterHandler(observer, hub);
+  createTabsHandler(controller, observer, hub);
 
   observer.observe();
 };
