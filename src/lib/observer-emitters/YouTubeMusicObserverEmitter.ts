@@ -1,8 +1,7 @@
 import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
-import { EventMessage } from '~types';
+import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { ObserverEmitter } from './IObserverEmitter';
 
@@ -126,13 +125,7 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    // await mainWorldToBackground({
-    //   name: EventMessage.SONG_INFO_UPDATED,
-    //   body: this._controller.getCurrentSongInfo()
-    // });
-
     const currentTrack = this._controller.getCurrentSongInfo();
-
     this._hub.dispatch(setCurrentTrack(currentTrack));
   }
 
@@ -141,9 +134,7 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.PLAYBACK_UPDATED,
-      body: this._controller.getPlayerState()
-    });
+    const playerState = this._controller.getPlayerState();
+    this._hub.dispatch(setPlayerState(playerState));
   }
 }

@@ -4,15 +4,17 @@ import type { PlayerState } from '~types';
 
 const initialState: PlayerState | null = null;
 
-const currentTrackSlice = createSlice({
+const playerStateSlice = createSlice({
   name: 'playerState',
   initialState: initialState,
   reducers: {
-    setPlayerState: (_, action) => action.payload,
+    setPlayerState: (_, action) => {
+      return action.payload;
+    },
     clearPlayerState: () => null
   }
 });
 
-export const { setPlayerState, clearPlayerState } = currentTrackSlice.actions;
+export const { setPlayerState, clearPlayerState } = playerStateSlice.actions;
 
-export default currentTrackSlice.reducer;
+export default playerStateSlice.reducer;

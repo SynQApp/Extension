@@ -209,7 +209,7 @@ export class AmazonMusicController implements MusicController {
     return {
       currentTime: Math.round(maestro.getCurrentTime()),
       isPlaying: maestro.isPlaying(),
-      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
+      repeatMode: REPEAT_STATES_MAP[playbackStates?.repeat?.state],
       volume: maestro.getVolume() * 100,
       queue: await this.getQueue()
     };
@@ -334,9 +334,9 @@ export class AmazonMusicController implements MusicController {
 
         return {
           albumCoverUrl: track.image,
-          trackName: track.primaryText?.text,
+          name: track.primaryText?.text,
           artistName: track.secondaryText,
-          trackId: primaryUrl.searchParams.get('trackAsin')
+          id: primaryUrl.searchParams.get('trackAsin')
         };
       }) ?? []
     );

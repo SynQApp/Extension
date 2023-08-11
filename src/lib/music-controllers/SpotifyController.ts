@@ -1,7 +1,7 @@
 import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track } from '~types';
+import type { PlayerState, QueueItem, Track, TrackSearchResult } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { waitForElement } from '~util/waitForElement';
@@ -358,7 +358,7 @@ export class SpotifyController implements MusicController {
     return;
   }
 
-  public async searchTracks(query: string): Promise<Track[]> {
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
     const queryParams = new URLSearchParams({
       q: query,
       type: 'track',

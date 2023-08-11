@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
-import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -9,15 +8,15 @@ import { getMusicServiceName } from '~util/musicService';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
-  const playbackState = usePlaybackState();
+  const playerState = useAppSelector((state) => state.playerState);
   const { sendMessage, musicService } = useMusicService();
 
   const queue = useMemo(() => {
-    if (!playbackState?.queue) {
+    if (!playerState?.queue) {
       return [];
     }
 
-    let { queue } = playbackState;
+    let { queue } = playerState;
 
     if (startAt === 'top') {
       queue = queue.slice(0);
@@ -34,7 +33,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     }
 
     return queue;
-  }, [playbackState]);
+  }, [playerState]);
 
   const musicServiceName = useMemo(
     () => getMusicServiceName(musicService),

@@ -1,6 +1,12 @@
 import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type {
+  PlayerState,
+  QueueItem,
+  Track,
+  TrackSearchResult,
+  ValueOrPromise
+} from '~types';
 import { findIndexes } from '~util/findIndexes';
 
 import type { MusicController } from './MusicController';
@@ -174,7 +180,7 @@ export class AppleMusicController implements MusicController {
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
-  public async searchTracks(query: string): Promise<Track[]> {
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
     const player = this.getPlayer();
 
     const results = await player.api.search(query, {

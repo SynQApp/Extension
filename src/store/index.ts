@@ -4,7 +4,7 @@ import {
   useDispatch,
   useSelector
 } from 'react-redux';
-import { syncStorage } from 'redux-persist-webextension-storage';
+import { localStorage } from 'redux-persist-webextension-storage';
 
 import {
   FLUSH,
@@ -23,9 +23,10 @@ import { Storage } from '@plasmohq/storage';
 import rootReducer, { type RootState } from './combinedReducers';
 
 const persistConfig: PersistConfig<unknown> = {
-  key: 'root',
+  key: 'synq-root',
   version: 1,
-  storage: syncStorage
+  // @ts-ignore
+  storage: localStorage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -51,7 +52,7 @@ export const persistor = persistStore(store);
 
 // This is what makes Redux sync properly with multiple pages
 // Open your extension's options page and popup to see it in action
-new Storage().watch({
+new Storage({ area: 'local' }).watch({
   [`persist:${persistConfig.key}`]: () => {
     persistor.resync();
   }

@@ -1,5 +1,8 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
+import { setCurrentTrack } from '~store/slices/currentTrack';
+import { setPlayerState } from '~store/slices/playerState';
 import { EventMessage } from '~types';
+import type { ReduxHub } from '~util/connectToReduxHub';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 
 import type { ObserverEmitter } from './IObserverEmitter';
@@ -15,12 +18,14 @@ const playbackStateChangedEvents = [
 
 export class AppleMusicObserverEmitter implements ObserverEmitter {
   private _controller: AppleMusicController;
+  private _hub: ReduxHub;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
   private _paused = true;
 
-  constructor(controller: AppleMusicController) {
+  constructor(controller: AppleMusicController, hub: ReduxHub) {
     this._controller = controller;
+    this._hub = hub;
   }
 
   public observe(): void {
@@ -87,10 +92,8 @@ export class AppleMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.SONG_INFO_UPDATED,
-      body: this._controller.getCurrentSongInfo()
-    });
+    const currentTrack = this._controller.getCurrentSongInfo();
+    this._hub.dispatch(setCurrentTrack(currentTrack));
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
@@ -98,9 +101,7 @@ export class AppleMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.PLAYBACK_UPDATED,
-      body: this._controller.getPlayerState()
-    });
+    const playerState = this._controller.getPlayerState();
+    this._hub.dispatch(setPlayerState(playerState));
   }
 }

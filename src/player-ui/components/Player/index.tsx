@@ -1,7 +1,6 @@
 import { Flex, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
-import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
 

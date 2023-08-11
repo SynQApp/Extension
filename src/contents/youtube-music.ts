@@ -28,11 +28,8 @@ const initialize = (extensionId: string) => {
 };
 
 onDocumentReady(() => {
-  console.log('onDocumentReady');
-
   window.addEventListener('SynQ:ExtensionId', (e) => {
     const extensionId = (e as CustomEvent).detail;
-    console.log('SynQ:ExtensionId', extensionId);
     initialize(extensionId);
   });
 

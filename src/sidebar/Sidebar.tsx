@@ -2,20 +2,36 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
+import { useWindowSize } from 'usehooks-ts';
 
 import { useMusicService } from '~player-ui/contexts/MusicService';
 import { useSessionDetails } from '~player-ui/contexts/SessionContext';
+import { useAppDispatch, useAppSelector } from '~store';
+import { collapse, expand } from '~store/slices/expanded';
 import { UiStateMessage } from '~types';
 
 import SidebarRoutes from './Routes';
 
+const VERTICAL_BREAKPOINT = 775;
+
 export const Sidebar = () => {
+  const { height } = useWindowSize();
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const { sendMessage } = useMusicService();
   const sessionDetails = useSessionDetails();
+  const dispatch = useAppDispatch();
+  const expanded = useAppSelector((state) => state.expanded);
+
+  useEffect(() => {
+    if (height > VERTICAL_BREAKPOINT && !expanded) {
+      dispatch(expand());
+    } else if (height <= VERTICAL_BREAKPOINT && expanded) {
+      dispatch(collapse());
+    }
+  }, [height]);
 
   const handleToggleButtonClick = () => {
     const newShow = !show;

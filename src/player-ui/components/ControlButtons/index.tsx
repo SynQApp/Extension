@@ -2,9 +2,9 @@ import { Button, Flex, Icon, Slider, token } from '@synq/ui';
 import { useState } from 'react';
 import styled, { css, useTheme } from 'styled-components';
 
-import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
 import { expandedStyle } from '~player-ui/util/expandedStyle';
+import { useAppSelector } from '~store';
 import { RepeatMode } from '~types';
 
 interface ControlButtonsProps {
@@ -31,7 +31,7 @@ export const ControlButtons = ({
   volume
 }: ControlButtonsProps) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const expanded = useExpanded();
+  const expanded = useAppSelector((state) => state.expanded);
 
   const handleVolumeMouseEnter = () => {
     setShowVolumeSlider(true);
