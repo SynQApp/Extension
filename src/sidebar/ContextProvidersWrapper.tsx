@@ -2,7 +2,6 @@ import { useWindowSize } from 'usehooks-ts';
 
 import { ExpandedProvider } from '~player-ui/contexts/Expanded';
 import { MusicServiceTabProvider } from '~player-ui/contexts/MusicServiceTab';
-import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
 
 import { useSidebarMusicServiceTab } from './hooks/useSidebarMusicServiceTab';
 
@@ -25,7 +24,7 @@ export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
           musicServiceTab
         }}
       >
-        <MarqueeStylesProvider>{children}</MarqueeStylesProvider>
+        {children}
       </MusicServiceTabProvider>
     </ExpandedProvider>
   );
