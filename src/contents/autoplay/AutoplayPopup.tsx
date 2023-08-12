@@ -2,6 +2,7 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setAutoplayReady } from '~store/slices/autoplayReady';
 import { MusicControllerMessage } from '~types';
@@ -14,6 +15,7 @@ const AutoplayPopup = () => {
   const autoplayReady = useAppSelector((state) => state.autoplayReady);
   const [showPopup, setShowPopup] = useState(false);
   const dispatch = useAppDispatch();
+  const { musicServiceTab } = useMusicServiceTab();
 
   useEffect(() => {
     if (firstRender) {
@@ -28,9 +30,12 @@ const AutoplayPopup = () => {
   const handleEnableClick = () => {
     dispatch(setAutoplayReady(true));
 
-    sendMessage({
-      name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
+      },
+      musicServiceTab.tabId
+    );
   };
 
   const handleOverlayClick = () => {

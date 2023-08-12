@@ -43,6 +43,8 @@ export const usePopupMusicServiceTab = () => {
       return;
     }
 
+    console.log('Setting selected tab', musicServiceTab.tabId);
+
     sendMessage({
       name: TabsMessage.SET_SELECTED_TAB,
       body: musicServiceTab.tabId

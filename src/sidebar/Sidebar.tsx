@@ -7,6 +7,7 @@ import { css, styled, useTheme } from 'styled-components';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
@@ -30,15 +31,17 @@ export const Sidebar = () => {
         : UiStateMessage.SIDEBAR_CLOSED
     });
 
-    // TODO: Remove this as it is only needed for testing purposes
-    const tab = await sendToBackground({
-      name: 'GET_SELF_TAB'
-    });
+    if (newShow) {
+      // TODO: Remove this as it is only needed for testing purposes
+      const tab = await sendToBackground<chrome.tabs.Tab>({
+        name: 'GET_SELF_TAB'
+      });
 
-    sendMessage({
-      name: TabsMessage.SET_SELECTED_TAB,
-      body: tab.id
-    });
+      sendMessage({
+        name: TabsMessage.SET_SELECTED_TAB,
+        body: tab.id
+      });
+    }
   };
 
   return (

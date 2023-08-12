@@ -4,7 +4,10 @@ import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
 import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicServiceObserver } from './MusicServiceObserver';
+import {
+  MusicServiceObserver,
+  type ObserverStateFilter
+} from './MusicServiceObserver';
 
 const playbackStateChangedEvents = [
   'playpause',
@@ -13,13 +16,12 @@ const playbackStateChangedEvents = [
   'timeupdate'
 ];
 
-export class AmazonMusicObserver implements MusicServiceObserver {
+export class AmazonMusicObserver extends MusicServiceObserver {
   private _controller: AmazonMusicController;
   private _hub: ReduxHub;
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;
   private _unsubscribeStoreObserver: () => void;
-  private _paused = true;
 
   private _currentState: {
     trackId: string;
@@ -31,6 +33,8 @@ export class AmazonMusicObserver implements MusicServiceObserver {
   };
 
   constructor(controller: AmazonMusicController, hub: ReduxHub) {
+    super();
+
     this._controller = controller;
     this._currentState = {
       trackId: undefined,
@@ -63,12 +67,8 @@ export class AmazonMusicObserver implements MusicServiceObserver {
     }, 500);
   }
 
-  public pause(): void {
-    this._paused = true;
-  }
-
-  public resume(): void {
-    this._paused = false;
+  public resume(filter?: ObserverStateFilter): void {
+    super.resume(filter);
 
     this._sendPlaybackUpdatedMessage();
     this._sendSongInfoUpdatedMessage();
@@ -112,7 +112,7 @@ export class AmazonMusicObserver implements MusicServiceObserver {
     const maestro = await this._controller.getMaestroInstance();
 
     this._unsubscribeStoreObserver = store.subscribe(async () => {
-      if (this._paused) {
+      if (this.isPaused()) {
         return;
       }
 
@@ -146,7 +146,7 @@ export class AmazonMusicObserver implements MusicServiceObserver {
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
-    if (this._paused) {
+    if (this.isPaused()) {
       return;
     }
 
@@ -156,20 +156,22 @@ export class AmazonMusicObserver implements MusicServiceObserver {
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
-      updateMusicServiceTabPreview({
-        tabId: tab.id,
-        preview: currentTrack
-      })
-    );
+    if (!this.isPaused('tabs')) {
+      this._hub.dispatch(
+        updateMusicServiceTabPreview({
+          tabId: tab.id,
+          preview: currentTrack
+        })
+      );
+    }
 
-    if (window._SYNQ_SELECTED_TAB) {
+    if (!this.isPaused('currentTrack')) {
       this._hub.dispatch(setCurrentTrack(currentTrack));
     }
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
-    if (this._paused || !window._SYNQ_SELECTED_TAB) {
+    if (this.isPaused('playerState')) {
       return;
     }
 

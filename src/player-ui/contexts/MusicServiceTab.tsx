@@ -7,8 +7,10 @@ interface MusicServiceTabContextValue {
   setMusicServiceTab?: (tab: MusicServiceTab) => void;
 }
 
-const MusicServiceTabContext =
-  createContext<MusicServiceTabContextValue | null>(null);
+const MusicServiceTabContext = createContext<MusicServiceTabContextValue>({
+  musicServiceTab: null,
+  setMusicServiceTab: () => {}
+});
 
 interface MusicServiceTabProviderProps {
   children: React.ReactNode;

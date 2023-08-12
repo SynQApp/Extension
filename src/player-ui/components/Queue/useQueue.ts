@@ -49,13 +49,16 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
-    sendMessage({
-      name: MusicControllerMessage.PLAY_QUEUE_TRACK,
-      body: {
-        trackId,
-        duplicateIndex
-      }
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.PLAY_QUEUE_TRACK,
+        body: {
+          trackId,
+          duplicateIndex
+        }
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   return {

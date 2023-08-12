@@ -5,7 +5,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
 import { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
-import { AmazonMusicObserver } from '~lib/observer-emitters/AmazonMusicObserver';
+import { AmazonMusicObserver } from '~lib/observers/AmazonMusicObserver';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 

@@ -12,11 +12,7 @@ export const createMusicControllerHandler = (
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {
-    if (!window._SYNQ_SELECTED_TAB) {
-      return;
-    }
-
-    switch (message.name) {
+    switch (message?.name) {
       case MusicControllerMessage.PLAY:
         await controller.play();
         break;

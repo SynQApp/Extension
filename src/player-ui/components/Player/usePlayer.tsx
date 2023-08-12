@@ -24,9 +24,12 @@ export const usePlayer = () => {
     musicServiceTab?.musicService
   )
     ? () => {
-        sendMessage({
-          name: MusicControllerMessage.TOGGLE_LIKE
-        });
+        sendMessage(
+          {
+            name: MusicControllerMessage.TOGGLE_LIKE
+          },
+          musicServiceTab.tabId
+        );
       }
     : undefined;
 
@@ -34,9 +37,12 @@ export const usePlayer = () => {
     musicServiceTab?.musicService
   )
     ? () => {
-        sendMessage({
-          name: MusicControllerMessage.TOGGLE_DISLIKE
-        });
+        sendMessage(
+          {
+            name: MusicControllerMessage.TOGGLE_DISLIKE
+          },
+          musicServiceTab.tabId
+        );
       }
     : undefined;
 

@@ -5,7 +5,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
 import { SpotifyController } from '~lib/music-controllers/SpotifyController';
-import { SpotifyObserver } from '~lib/observer-emitters/SpotifyObserver';
+import { SpotifyObserver } from '~lib/observers/SpotifyObserver';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useLocalStorage } from 'usehooks-ts';
 
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 import { useAppDispatch, useAppSelector } from '~store';
 import { clearSearchResults } from '~store/slices/search';
@@ -17,6 +18,7 @@ export const useSearchScreen = () => {
     'recentSearches',
     [] as string[]
   );
+  const { musicServiceTab } = useMusicServiceTab();
   const sidebarRoot = useSidebarRoot();
   const dispatch = useAppDispatch();
 
@@ -31,12 +33,15 @@ export const useSearchScreen = () => {
       return [searchQuery, ...prevRecentSearches].slice(0, 10);
     });
 
-    sendMessage({
-      name: MusicControllerMessage.SEARCH_TRACKS,
-      body: {
-        query: searchQuery
-      }
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.SEARCH_TRACKS,
+        body: {
+          query: searchQuery
+        }
+      },
+      musicServiceTab?.tabId
+    );
   }, []);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {

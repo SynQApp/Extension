@@ -4,7 +4,10 @@ import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
 import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicServiceObserver } from './MusicServiceObserver';
+import {
+  MusicServiceObserver,
+  type ObserverStateFilter
+} from './MusicServiceObserver';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',
@@ -15,14 +18,15 @@ const playbackStateChangedEvents = [
   'repeatModeDidChange'
 ];
 
-export class AppleMusicObserver implements MusicServiceObserver {
+export class AppleMusicObserver extends MusicServiceObserver {
   private _controller: AppleMusicController;
   private _hub: ReduxHub;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
-  private _paused = true;
 
   constructor(controller: AppleMusicController, hub: ReduxHub) {
+    super();
+
     this._controller = controller;
     this._hub = hub;
   }
@@ -63,12 +67,8 @@ export class AppleMusicObserver implements MusicServiceObserver {
     }, 500);
   }
 
-  public pause(): void {
-    this._paused = true;
-  }
-
-  public resume(): void {
-    this._paused = false;
+  public resume(filter: ObserverStateFilter): void {
+    super.resume(filter);
 
     this._sendPlaybackUpdatedMessage();
     this._sendSongInfoUpdatedMessage();
@@ -90,7 +90,7 @@ export class AppleMusicObserver implements MusicServiceObserver {
   }
 
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
-    if (this._paused) {
+    if (this.isPaused()) {
       return;
     }
 
@@ -100,20 +100,22 @@ export class AppleMusicObserver implements MusicServiceObserver {
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
-      updateMusicServiceTabPreview({
-        tabId: tab.id,
-        preview: currentTrack
-      })
-    );
+    if (!this.isPaused('tabs')) {
+      this._hub.dispatch(
+        updateMusicServiceTabPreview({
+          tabId: tab.id,
+          preview: currentTrack
+        })
+      );
+    }
 
-    if (window._SYNQ_SELECTED_TAB) {
+    if (!this.isPaused('currentTrack')) {
       this._hub.dispatch(setCurrentTrack(currentTrack));
     }
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
-    if (this._paused || !window._SYNQ_SELECTED_TAB) {
+    if (this.isPaused('playerState')) {
       return;
     }
 

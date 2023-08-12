@@ -8,11 +8,7 @@ export const createAutoplayReadyHandler = (
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {
-    if (!window._SYNQ_SELECTED_TAB) {
-      return;
-    }
-
-    switch (message.name) {
+    switch (message?.name) {
       case AutoplayMessage.CHECK_AUTOPLAY_READY:
         const controllerReady = await controller.isReady();
         const autoPlayReady =
