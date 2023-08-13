@@ -7,6 +7,7 @@ import { StyleSheetManager } from 'styled-components';
 import { sendToBackground } from '@plasmohq/messaging';
 
 import Sidebar from '~sidebar';
+import { ContextProvidersWrapper } from '~sidebar/ContextProvidersWrapper';
 import { SidebarRootProvider } from '~sidebar/contexts/SidebarRoot';
 import { store } from '~store';
 
@@ -41,14 +42,16 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
   return (
     <SidebarRootProvider sidebarRoot={container}>
       <Provider store={store}>
-        <UiProvider>
-          <StyleSheetManager
-            target={anchor.element.firstElementChild.shadowRoot as any}
-          >
-            <Sidebar />
-            <AutoplayPopup />
-          </StyleSheetManager>
-        </UiProvider>
+        <ContextProvidersWrapper>
+          <UiProvider>
+            <StyleSheetManager
+              target={anchor.element.firstElementChild.shadowRoot as any}
+            >
+              <Sidebar />
+              <AutoplayPopup />
+            </StyleSheetManager>
+          </UiProvider>
+        </ContextProvidersWrapper>
       </Provider>
     </SidebarRootProvider>
   );

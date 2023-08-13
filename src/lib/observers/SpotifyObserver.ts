@@ -2,19 +2,24 @@ import wait from 'waait';
 
 import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
 import { setCurrentTrack } from '~store/slices/currentTrack';
+import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
 import { setPlayerState } from '~store/slices/playerState';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { waitForElement } from '~util/waitForElement';
 
-import type { ObserverEmitter } from './IObserverEmitter';
+import {
+  MusicServiceObserver,
+  type ObserverStateFilter
+} from './MusicServiceObserver';
 
-export class SpotifyObserverEmitter implements ObserverEmitter {
+export class SpotifyObserver extends MusicServiceObserver {
   private _controller: SpotifyController;
   private _hub: ReduxHub;
   private _mutationObservers: MutationObserver[] = [];
-  private _paused = true;
 
   constructor(controller: SpotifyController, hub: ReduxHub) {
+    super();
+
     this._controller = controller;
     this._hub = hub;
   }
@@ -26,12 +31,8 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     await this._setupSongInfoObserver();
   }
 
-  public pause(): void {
-    this._paused = true;
-  }
-
-  public resume(): void {
-    this._paused = false;
+  public resume(filter: ObserverStateFilter): void {
+    super.resume(filter);
 
     this._sendPlaybackUpdatedMessage();
     this._sendSongInfoUpdatedMessage();
@@ -132,27 +133,43 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
   private async _sendSongInfoUpdatedMessage(): Promise<void> {
     const nowPlayingText = this._getNowPlayingText();
 
-    if (this._paused) {
+    if (this.isPaused()) {
       return;
     }
 
     for (let i = 0; i < 5; i++) {
-      const songInfo = await this._controller.getCurrentSongInfo();
+      const songInfo = await this._controller.getCurrentTrack();
 
       if (!nowPlayingText.includes(songInfo.name)) {
         await wait(1000);
         continue;
       }
 
-      const currentTrack = await this._controller.getCurrentSongInfo();
-      this._hub.dispatch(setCurrentTrack(currentTrack));
+      const currentTrack = await this._controller.getCurrentTrack();
+
+      const tab = await this._hub.asyncPostMessage({
+        name: 'GET_SELF_TAB'
+      });
+
+      if (!this.isPaused('tabs')) {
+        this._hub.dispatch(
+          updateMusicServiceTabPreview({
+            tabId: tab.id,
+            preview: currentTrack
+          })
+        );
+      }
+
+      if (!this.isPaused('currentTrack')) {
+        this._hub.dispatch(setCurrentTrack(currentTrack));
+      }
 
       return;
     }
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
-    if (this._paused) {
+    if (this.isPaused('playerState')) {
       return;
     }
 

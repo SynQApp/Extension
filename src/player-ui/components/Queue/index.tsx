@@ -30,7 +30,7 @@ export const Queue = ({
           imageIconOverlay={isPlaying ? 'playing' : 'play'}
           imageUrl={songInfo?.albumCoverUrl}
           key={index}
-          onClick={() => handlePlayQueueTrack(songInfo?.id, index)}
+          onImageClick={() => handlePlayQueueTrack(songInfo?.id, index)}
           primaryText={songInfo?.name}
           rightNode={
             <TrackListItemMenu

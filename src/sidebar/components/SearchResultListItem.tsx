@@ -34,7 +34,7 @@ export const SearchResultListItem = ({
       imageAlt={`Album cover for ${trackName}`}
       primaryText={trackName}
       secondaryText={artistName}
-      onClick={onPlayNowClick}
+      onImageClick={onPlayNowClick}
       rightNode={
         <ActionsFlex justify="center" align="center">
           <GradientAddButton added={added} onClick={onAddClick} />

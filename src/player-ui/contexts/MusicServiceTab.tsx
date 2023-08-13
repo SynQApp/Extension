@@ -2,11 +2,19 @@ import React, { createContext, useContext } from 'react';
 
 import type { MusicServiceTab } from '~types';
 
-const MusicServiceTabContext = createContext<MusicServiceTab | null>(null);
+interface MusicServiceTabContextValue {
+  musicServiceTab: MusicServiceTab;
+  setMusicServiceTab?: (tab: MusicServiceTab) => void;
+}
+
+const MusicServiceTabContext = createContext<MusicServiceTabContextValue>({
+  musicServiceTab: null,
+  setMusicServiceTab: () => {}
+});
 
 interface MusicServiceTabProviderProps {
   children: React.ReactNode;
-  value: MusicServiceTab;
+  value: MusicServiceTabContextValue;
 }
 
 /**

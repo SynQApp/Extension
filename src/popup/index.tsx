@@ -1,17 +1,26 @@
 import './index.css';
 
-import { useEffect } from 'react';
+import { UiProvider } from '@synq/ui';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
 
-import { POPUP_PORT } from '~constants/port';
+import { store } from '~store';
 
 import App from './App';
+import PopupContextProvidersWrapper from './contexts/PopupContextProvidersWrapper';
 
 const Popup = () => {
-  useEffect(() => {
-    chrome.runtime.connect({ name: POPUP_PORT });
-  }, []);
-
-  return <App />;
+  return (
+    <Provider store={store}>
+      <MemoryRouter>
+        <PopupContextProvidersWrapper>
+          <UiProvider>
+            <App />
+          </UiProvider>
+        </PopupContextProvidersWrapper>
+      </MemoryRouter>
+    </Provider>
+  );
 };
 
 export default Popup;

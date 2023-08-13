@@ -18,21 +18,31 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 export const usePlayer = () => {
   const expanded = useExpanded();
   const currentTrack = useAppSelector((state) => state.currentTrack);
-  const tab = useMusicServiceTab();
+  const { musicServiceTab } = useMusicServiceTab();
 
-  const handleLikeClick = LIKE_ENABLED_SERVICES.has(tab?.musicService)
+  const handleLikeClick = LIKE_ENABLED_SERVICES.has(
+    musicServiceTab?.musicService
+  )
     ? () => {
-        sendMessage({
-          name: MusicControllerMessage.TOGGLE_LIKE
-        });
+        sendMessage(
+          {
+            name: MusicControllerMessage.TOGGLE_LIKE
+          },
+          musicServiceTab.tabId
+        );
       }
     : undefined;
 
-  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(tab?.musicService)
+  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(
+    musicServiceTab?.musicService
+  )
     ? () => {
-        sendMessage({
-          name: MusicControllerMessage.TOGGLE_DISLIKE
-        });
+        sendMessage(
+          {
+            name: MusicControllerMessage.TOGGLE_DISLIKE
+          },
+          musicServiceTab.tabId
+        );
       }
     : undefined;
 

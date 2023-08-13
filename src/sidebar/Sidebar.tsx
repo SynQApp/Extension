@@ -5,8 +5,12 @@ import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
+import { TabsMessage } from '~types/TabsMessage';
 import { sendMessage } from '~util/sendMessage';
 
 import SidebarRoutes from './Routes';
@@ -16,7 +20,7 @@ export const Sidebar = () => {
   const theme = useTheme();
   const sessionDetails = useAppSelector((state) => state.session);
 
-  const handleToggleButtonClick = () => {
+  const handleToggleButtonClick = async () => {
     const newShow = !show;
 
     setShow(newShow);
@@ -26,6 +30,18 @@ export const Sidebar = () => {
         ? UiStateMessage.SIDEBAR_OPENED
         : UiStateMessage.SIDEBAR_CLOSED
     });
+
+    if (newShow) {
+      // TODO: Remove this as it is only needed for testing purposes
+      const tab = await sendToBackground<chrome.tabs.Tab>({
+        name: 'GET_SELF_TAB'
+      });
+
+      sendMessage({
+        name: TabsMessage.SET_SELECTED_TAB,
+        body: tab.id
+      });
+    }
   };
 
   return (
