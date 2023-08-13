@@ -1,7 +1,8 @@
-import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
 import { useExpanded } from '~player-ui/contexts/Expanded';
-import { useMusicService } from '~player-ui/contexts/MusicService';
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
+import { useAppSelector } from '~store';
 import { MusicControllerMessage, MusicService } from '~types';
+import { sendMessage } from '~util/sendMessage';
 
 const LIKE_ENABLED_SERVICES = new Set([
   MusicService.AMAZON_MUSIC,
@@ -16,10 +17,10 @@ const DISLIKE_ENABLED_SERVICES = new Set([
 
 export const usePlayer = () => {
   const expanded = useExpanded();
-  const currentSongInfo = useCurrentSongInfo();
-  const { musicService, sendMessage } = useMusicService();
+  const currentTrack = useAppSelector((state) => state.currentTrack);
+  const tab = useMusicServiceTab();
 
-  const handleLikeClick = LIKE_ENABLED_SERVICES.has(musicService)
+  const handleLikeClick = LIKE_ENABLED_SERVICES.has(tab?.musicService)
     ? () => {
         sendMessage({
           name: MusicControllerMessage.TOGGLE_LIKE
@@ -27,7 +28,7 @@ export const usePlayer = () => {
       }
     : undefined;
 
-  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(musicService)
+  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(tab?.musicService)
     ? () => {
         sendMessage({
           name: MusicControllerMessage.TOGGLE_DISLIKE
@@ -37,7 +38,7 @@ export const usePlayer = () => {
 
   return {
     expanded,
-    currentSongInfo,
+    currentTrack,
     handleLikeClick,
     handleDislikeClick
   };

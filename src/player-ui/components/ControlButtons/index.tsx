@@ -1,6 +1,6 @@
 import { Button, Flex, Icon, Slider, token } from '@synq/ui';
 import { useState } from 'react';
-import styled, { css, useTheme } from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';

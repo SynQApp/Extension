@@ -2,63 +2,45 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
-import { useMusicService } from '~player-ui/contexts/MusicService';
-import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
-import { useTabs } from '~player-ui/contexts/Tabs';
-import { AutoplayMessage, MusicService } from '~types';
-
-const LIKE_ENABLED_SERVICES = new Set([
-  MusicService.AMAZON_MUSIC,
-  MusicService.SPOTIFY,
-  MusicService.YOUTUBE_MUSIC
-]);
-
-const DISLIKE_ENABLED_SERVICES = new Set([
-  MusicService.AMAZON_MUSIC,
-  MusicService.YOUTUBE_MUSIC
-]);
+import { useAppSelector } from '~store';
+import { AutoplayMessage } from '~types';
+import { sendMessage } from '~util/sendMessage';
 
 const useControllerScreen = () => {
   const expanded = useExpanded();
-  const { allTabs, loading: tabsLoading } = useTabs();
+  const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
   const navigate = useNavigate();
-  const playbackState = usePlaybackState();
-  const { sendMessage } = useMusicService();
+  const playerState = useAppSelector((state) => state.playerState);
+  const autoplayReady = useAppSelector((state) => state.autoplayReady);
 
   const [showQueue, setShowQueue] = useState(false);
 
   useEffect(() => {
-    if (tabsLoading) {
-      return;
-    }
-
-    if (!allTabs || allTabs.length === 0) {
+    if (!musicServiceTabs || musicServiceTabs.length === 0) {
       navigate('/select-platform');
-    } else if (allTabs.length > 1) {
+    } else if (musicServiceTabs.length > 1) {
       navigate('/select-tab');
     }
-  }, [tabsLoading]);
+  }, [musicServiceTabs]);
 
   useEffect(() => {
-    const checkAutoplayReady = async () => {
-      const res = await sendMessage({
-        name: AutoplayMessage.CHECK_AUTOPLAY_READY,
-        body: {
-          awaitResponse: true
-        }
-      });
+    if (!autoplayReady) {
+      navigate('/enable-autoplay');
+    }
+  }, [autoplayReady]);
 
-      if (res?.ready === false) {
-        navigate('/enable-autoplay');
+  useEffect(() => {
+    sendMessage({
+      name: AutoplayMessage.CHECK_AUTOPLAY_READY,
+      body: {
+        awaitResponse: true
       }
-    };
-
-    checkAutoplayReady();
-  }, [sendMessage]);
+    });
+  }, []);
 
   const queueCount = useMemo(
-    () => playbackState?.queue?.length ?? 0,
-    [playbackState]
+    () => playerState?.queue?.length ?? 0,
+    [playerState]
   );
 
   return {

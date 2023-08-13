@@ -4,6 +4,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import { YouTubeMusicObserverEmitter } from '~lib/observer-emitters/YouTubeMusicObserverEmitter';
+import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -12,16 +13,25 @@ export const config: PlasmoCSConfig = {
   world: 'MAIN'
 };
 
-const initialize = () => {
+const initialize = (extensionId: string) => {
   console.info('SynQ: Initializing YouTube Music');
 
-  const controller = new YouTubeMusicController();
-  const observer = new YouTubeMusicObserverEmitter(controller);
+  const hub = connectToReduxHub(extensionId);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
+  const controller = new YouTubeMusicController(hub);
+  const observer = new YouTubeMusicObserverEmitter(controller, hub);
+
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
 
   observer.observe();
 };
 
-onDocumentReady(initialize);
+onDocumentReady(() => {
+  window.addEventListener('SynQ:ExtensionId', (e) => {
+    const extensionId = (e as CustomEvent).detail;
+    initialize(extensionId);
+  });
+
+  window.dispatchEvent(new CustomEvent('SynQ:GetExtensionId'));
+});

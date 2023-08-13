@@ -1,7 +1,7 @@
 import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, SongInfo } from '~types';
+import type { PlayerState, QueueItem, Track, TrackSearchResult } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { waitForElement } from '~util/waitForElement';
@@ -241,7 +241,7 @@ export class SpotifyController implements MusicController {
     };
   }
 
-  public async getCurrentSongInfo(): Promise<SongInfo> {
+  public async getCurrentSongInfo(): Promise<Track> {
     const currentlyPlaying = await this._fetchSpotify(
       SpotifyEndpoints.CURRENTLY_PLAYING,
       'GET'
@@ -337,10 +337,7 @@ export class SpotifyController implements MusicController {
     }
 
     const queue = await this.getQueue(true);
-    const trackIndexes = findIndexes(
-      queue,
-      (item) => item.songInfo.trackId === id
-    );
+    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     const trackRows = await waitForElement(
@@ -361,7 +358,7 @@ export class SpotifyController implements MusicController {
     return;
   }
 
-  public async searchTracks(query: string): Promise<SongInfo[]> {
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
     const queryParams = new URLSearchParams({
       q: query,
       type: 'track',
@@ -404,10 +401,10 @@ export class SpotifyController implements MusicController {
     queueButton.click();
   }
 
-  private _itemToSongInfo(item: any): SongInfo {
+  private _itemToSongInfo(item: any): Track {
     return {
-      trackId: item.id,
-      trackName: item.name,
+      id: item.id,
+      name: item.name,
       albumName: item.album.name,
       artistName: item.artists.map((artist) => artist.name).join(' & '),
       albumCoverUrl: item.album.images[0].url,

@@ -1,6 +1,6 @@
-export interface SongInfo {
-  trackId: string;
-  trackName: string;
+export interface Track {
+  id: string;
+  name: string;
   artistName: string;
   albumName: string;
   albumCoverUrl: string;

@@ -1,13 +1,18 @@
 import { token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
+import { useExpanded } from '~player-ui/contexts/Expanded';
+import { useAppSelector } from '~store';
+
 import Header from '../player-ui/components/Header';
-import { useExpanded } from '../player-ui/contexts/Expanded';
 import { type Expandable } from '../player-ui/types';
 import { expandedStyle } from '../player-ui/util/expandedStyle';
 
 const Layout = ({ children }) => {
   const expanded = useExpanded();
+  const tabs = useAppSelector((state) => state.musicServiceTabs);
+
+  console.log({ tabs });
 
   return (
     <Container $expanded={expanded}>

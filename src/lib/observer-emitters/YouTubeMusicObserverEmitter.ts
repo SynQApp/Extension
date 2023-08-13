@@ -1,18 +1,21 @@
 import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
-import { EventMessage } from '~types';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
+import { setCurrentTrack } from '~store/slices/currentTrack';
+import { setPlayerState } from '~store/slices/playerState';
+import type { ReduxHub } from '~util/connectToReduxHub';
 
 import type { ObserverEmitter } from './IObserverEmitter';
 
 export class YouTubeMusicObserverEmitter implements ObserverEmitter {
   private _controller: YouTubeMusicController;
+  private _hub: ReduxHub;
   private _onStateChangeHandler: () => void;
   private _onVideoDataChangeHandler: () => void;
   private _mutationObservers: MutationObserver[] = [];
   private _paused = true;
 
-  constructor(controller: YouTubeMusicController) {
+  constructor(controller: YouTubeMusicController, hub: ReduxHub) {
     this._controller = controller;
+    this._hub = hub;
   }
 
   public observe(): void {
@@ -32,6 +35,9 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
 
   public resume(): void {
     this._paused = false;
+
+    this._sendPlaybackUpdatedMessage();
+    this._sendSongInfoUpdatedMessage();
   }
 
   public unobserve(): void {
@@ -122,10 +128,8 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.SONG_INFO_UPDATED,
-      body: this._controller.getCurrentSongInfo()
-    });
+    const currentTrack = this._controller.getCurrentSongInfo();
+    this._hub.dispatch(setCurrentTrack(currentTrack));
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
@@ -133,9 +137,7 @@ export class YouTubeMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.PLAYBACK_UPDATED,
-      body: this._controller.getPlayerState()
-    });
+    const playerState = this._controller.getPlayerState();
+    this._hub.dispatch(setPlayerState(playerState));
   }
 }

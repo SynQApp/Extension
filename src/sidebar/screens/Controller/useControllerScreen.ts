@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExpanded } from '~player-ui/contexts/Expanded';
-import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
 import { useSidebarRoot } from '~sidebar/contexts/SidebarRoot';
 import { useWindowSize } from '~sidebar/hooks/useWindowSize';
+import { useAppSelector } from '~store';
 
 const NON_EXPANDED_OFFSET = 325;
 const EXPANDED_OFFSET = 530;
@@ -15,7 +15,7 @@ export const useControllerScreen = () => {
   const expanded = useExpanded();
   const navigate = useNavigate();
   const { height } = useWindowSize();
-  const playbackState = usePlaybackState();
+  const playerState = useAppSelector((state) => state.playerState);
   const sidebarRoot = useSidebarRoot();
 
   const shouldDisplayQueue = useMemo(() => {
@@ -23,7 +23,7 @@ export const useControllerScreen = () => {
   }, [height]);
 
   const queueDisplayCount = useMemo(() => {
-    if (!playbackState?.queue?.length) {
+    if (!playerState?.queue?.length) {
       return 0;
     }
 
@@ -34,7 +34,7 @@ export const useControllerScreen = () => {
           QUEUE_ITEM_HEIGHT
       )
     );
-  }, [expanded, height, playbackState]);
+  }, [expanded, height, playerState]);
 
   const handleNavigateToSearch = () => {
     navigate('/search');

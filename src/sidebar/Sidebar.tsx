@@ -5,17 +5,16 @@ import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
-import { useMusicService } from '~player-ui/contexts/MusicService';
-import { useSessionDetails } from '~player-ui/contexts/SessionContext';
+import { useAppSelector } from '~store';
 import { UiStateMessage } from '~types';
+import { sendMessage } from '~util/sendMessage';
 
 import SidebarRoutes from './Routes';
 
 export const Sidebar = () => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
-  const { sendMessage } = useMusicService();
-  const sessionDetails = useSessionDetails();
+  const sessionDetails = useAppSelector((state) => state.session);
 
   const handleToggleButtonClick = () => {
     const newShow = !show;

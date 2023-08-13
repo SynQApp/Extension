@@ -2,40 +2,35 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
-import { AutoplayMessage, ContentEvent, MusicControllerMessage } from '~types';
+import { useAppDispatch, useAppSelector } from '~store';
+import { setAutoplayReady } from '~store/slices/autoplayReady';
+import { MusicControllerMessage } from '~types';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
+import { sendMessage } from '~util/sendMessage';
+
+let firstRender = true;
 
 const AutoplayPopup = () => {
+  const autoplayReady = useAppSelector((state) => state.autoplayReady);
   const [showPopup, setShowPopup] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const handler = (e: CustomEvent) => {
-      const message = e.detail.body;
+    if (firstRender) {
+      dispatch(setAutoplayReady(true));
+      firstRender = false;
+      return;
+    }
 
-      if (message.name === AutoplayMessage.DISPLAY_AUTOPLAY_POPUP) {
-        setShowPopup(true);
-      }
-    };
-
-    window.addEventListener(ContentEvent.TO_CONTENT, handler);
-
-    return () => {
-      window.removeEventListener(ContentEvent.TO_CONTENT, handler);
-    };
-  }, []);
+    setShowPopup(!autoplayReady);
+  }, [autoplayReady]);
 
   const handleEnableClick = () => {
-    setShowPopup(false);
+    dispatch(setAutoplayReady(true));
 
-    const event = new CustomEvent(ContentEvent.TO_CONTENT, {
-      detail: {
-        body: {
-          name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
-        }
-      }
+    sendMessage({
+      name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
     });
-
-    window.dispatchEvent(event);
   };
 
   const handleOverlayClick = () => {

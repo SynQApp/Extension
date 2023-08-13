@@ -1,6 +1,7 @@
 import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
-import { EventMessage } from '~types';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
+import { setCurrentTrack } from '~store/slices/currentTrack';
+import { setPlayerState } from '~store/slices/playerState';
+import type { ReduxHub } from '~util/connectToReduxHub';
 
 import type { ObserverEmitter } from './IObserverEmitter';
 
@@ -13,6 +14,7 @@ const playbackStateChangedEvents = [
 
 export class AmazonMusicObserverEmitter implements ObserverEmitter {
   private _controller: AmazonMusicController;
+  private _hub: ReduxHub;
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;
   private _unsubscribeStoreObserver: () => void;
@@ -27,7 +29,7 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
     isPlaying: boolean;
   };
 
-  constructor(controller: AmazonMusicController) {
+  constructor(controller: AmazonMusicController, hub: ReduxHub) {
     this._controller = controller;
     this._currentState = {
       trackId: undefined,
@@ -37,6 +39,7 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
       repeat: undefined,
       isPlaying: undefined
     };
+    this._hub = hub;
   }
 
   public observe(): void {
@@ -65,6 +68,9 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
 
   public resume(): void {
     this._paused = false;
+
+    this._sendPlaybackUpdatedMessage();
+    this._sendSongInfoUpdatedMessage();
   }
 
   public async unobserve(): Promise<void> {
@@ -112,22 +118,22 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
       const state = store.getState();
 
       if (state.Storage?.RATINGS?.TRACK_RATING !== this._currentState.rating) {
-        this._currentState.rating = state.Storage.RATINGS.TRACK_RATING;
+        this._currentState.rating = state.Storage?.RATINGS?.TRACK_RATING;
         await this._sendSongInfoUpdatedMessage();
       }
 
       if (state.Media?.mediaId !== this._currentState.trackId) {
-        this._currentState.trackId = state.Media.mediaId;
+        this._currentState.trackId = state.Media?.mediaId;
         await this._sendSongInfoUpdatedMessage();
       }
 
       if (state.PlaybackStates?.repeat?.state !== this._currentState.repeat) {
-        this._currentState.repeat = state.PlaybackStates.repeat.state;
+        this._currentState.repeat = state.PlaybackStates?.repeat?.state;
         await this._sendPlaybackUpdatedMessage();
       }
 
       if (state.PlaybackStates?.play?.state !== this._currentState.isPlaying) {
-        this._currentState.isPlaying = state.PlaybackStates.play.state;
+        this._currentState.isPlaying = state.PlaybackStates?.play?.state;
         await this._sendPlaybackUpdatedMessage();
       }
 
@@ -143,10 +149,8 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.SONG_INFO_UPDATED,
-      body: this._controller.getCurrentSongInfo()
-    });
+    const currentTrack = this._controller.getCurrentSongInfo();
+    this._hub.dispatch(setCurrentTrack(currentTrack));
   }
 
   private async _sendPlaybackUpdatedMessage(): Promise<void> {
@@ -154,9 +158,7 @@ export class AmazonMusicObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.PLAYBACK_UPDATED,
-      body: await this._controller.getPlayerState()
-    });
+    const playerState = await this._controller.getPlayerState();
+    this._hub.dispatch(setPlayerState(playerState));
   }
 }

@@ -1,19 +1,22 @@
 import wait from 'waait';
 
 import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
-import { EventMessage } from '~types';
-import { mainWorldToBackground } from '~util/mainWorldToBackground';
+import { setCurrentTrack } from '~store/slices/currentTrack';
+import { setPlayerState } from '~store/slices/playerState';
+import type { ReduxHub } from '~util/connectToReduxHub';
 import { waitForElement } from '~util/waitForElement';
 
 import type { ObserverEmitter } from './IObserverEmitter';
 
 export class SpotifyObserverEmitter implements ObserverEmitter {
   private _controller: SpotifyController;
+  private _hub: ReduxHub;
   private _mutationObservers: MutationObserver[] = [];
   private _paused = true;
 
-  constructor(controller: SpotifyController) {
+  constructor(controller: SpotifyController, hub: ReduxHub) {
     this._controller = controller;
+    this._hub = hub;
   }
 
   public async observe(): Promise<void> {
@@ -29,6 +32,9 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
 
   public resume(): void {
     this._paused = false;
+
+    this._sendPlaybackUpdatedMessage();
+    this._sendSongInfoUpdatedMessage();
   }
 
   public unobserve(): void {
@@ -85,12 +91,16 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     this._mutationObservers.push(playerStateObserver);
   }
 
+  private _getNowPlayingText() {
+    const nowPlayingWidget = document.querySelector(
+      'div[data-testid="now-playing-widget"]'
+    );
+    return nowPlayingWidget?.getAttribute('aria-label') ?? '';
+  }
+
   private async _setupSongInfoObserver() {
     const songInfoObserver = new MutationObserver(async () => {
-      const nowPlayingWidget = document.querySelector(nowPlayingWidgetSelector);
-      await this._sendSongInfoUpdatedMessage(
-        nowPlayingWidget?.getAttribute('aria-label') ?? ''
-      );
+      await this._sendSongInfoUpdatedMessage();
     });
 
     const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
@@ -119,9 +129,9 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
    * song info. This method will retry up to 5 times to get the current song info that
    * matches the UI's song info.
    */
-  private async _sendSongInfoUpdatedMessage(
-    nowPlayingText: string
-  ): Promise<void> {
+  private async _sendSongInfoUpdatedMessage(): Promise<void> {
+    const nowPlayingText = this._getNowPlayingText();
+
     if (this._paused) {
       return;
     }
@@ -129,15 +139,15 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
     for (let i = 0; i < 5; i++) {
       const songInfo = await this._controller.getCurrentSongInfo();
 
-      if (!nowPlayingText.includes(songInfo.trackName)) {
+      if (!nowPlayingText.includes(songInfo.name)) {
         await wait(1000);
         continue;
       }
 
-      await mainWorldToBackground({
-        name: EventMessage.SONG_INFO_UPDATED,
-        body: songInfo
-      });
+      const currentTrack = await this._controller.getCurrentSongInfo();
+      this._hub.dispatch(setCurrentTrack(currentTrack));
+
+      return;
     }
   }
 
@@ -146,9 +156,8 @@ export class SpotifyObserverEmitter implements ObserverEmitter {
       return;
     }
 
-    await mainWorldToBackground({
-      name: EventMessage.PLAYBACK_UPDATED,
-      body: await this._controller.getPlayerState()
-    });
+    const playerState = await this._controller.getPlayerState();
+    const action = setPlayerState(playerState);
+    this._hub.dispatch(action);
   }
 }

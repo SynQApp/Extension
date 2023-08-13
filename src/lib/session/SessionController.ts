@@ -1,4 +1,4 @@
-import type { Listener, SessionDetails, SessionQueueItem } from '~types';
+import type { Listener, Session, SessionQueueItem } from '~types';
 
 class NotImplementedError extends Error {
   constructor() {
@@ -27,7 +27,7 @@ export class SessionController {
     throw new NotImplementedError();
   }
 
-  public getSessionDetails(): SessionDetails {
+  public getSessionDetails(): Session {
     throw new NotImplementedError();
   }
 

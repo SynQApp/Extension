@@ -1,6 +1,12 @@
 import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type {
+  PlayerState,
+  QueueItem,
+  Track,
+  TrackSearchResult,
+  ValueOrPromise
+} from '~types';
 import { findIndexes } from '~util/findIndexes';
 
 import type { MusicController } from './MusicController';
@@ -139,7 +145,7 @@ export class AppleMusicController implements MusicController {
     return playerState;
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+  public getCurrentSongInfo(): ValueOrPromise<Track> {
     return this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem);
   }
 
@@ -168,16 +174,13 @@ export class AppleMusicController implements MusicController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(
-      queue,
-      (item) => item.songInfo.trackId === id
-    );
+    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
-  public async searchTracks(query: string): Promise<SongInfo[]> {
+  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
     const player = this.getPlayer();
 
     const results = await player.api.search(query, {
@@ -197,15 +200,15 @@ export class AppleMusicController implements MusicController {
     return me.subscription.active;
   }
 
-  private _mediaItemToSongInfo(mediaItem: any): SongInfo {
+  private _mediaItemToSongInfo(mediaItem: any): Track {
     const track = mediaItem.attributes;
 
     return {
       albumCoverUrl: track.artwork.url.replace('{w}x{h}bb', '100x100'),
       albumName: track.albumName,
       artistName: track.artistName,
-      trackName: track.name,
-      trackId: track.playParams.id,
+      name: track.name,
+      id: track.playParams.id,
       duration: Math.round(track.durationInMillis / 1000)
     };
   }

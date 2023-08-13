@@ -1,29 +1,29 @@
 import { useMemo } from 'react';
 
-import { useCurrentSongInfo } from '~player-ui/contexts/CurrentSongInfo';
-import { useMusicService } from '~player-ui/contexts/MusicService';
-import { usePlaybackState } from '~player-ui/contexts/PlaybackState';
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
+import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
+import { sendMessage } from '~util/sendMessage';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
-  const currentSongInfo = useCurrentSongInfo();
-  const playbackState = usePlaybackState();
-  const { sendMessage, musicService } = useMusicService();
+  const currentTrack = useAppSelector((state) => state.currentTrack);
+  const playerState = useAppSelector((state) => state.playerState);
+  const tab = useMusicServiceTab();
 
   const queue = useMemo(() => {
-    if (!playbackState?.queue) {
+    if (!playerState?.queue) {
       return [];
     }
 
-    let { queue } = playbackState;
+    let { queue } = playerState;
 
     if (startAt === 'top') {
       queue = queue.slice(0);
     } else {
       const currentTrackIndex = queue.findIndex(
-        (item) => item.songInfo.trackId === currentSongInfo?.trackId
+        (item) => item.songInfo.id === currentTrack?.id
       );
 
       queue = queue.slice(currentTrackIndex);
@@ -34,17 +34,17 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     }
 
     return queue;
-  }, [playbackState]);
+  }, [playerState]);
 
   const musicServiceName = useMemo(
-    () => getMusicServiceName(musicService),
-    [musicService]
+    () => (tab ? getMusicServiceName(tab.musicService) : ''),
+    [tab]
   );
 
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
     const trackIndexes = findIndexes(
       queue,
-      (item) => item.songInfo.trackId === trackId
+      (item) => item.songInfo.id === trackId
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 

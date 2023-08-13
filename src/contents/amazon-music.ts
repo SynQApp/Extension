@@ -5,6 +5,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
 import { AmazonMusicObserverEmitter } from '~lib/observer-emitters/AmazonMusicObserverEmitter';
+import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -13,17 +14,26 @@ export const config: PlasmoCSConfig = {
   world: 'MAIN'
 };
 
-const initialize = () => {
+const initialize = (extensionId: string) => {
   console.info('SynQ: Initializing Amazon Music');
 
-  const controller = new AmazonMusicController();
-  const observer = new AmazonMusicObserverEmitter(controller);
+  const hub = connectToReduxHub(extensionId);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
-  createAutoplayReadyHandler(controller);
+  const controller = new AmazonMusicController();
+  const observer = new AmazonMusicObserverEmitter(controller, hub);
+
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
+  createAutoplayReadyHandler(controller, hub);
 
   observer.observe();
 };
 
-onDocumentReady(initialize);
+onDocumentReady(() => {
+  window.addEventListener('SynQ:ExtensionId', (e) => {
+    const extensionId = (e as CustomEvent).detail;
+    initialize(extensionId);
+  });
+
+  window.dispatchEvent(new CustomEvent('SynQ:GetExtensionId'));
+});

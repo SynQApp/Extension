@@ -1,8 +1,9 @@
 import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
 
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types/TrackSearchResult';
+import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
 import { mainWorldToBackground } from '~util/mainWorldToBackground';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -50,12 +51,15 @@ export class YouTubeMusicController implements MusicController {
   private _curtain: HTMLDivElement;
   private _unmuteVolume: number = 50;
   private _ytmServiceClient: YoutubeMusicServiceClient;
+  private _hub: ReduxHub;
 
-  constructor() {
+  constructor(hub: ReduxHub) {
     this._createNavigationWrapper();
     this._addCurtainStyles();
 
     this._ytmServiceClient = new YoutubeMusicServiceClient();
+
+    this._hub = hub;
   }
 
   public prepareForAutoplay(): ValueOrPromise<void> {
@@ -175,7 +179,7 @@ export class YouTubeMusicController implements MusicController {
     };
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+  public getCurrentSongInfo(): ValueOrPromise<Track> {
     const videoDetails = this._appState.player?.playerResponse?.videoDetails;
     const trackId = videoDetails.videoId;
 
@@ -185,7 +189,7 @@ export class YouTubeMusicController implements MusicController {
       return rendererData?.videoId === trackId;
     });
 
-    const songInfo: SongInfo = this._queueItemToSongInfo(queueItem);
+    const songInfo: Track = this._queueItemToSongInfo(queueItem);
 
     const isLiked =
       (
@@ -236,10 +240,7 @@ export class YouTubeMusicController implements MusicController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(
-      queue,
-      (item) => item.songInfo.trackId === id
-    );
+    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
@@ -250,8 +251,8 @@ export class YouTubeMusicController implements MusicController {
 
     return searchResults.results.map((result) => {
       const trackSearchResult: TrackSearchResult = {
-        trackId: result.id,
-        trackName: result.trackName,
+        id: result.id,
+        name: result.trackName,
         artistName: result.artists.join(', '),
         albumCoverUrl: result.albumCoverUrl
       };
@@ -312,7 +313,7 @@ export class YouTubeMusicController implements MusicController {
     return thumbnails.find((thumbnail) => thumbnail.width >= 100).url;
   }
 
-  private _queueItemToSongInfo(queueItem: any): SongInfo {
+  private _queueItemToSongInfo(queueItem: any): Track {
     const rendererData = this._getQueueItemRendererData(queueItem);
 
     const trackId = rendererData.videoId;
@@ -326,8 +327,8 @@ export class YouTubeMusicController implements MusicController {
 
     return {
       duration: lengthTextToSeconds(rendererData.lengthText.runs[0].text),
-      trackId,
-      trackName,
+      id: trackId,
+      name: trackName,
       artistName: artist,
       albumName: album,
       albumCoverUrl
@@ -381,7 +382,7 @@ export class YouTubeMusicController implements MusicController {
   }
 
   private async _addCurtain() {
-    const screenshot = await mainWorldToBackground({ name: 'SCREENSHOT' });
+    const screenshot = await this._hub.asyncPostMessage({ name: 'SCREENSHOT' });
 
     this._curtain = document.createElement('div');
     this._curtain.className = 'synq-curtain';

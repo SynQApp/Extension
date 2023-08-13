@@ -5,6 +5,7 @@ import { styled } from 'styled-components';
 import Header from '~player-ui/components/Header';
 import { useExpanded } from '~player-ui/contexts/Expanded';
 import type { Expandable } from '~player-ui/types';
+import { useAppSelector } from '~store';
 
 interface LayoutProps {
   children: React.ReactNode;

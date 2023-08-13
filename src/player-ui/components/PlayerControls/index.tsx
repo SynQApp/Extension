@@ -11,8 +11,8 @@ import { usePlayerControls } from './usePlayerControls';
 export const PlayerControls = () => {
   const {
     expanded,
-    currentSongInfo,
-    playbackState,
+    currentTrack,
+    playerState,
     handleTogglePausePlay,
     handleNext,
     handlePrevious,
@@ -30,27 +30,27 @@ export const PlayerControls = () => {
         forwardedAs="h2"
         $expanded={expanded}
       >
-        {currentSongInfo?.trackName ?? '-'}
+        {currentTrack?.name ?? '-'}
       </TrackTitle>
       <TrackArtist
         type="body"
         size={expanded ? 'sm' : 'xs'}
         $expanded={expanded}
       >
-        {currentSongInfo?.artistName ?? '-'}
+        {currentTrack?.artistName ?? '-'}
       </TrackArtist>
       <TrackSeekerContainer>
         <TrackSeeker
-          currentTime={playbackState?.currentTime}
-          duration={currentSongInfo?.duration}
+          currentTime={playerState?.currentTime}
+          duration={currentTrack?.duration}
           onSeek={handleSeek}
         />
       </TrackSeekerContainer>
       <ControlButtonsContainer $expanded={expanded}>
         <ControlButtons
-          isPlaying={playbackState?.isPlaying}
-          volume={playbackState?.volume}
-          repeatMode={playbackState?.repeatMode}
+          isPlaying={playerState?.isPlaying}
+          volume={playerState?.volume}
+          repeatMode={playerState?.repeatMode}
           onPausePlay={handleTogglePausePlay}
           onNext={handleNext}
           onPrevious={handlePrevious}

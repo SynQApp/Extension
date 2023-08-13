@@ -1,5 +1,6 @@
 import type { ObserverEmitter } from '~lib/observer-emitters/IObserverEmitter';
 import { ContentEvent, UiStateMessage } from '~types';
+import type { ReduxHub } from '~util/connectToReduxHub';
 
 const UI_STATE = {
   popupOpen: false,
@@ -7,42 +8,38 @@ const UI_STATE = {
 };
 
 export const createObserverEmitterHandler = (
-  observerEmitter: ObserverEmitter
+  observerEmitter: ObserverEmitter,
+  hub: ReduxHub
 ) => {
-  window.addEventListener(
-    ContentEvent.TO_CONTENT,
-    async (event: CustomEvent) => {
-      const message = event.detail.body;
+  hub.addListener(async (message) => {
+    switch (message.name) {
+      case UiStateMessage.POPUP_OPENED:
+        UI_STATE.popupOpen = true;
+        await observerEmitter.resume();
+        break;
 
-      switch (message.name) {
-        case UiStateMessage.POPUP_OPENED:
-          UI_STATE.popupOpen = true;
-          await observerEmitter.resume();
-          break;
+      case UiStateMessage.POPUP_CLOSED:
+        UI_STATE.popupOpen = false;
 
-        case UiStateMessage.POPUP_CLOSED:
-          UI_STATE.popupOpen = false;
+        if (!UI_STATE.sidebarOpen) {
+          await observerEmitter.pause();
+        }
 
-          if (!UI_STATE.sidebarOpen) {
-            await observerEmitter.pause();
-          }
+        break;
 
-          break;
+      case UiStateMessage.SIDEBAR_OPENED:
+        UI_STATE.sidebarOpen = true;
+        await observerEmitter.resume();
+        break;
 
-        case UiStateMessage.SIDEBAR_OPENED:
-          UI_STATE.sidebarOpen = true;
-          await observerEmitter.resume();
-          break;
+      case UiStateMessage.SIDEBAR_CLOSED:
+        UI_STATE.sidebarOpen = false;
 
-        case UiStateMessage.SIDEBAR_CLOSED:
-          UI_STATE.sidebarOpen = false;
+        if (!UI_STATE.popupOpen) {
+          await observerEmitter.pause();
+        }
 
-          if (!UI_STATE.popupOpen) {
-            await observerEmitter.pause();
-          }
-
-          break;
-      }
+        break;
     }
-  );
+  });
 };

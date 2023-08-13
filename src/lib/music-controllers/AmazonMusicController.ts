@@ -2,7 +2,7 @@ import type { Store } from 'redux';
 
 import { BASE_API_URL, BASE_APP_URL } from '~constants/amazon';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, SongInfo, ValueOrPromise } from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { convertToAscii, generateRequestId } from '~util/skyfireUtils';
@@ -209,19 +209,19 @@ export class AmazonMusicController implements MusicController {
     return {
       currentTime: Math.round(maestro.getCurrentTime()),
       isPlaying: maestro.isPlaying(),
-      repeatMode: REPEAT_STATES_MAP[playbackStates.repeat.state],
+      repeatMode: REPEAT_STATES_MAP[playbackStates?.repeat?.state],
       volume: maestro.getVolume() * 100,
       queue: await this.getQueue()
     };
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<SongInfo> {
+  public getCurrentSongInfo(): ValueOrPromise<Track> {
     const appState = this.getStore().getState();
     const media = appState.Media;
 
-    const songInfo: SongInfo = {
-      trackId: media.mediaId,
-      trackName: media.title,
+    const songInfo: Track = {
+      id: media.mediaId,
+      name: media.title,
       albumName: media.albumName,
       albumCoverUrl: media.artwork,
       artistName: media.artistName,
@@ -284,7 +284,7 @@ export class AmazonMusicController implements MusicController {
     const currentTrack = await this.getCurrentSongInfo();
 
     // If current track is the same as the one we want to play, just restart it
-    if (currentTrack.trackId === id && duplicateIndex === 0) {
+    if (currentTrack.id === id && duplicateIndex === 0) {
       this.seekTo(0);
       return;
     }
@@ -293,16 +293,16 @@ export class AmazonMusicController implements MusicController {
 
     const trackIndexes = findIndexes(
       queueItems,
-      (item) => item.songInfo.trackId === id
+      (item) => item.songInfo.id === id
     );
     const trackIndex = trackIndexes[duplicateIndex];
 
     const queueItem = queueItems[trackIndex];
 
     const playTrackAction = this._createPlayAtQueueEntityAction(
-      queueItem.songInfo.trackId,
+      queueItem.songInfo.id,
       queueItem.queueItemId,
-      currentTrack.trackId
+      currentTrack.id
     );
 
     this.getStore().dispatch(playTrackAction);
@@ -334,9 +334,9 @@ export class AmazonMusicController implements MusicController {
 
         return {
           albumCoverUrl: track.image,
-          trackName: track.primaryText?.text,
+          name: track.primaryText?.text,
           artistName: track.secondaryText,
-          trackId: primaryUrl.searchParams.get('trackAsin')
+          id: primaryUrl.searchParams.get('trackAsin')
         };
       }) ?? []
     );
@@ -372,7 +372,7 @@ export class AmazonMusicController implements MusicController {
     });
   }
 
-  private _queueItemToSongInfo(item: any): SongInfo {
+  private _queueItemToSongInfo(item: any): Track {
     const searchParams = new URLSearchParams(
       item?.primaryLink?.deeplink?.split('?')[1]
     );
@@ -380,8 +380,8 @@ export class AmazonMusicController implements MusicController {
     const trackId = searchParams.get('trackAsin');
 
     return {
-      trackId,
-      trackName: item.primaryText,
+      id: trackId,
+      name: item.primaryText,
       artistName: item.secondaryText1,
       albumName: item.secondaryText2,
       albumCoverUrl: item.image,

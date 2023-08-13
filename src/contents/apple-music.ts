@@ -4,6 +4,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
 import { AppleMusicObserverEmitter } from '~lib/observer-emitters/AppleMusicObserverEmitter';
+import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
@@ -12,16 +13,25 @@ export const config: PlasmoCSConfig = {
   world: 'MAIN'
 };
 
-const initialize = () => {
+const initialize = (extensionId: string) => {
   console.info('SynQ: Initializing Apple Music');
 
-  const controller = new AppleMusicController();
-  const observer = new AppleMusicObserverEmitter(controller);
+  const hub = connectToReduxHub(extensionId);
 
-  createMusicControllerHandler(controller);
-  createObserverEmitterHandler(observer);
+  const controller = new AppleMusicController();
+  const observer = new AppleMusicObserverEmitter(controller, hub);
+
+  createMusicControllerHandler(controller, hub);
+  createObserverEmitterHandler(observer, hub);
 
   observer.observe();
 };
 
-onDocumentReady(initialize);
+onDocumentReady(() => {
+  window.addEventListener('SynQ:ExtensionId', (e) => {
+    const extensionId = (e as CustomEvent).detail;
+    initialize(extensionId);
+  });
+
+  window.dispatchEvent(new CustomEvent('SynQ:GetExtensionId'));
+});
