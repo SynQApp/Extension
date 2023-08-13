@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 
 import { TrackListItem } from '~player-ui/components/TrackListItem';
 import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
+import Layout from '~popup/Layout';
 import { useAppSelector } from '~store';
 import type { MusicService } from '~types';
 import { getMusicServiceName } from '~util/musicService';
@@ -28,30 +29,32 @@ const SelectTabScreen = () => {
   }, [tabs]);
 
   return (
-    <Container>
-      <HeaderText type="subtitle" size="lg">
-        Select Tab
-      </HeaderText>
-      {tabGroups.map(([musicService, tabs]) => (
-        <>
-          <TabListHeaderText type="body" size="sm">
-            {getMusicServiceName(musicService as MusicService)}
-          </TabListHeaderText>
-          <TabList>
-            {tabs.map((tab) => (
-              <TabListItem
-                key={tab.tabId}
-                primaryText={tab.preview?.name ?? '<No Music Playing>'}
-                secondaryText={tab.preview?.artistName}
-                onClick={() => setMusicServiceTab(tab)}
-                imageUrl={tab.preview?.albumCoverUrl ?? ''}
-                imageAlt={`Album art for ${tab.preview?.name}`}
-              />
-            ))}
-          </TabList>
-        </>
-      ))}
-    </Container>
+    <Layout>
+      <Container>
+        <HeaderText type="subtitle" size="lg">
+          Select Tab
+        </HeaderText>
+        {tabGroups.map(([musicService, tabs]) => (
+          <>
+            <TabListHeaderText type="body" size="sm">
+              {getMusicServiceName(musicService as MusicService)}
+            </TabListHeaderText>
+            <TabList>
+              {tabs.map((tab) => (
+                <TabListItem
+                  key={tab.tabId}
+                  primaryText={tab.preview?.name ?? '<No Music Playing>'}
+                  secondaryText={tab.preview?.artistName}
+                  onClick={() => setMusicServiceTab(tab)}
+                  imageUrl={tab.preview?.albumCoverUrl ?? ''}
+                  imageAlt={`Album art for ${tab.preview?.name}`}
+                />
+              ))}
+            </TabList>
+          </>
+        ))}
+      </Container>
+    </Layout>
   );
 };
 

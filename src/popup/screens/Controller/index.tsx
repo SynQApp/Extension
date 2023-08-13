@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import { Player } from '~player-ui/components/Player';
 import { Queue } from '~player-ui/components/Queue';
 import type { Expandable } from '~player-ui/types';
+import Layout from '~popup/Layout';
 
 import useControllerScreen from './useControllerScreen';
 
@@ -20,7 +21,7 @@ const ControllerScreen = () => {
   };
 
   return (
-    <>
+    <Layout>
       <PlayerSection>
         <div>
           <Player />
@@ -40,7 +41,7 @@ const ControllerScreen = () => {
           <Queue documentContainer={document.body} />
         </Scrollable>
       </QueueSection>
-    </>
+    </Layout>
   );
 };
 
