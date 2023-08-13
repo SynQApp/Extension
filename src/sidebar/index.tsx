@@ -1,14 +1,15 @@
 import { MemoryRouter } from 'react-router-dom';
 
-import { ContextProvidersWrapper } from './ContextProvidersWrapper';
+import { MarqueeStylesProvider } from '~player-ui/styles/MarqueeStylesProvider';
+
 import { Sidebar } from './Sidebar';
 
 export const SidebarIndex = () => {
   return (
     <MemoryRouter>
-      <ContextProvidersWrapper>
+      <MarqueeStylesProvider>
         <Sidebar />
-      </ContextProvidersWrapper>
+      </MarqueeStylesProvider>
     </MemoryRouter>
   );
 };

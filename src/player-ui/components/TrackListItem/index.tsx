@@ -6,22 +6,26 @@ import { MarqueeText } from '../MarqueeText';
 
 interface TrackListItemProps {
   active?: boolean;
+  className?: string;
   imageIconOverlay?: IconProps['icon'];
   imageUrl: string;
   imageAlt: string;
   primaryText: string;
   secondaryText: string;
-  onClick: () => void;
+  onClick?: () => void;
+  onImageClick?: () => void;
   rightNode?: React.ReactNode;
 }
 
 export const TrackListItem = ({
   active,
+  className,
   imageIconOverlay,
   imageUrl,
   imageAlt,
   primaryText,
   onClick,
+  onImageClick,
   secondaryText,
   rightNode
 }: TrackListItemProps) => {
@@ -40,16 +44,26 @@ export const TrackListItem = ({
 
   return (
     <Container
+      className={className}
       leftNode={
-        <AlbumArtContainer onClick={onClick}>
+        <AlbumArtContainer onClick={onImageClick}>
           <ImageStyled
             $active={active}
+            $hasOverlay={!!imageIconOverlay}
             alt={imageAlt}
             className="album-art"
             height="100%"
             radius="lg"
             src={imageUrl}
             width="100%"
+            fallback={
+              <ImageFallbackFlex align="center" justify="center">
+                <Icon
+                  icon="musicNote"
+                  color={theme.colors.onBackgroundMedium}
+                />
+              </ImageFallbackFlex>
+            }
           />
           {imageIconOverlay && (
             <ImageOverlayFlex
@@ -64,8 +78,10 @@ export const TrackListItem = ({
         </AlbumArtContainer>
       }
       $active={active}
+      $hasOverlay={!!imageIconOverlay}
       ref={listItemRef}
       rightNode={rightNode}
+      onClick={onClick}
     >
       <PrimaryText type="display" size="sm">
         {primaryText}
@@ -79,6 +95,7 @@ export const TrackListItem = ({
 
 interface ContainerProps {
   $active: boolean;
+  $hasOverlay?: boolean;
 }
 
 const Container = styled(ListItem)<ContainerProps>`
@@ -88,13 +105,17 @@ const Container = styled(ListItem)<ContainerProps>`
   &:hover {
     background: ${token('colors.surface01')};
 
-    .album-art-overlay {
-      opacity: 1;
-    }
+    ${({ $hasOverlay }) =>
+      $hasOverlay &&
+      css`
+        .album-art-overlay {
+          opacity: 1;
+        }
 
-    .album-art {
-      filter: brightness(0.4);
-    }
+        .album-art {
+          filter: brightness(0.4);
+        }
+      `}
   }
 
   ${({ $active }) =>
@@ -136,6 +157,7 @@ const AlbumArtContainer = styled.div`
 
 interface ImageStyledProps {
   $active: boolean;
+  $hasOverlay?: boolean;
 }
 
 const ImageStyled = styled(Image)<ImageStyledProps>`
@@ -144,11 +166,16 @@ const ImageStyled = styled(Image)<ImageStyledProps>`
   width: 100%;
   transition: filter 0.2s ease-in-out;
 
-  ${({ $active }) =>
+  ${({ $active, $hasOverlay }) =>
     $active &&
+    $hasOverlay &&
     css`
       filter: brightness(0.4);
     `}
+`;
+
+const ImageFallbackFlex = styled(Flex)`
+  background: ${token('colors.surface02')};
 `;
 
 const ImageOverlayFlex = styled(Flex)<ImageStyledProps>`

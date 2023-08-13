@@ -1,23 +1,13 @@
+import { broadcast } from '@plasmohq/messaging/pub-sub';
+
 import { store } from '~store';
-import {
-  addMusicServiceTab,
-  removeMusicServiceTab
-} from '~store/slices/musicServiceTabs';
-import { getMusicServiceFromUrl } from '~util/musicService';
+import { clearMusicServiceTabs } from '~store/slices/musicServiceTabs';
+import { TabsMessage } from '~types/TabsMessage';
 
-export const updateMusicServiceTabs = (port: chrome.runtime.Port) => {
-  if (!port.sender?.tab?.id) {
-    return;
-  }
+export const updateMusicServiceTabs = () => {
+  store.dispatch(clearMusicServiceTabs());
 
-  store.dispatch(
-    addMusicServiceTab({
-      tabId: port.sender.tab.id,
-      musicService: getMusicServiceFromUrl(port.sender.tab.url)
-    })
-  );
-
-  port.onDisconnect.addListener(() => {
-    store.dispatch(removeMusicServiceTab(port.sender.tab.id));
+  broadcast({
+    payload: { name: TabsMessage.UPDATE_TAB }
   });
 };

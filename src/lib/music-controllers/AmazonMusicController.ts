@@ -215,9 +215,13 @@ export class AmazonMusicController implements MusicController {
     };
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<Track> {
+  public getCurrentTrack(): Track {
     const appState = this.getStore().getState();
     const media = appState.Media;
+
+    if (!media) {
+      return null;
+    }
 
     const songInfo: Track = {
       id: media.mediaId,
@@ -254,7 +258,7 @@ export class AmazonMusicController implements MusicController {
         return queueItem;
       }) || [];
 
-    const currentSongInfo = await this.getCurrentSongInfo();
+    const currentSongInfo = await this.getCurrentTrack();
     const currentQueueItem: AmazonQueueItem = {
       songInfo: currentSongInfo,
       isPlaying: true,
@@ -281,7 +285,7 @@ export class AmazonMusicController implements MusicController {
   }
 
   public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
-    const currentTrack = await this.getCurrentSongInfo();
+    const currentTrack = await this.getCurrentTrack();
 
     // If current track is the same as the one we want to play, just restart it
     if (currentTrack.id === id && duplicateIndex === 0) {

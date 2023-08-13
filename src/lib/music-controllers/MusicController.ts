@@ -83,7 +83,7 @@ export interface MusicController {
   /**
    * Get the currently-playing song info.
    */
-  getCurrentSongInfo(): ValueOrPromise<Track | undefined>;
+  getCurrentTrack(): ValueOrPromise<Track | undefined>;
 
   /**
    * Get the queue.

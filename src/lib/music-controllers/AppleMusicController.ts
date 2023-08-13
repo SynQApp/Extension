@@ -145,8 +145,14 @@ export class AppleMusicController implements MusicController {
     return playerState;
   }
 
-  public getCurrentSongInfo(): ValueOrPromise<Track> {
-    return this._mediaItemToSongInfo(this.getPlayer().nowPlayingItem);
+  public getCurrentTrack(): Track {
+    const nowPlayingItem = this.getPlayer().nowPlayingItem;
+
+    if (!nowPlayingItem) {
+      return null;
+    }
+
+    return this._mediaItemToSongInfo(nowPlayingItem);
   }
 
   public getQueue(): QueueItem[] {

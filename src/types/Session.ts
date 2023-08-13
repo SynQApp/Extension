@@ -5,4 +5,5 @@ export interface Session {
   locked: boolean;
   repeatMode: RepeatMode;
   listeners: Listener[];
+  tabId: number;
 }

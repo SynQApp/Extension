@@ -4,7 +4,6 @@ import { sendToBackground } from '@plasmohq/messaging';
 
 import { useAppSelector } from '~store';
 import type { MusicServiceTab } from '~types';
-import { getMusicServiceFromUrl } from '~util/musicService';
 
 export const useSidebarMusicServiceTab = () => {
   const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
@@ -16,16 +15,17 @@ export const useSidebarMusicServiceTab = () => {
         name: 'GET_SELF_TAB'
       });
 
-      const musicService = getMusicServiceFromUrl(window.location.href);
+      const musicServiceTab = musicServiceTabs.find(
+        (musicServiceTab) => musicServiceTab.tabId === tab.id
+      );
 
-      setTab({
-        tabId: tab.id,
-        musicService
-      });
+      if (musicServiceTab) {
+        setTab(musicServiceTab);
+      }
     };
 
     updateTab();
-  }, []);
+  }, [musicServiceTabs]);
 
   return tab;
 };

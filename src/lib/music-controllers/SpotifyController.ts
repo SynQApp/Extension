@@ -241,11 +241,15 @@ export class SpotifyController implements MusicController {
     };
   }
 
-  public async getCurrentSongInfo(): Promise<Track> {
+  public async getCurrentTrack(): Promise<Track> {
     const currentlyPlaying = await this._fetchSpotify(
       SpotifyEndpoints.CURRENTLY_PLAYING,
       'GET'
     );
+
+    if (!currentlyPlaying?.item) {
+      return null;
+    }
 
     const currentSongInfo = this._itemToSongInfo(currentlyPlaying.item);
 
@@ -293,7 +297,7 @@ export class SpotifyController implements MusicController {
         return queueItem;
       }) || [];
 
-    const currentSongInfo = await this.getCurrentSongInfo();
+    const currentSongInfo = await this.getCurrentTrack();
     const currentSongQueueItem: QueueItem = {
       songInfo: currentSongInfo,
       isPlaying: true

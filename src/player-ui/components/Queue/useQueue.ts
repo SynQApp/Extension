@@ -10,7 +10,7 @@ import { sendMessage } from '~util/sendMessage';
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
-  const tab = useMusicServiceTab();
+  const { musicServiceTab } = useMusicServiceTab();
 
   const queue = useMemo(() => {
     if (!playerState?.queue) {
@@ -23,7 +23,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
       queue = queue.slice(0);
     } else {
       const currentTrackIndex = queue.findIndex(
-        (item) => item.songInfo.id === currentTrack?.id
+        (item) => item.songInfo?.id === currentTrack?.id
       );
 
       queue = queue.slice(currentTrackIndex);
@@ -37,24 +37,28 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   }, [playerState]);
 
   const musicServiceName = useMemo(
-    () => (tab ? getMusicServiceName(tab.musicService) : ''),
-    [tab]
+    () =>
+      musicServiceTab ? getMusicServiceName(musicServiceTab.musicService) : '',
+    [musicServiceTab]
   );
 
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
     const trackIndexes = findIndexes(
       queue,
-      (item) => item.songInfo.id === trackId
+      (item) => item.songInfo?.id === trackId
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
-    sendMessage({
-      name: MusicControllerMessage.PLAY_QUEUE_TRACK,
-      body: {
-        trackId,
-        duplicateIndex
-      }
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.PLAY_QUEUE_TRACK,
+        body: {
+          trackId,
+          duplicateIndex
+        }
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   return {

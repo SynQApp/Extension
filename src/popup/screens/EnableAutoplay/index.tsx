@@ -3,30 +3,33 @@ import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
+import Layout from '~popup/Layout';
 import { getMusicServiceName } from '~util/musicService';
 
 export const EnableAutoplayScreen = () => {
-  const tab = useMusicServiceTab();
+  const { musicServiceTab } = useMusicServiceTab();
 
   const handleEnableClick = () => {
     // Switch to selected tab
-    chrome.tabs.update(tab?.tabId, { active: true });
+    chrome.tabs.update(musicServiceTab?.tabId, { active: true });
   };
 
   const musicServiceName = useMemo(
-    () => getMusicServiceName(tab.musicService),
-    [tab]
+    () => getMusicServiceName(musicServiceTab.musicService),
+    [musicServiceTab]
   );
 
   return (
-    <AutoplayScreenFlex align="center" direction="column">
-      <Title type="subtitle" size="md">
-        Please enable SynQ to continue.
-      </Title>
-      <Button variant="secondary" size="small" onClick={handleEnableClick}>
-        {musicServiceName} →
-      </Button>
-    </AutoplayScreenFlex>
+    <Layout>
+      <AutoplayScreenFlex align="center" direction="column">
+        <Title type="subtitle" size="md">
+          Please enable SynQ to continue.
+        </Title>
+        <Button variant="secondary" size="small" onClick={handleEnableClick}>
+          {musicServiceName} →
+        </Button>
+      </AutoplayScreenFlex>
+    </Layout>
   );
 };
 

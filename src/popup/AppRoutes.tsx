@@ -4,7 +4,6 @@ import ControllerScreen from './screens/Controller';
 import EnableAutoplayScreen from './screens/EnableAutoplay';
 import SelectPlatformScreen from './screens/SelectPlatform';
 import SelectTabScreen from './screens/SelectTab';
-import SettingsScreen from './screens/Settings';
 
 const AppRoutes = () => {
   return (
@@ -13,7 +12,6 @@ const AppRoutes = () => {
       <Route path="/enable-autoplay" element={<EnableAutoplayScreen />} />
       <Route path="/select-platform" element={<SelectPlatformScreen />} />
       <Route path="/select-tab" element={<SelectTabScreen />} />
-      <Route path="/settings" element={<SettingsScreen />} />
     </Routes>
   );
 };

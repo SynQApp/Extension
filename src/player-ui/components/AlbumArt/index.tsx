@@ -33,7 +33,11 @@ export const AlbumArt = ({
   return (
     <AlbumArtContainer justify="center" align="center">
       <AlbumGlow className="album-glow" src={src} $expanded={expanded} />
-      <AlbumArtImg src={src} alt={`Album art for: ${trackName}`} />
+      <AlbumArtImg
+        src={src}
+        alt={`Album art for: ${trackName}`}
+        fallback={<AlbumArtFallback />}
+      />
       <ThumbsOverlay className="thumbs-overlay" />
       <ThumbsContainer
         className="thumbs"
@@ -120,6 +124,14 @@ const AlbumArtImg = styled(Image)`
   position: absolute;
   width: 100%;
   z-index: 1;
+`;
+
+const AlbumArtFallback = styled.div`
+  background: ${token('colors.surface01')};
+  border-radius: ${token('radii.lg')};
+  border: 1px solid ${token('colors.onBackground')}24;
+  height: 100%;
+  width: 100%;
 `;
 
 const ThumbsOverlay = styled.div`

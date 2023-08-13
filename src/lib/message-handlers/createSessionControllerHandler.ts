@@ -10,7 +10,7 @@ export const createMusicControllerHandler = (
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {
-    switch (message.name) {
+    switch (message?.name) {
       case SessionControllerMessage.END_SESSION:
         controller.endSession();
         break;

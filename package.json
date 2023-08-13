@@ -18,7 +18,7 @@
     "@plasmohq/storage": "^1.7.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@synq/music-service-clients": "1.0.5",
-    "@synq/ui": "0.0.4-alpha.5",
+    "@synq/ui": "0.0.4-alpha.7",
     "i": "^0.3.7",
     "plasmo": "0.75.2",
     "pnpm": "^8.6.12",

@@ -1,4 +1,5 @@
 import { useExpanded } from '~player-ui/contexts/Expanded';
+import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { sendMessage } from '~util/sendMessage';
@@ -7,53 +8,75 @@ export const usePlayerControls = () => {
   const expanded = useExpanded();
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
+  const { musicServiceTab } = useMusicServiceTab();
 
   const handleTogglePausePlay = () => {
-    sendMessage({
-      name: MusicControllerMessage.PLAY_PAUSE
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.PLAY_PAUSE
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handleNext = () => {
-    sendMessage({
-      name: MusicControllerMessage.NEXT
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.NEXT
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handlePrevious = () => {
-    sendMessage({
-      name: MusicControllerMessage.PREVIOUS
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.PREVIOUS
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handleSeek = (time: number) => {
-    sendMessage({
-      name: MusicControllerMessage.SEEK_TO,
-      body: {
-        time
-      }
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.SEEK_TO,
+        body: {
+          time
+        }
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handleToggleRepeat = () => {
-    sendMessage({
-      name: MusicControllerMessage.TOGGLE_REPEAT_MODE
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.TOGGLE_REPEAT_MODE
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handleChangeVolume = (volume: number) => {
-    sendMessage({
-      name: MusicControllerMessage.SET_VOLUME,
-      body: {
-        volume
-      }
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.SET_VOLUME,
+        body: {
+          volume
+        }
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   const handleToggleMute = () => {
-    sendMessage({
-      name: MusicControllerMessage.TOGGLE_MUTE
-    });
+    sendMessage(
+      {
+        name: MusicControllerMessage.TOGGLE_MUTE
+      },
+      musicServiceTab?.tabId
+    );
   };
 
   return {

@@ -26,8 +26,8 @@ dependencies:
     specifier: 1.0.5
     version: 1.0.5
   '@synq/ui':
-    specifier: 0.0.4-alpha.5
-    version: 0.0.4-alpha.5(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3)
+    specifier: 0.0.4-alpha.7
+    version: 0.0.4-alpha.7(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3)
   i:
     specifier: ^0.3.7
     version: 0.3.7
@@ -4498,8 +4498,8 @@ packages:
       - supports-color
     dev: false
 
-  /@synq/ui@0.0.4-alpha.5(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3):
-    resolution: {integrity: sha512-nAqqf2heTIeh0KWGWOUj5yFgs86AJ49zI+rT0+uFUkcav8YTjG9uWhlY2bqKeLWA75JYcN5yS4IUUf7boRe7iQ==}
+  /@synq/ui@0.0.4-alpha.7(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.3):
+    resolution: {integrity: sha512-S/VEteVcXUuHzviNMx+KBm867VrMup/fMkAysryZ5nbNC4ZKCh+2x/NpBYIRunIzrJ4gf+s3UdwNvmb/QQ5Osg==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
