@@ -38,11 +38,7 @@ const App = () => {
     }
   }, [tabs.length, selectedTab]);
 
-  return (
-    <Layout>
-      <AppRoutes />
-    </Layout>
-  );
+  return <AppRoutes />;
 };
 
 export default App;
