@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import type { DropResult } from 'react-beautiful-dnd';
 
 import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
-import { MusicControllerMessage } from '~types';
+import { MusicControllerMessage, SessionControllerMessage } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 import { sendMessage } from '~util/sendMessage';
@@ -10,6 +11,7 @@ import { sendMessage } from '~util/sendMessage';
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const playerState = useAppSelector((state) => state.playerState);
+  const session = useAppSelector((state) => state.session);
   const { musicServiceTab } = useMusicServiceTab();
 
   const queue = useMemo(() => {
@@ -61,8 +63,36 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
   };
 
+  const handleQueueItemReorder = (dropResult: DropResult) => {
+    if (!musicServiceTab) {
+      return;
+    }
+
+    const { source, destination } = dropResult;
+
+    if (!source || !destination) {
+      return;
+    }
+
+    const { index: sourceIndex } = source;
+    const { index: destinationIndex } = destination;
+
+    sendMessage(
+      {
+        name: SessionControllerMessage.UPDATE_SESSION_QUEUE_ITEM_POSITION,
+        body: {
+          sourceIndex,
+          destinationIndex
+        }
+      },
+      musicServiceTab.tabId
+    );
+  };
+
   return {
     handlePlayQueueTrack,
+    handleQueueItemReorder,
+    inSession: !!session,
     musicServiceName,
     queueItems: queue
   };

@@ -33,8 +33,8 @@ export const createMusicControllerHandler = (
 
       case SessionControllerMessage.UPDATE_SESSION_QUEUE_ITEM_POSITION:
         controller.updateSessionQueueItemPosition(
-          message.body.queueItemId,
-          message.body.index
+          message.body.sourceIndex,
+          message.body.destinationIndex
         );
         break;
 

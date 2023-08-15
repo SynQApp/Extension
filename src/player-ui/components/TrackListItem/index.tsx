@@ -1,4 +1,12 @@
-import { Flex, Icon, type IconProps, Image, ListItem, token } from '@synq/ui';
+import {
+  Flex,
+  Icon,
+  type IconProps,
+  Image,
+  ListItem,
+  Stack,
+  token
+} from '@synq/ui';
 import { useEffect, useRef } from 'react';
 import styled, { css, useTheme } from 'styled-components';
 
@@ -7,6 +15,7 @@ import { MarqueeText } from '../MarqueeText';
 interface TrackListItemProps {
   active?: boolean;
   className?: string;
+  handleProps?: React.HTMLAttributes<HTMLDivElement>;
   imageIconOverlay?: IconProps['icon'];
   imageUrl: string;
   imageAlt: string;
@@ -20,6 +29,7 @@ interface TrackListItemProps {
 export const TrackListItem = ({
   active,
   className,
+  handleProps,
   imageIconOverlay,
   imageUrl,
   imageAlt,
@@ -46,39 +56,50 @@ export const TrackListItem = ({
     <Container
       className={className}
       leftNode={
-        <AlbumArtContainer onClick={onImageClick}>
-          <ImageStyled
-            $active={active}
-            $hasOverlay={!!imageIconOverlay}
-            alt={imageAlt}
-            className="album-art"
-            height="100%"
-            radius="lg"
-            src={imageUrl}
-            width="100%"
-            fallback={
-              <ImageFallbackFlex align="center" justify="center">
-                <Icon
-                  icon="musicNote"
-                  color={theme.colors.onBackgroundMedium}
-                />
-              </ImageFallbackFlex>
-            }
-          />
-          {imageIconOverlay && (
-            <ImageOverlayFlex
-              $active={active}
-              align="center"
-              className="album-art-overlay"
-              justify="center"
-            >
-              <Icon icon={imageIconOverlay} color={theme.colors.onBackground} />
-            </ImageOverlayFlex>
+        <Stack align="center" spacing="xs">
+          {handleProps && (
+            <div {...handleProps}>
+              <Icon icon="dragHandle" color={theme.colors.onBackground} />
+            </div>
           )}
-        </AlbumArtContainer>
+          <AlbumArtContainer onClick={onImageClick}>
+            <ImageStyled
+              $active={active}
+              $hasOverlay={!!imageIconOverlay}
+              alt={imageAlt}
+              className="album-art"
+              height="100%"
+              radius="lg"
+              src={imageUrl}
+              width="100%"
+              fallback={
+                <ImageFallbackFlex align="center" justify="center">
+                  <Icon
+                    icon="musicNote"
+                    color={theme.colors.onBackgroundMedium}
+                  />
+                </ImageFallbackFlex>
+              }
+            />
+            {imageIconOverlay && (
+              <ImageOverlayFlex
+                $active={active}
+                align="center"
+                className="album-art-overlay"
+                justify="center"
+              >
+                <Icon
+                  icon={imageIconOverlay}
+                  color={theme.colors.onBackground}
+                />
+              </ImageOverlayFlex>
+            )}
+          </AlbumArtContainer>
+        </Stack>
       }
       $active={active}
       $hasOverlay={!!imageIconOverlay}
+      $hasHandle={!!handleProps}
       ref={listItemRef}
       rightNode={rightNode}
       onClick={onClick}
@@ -96,11 +117,13 @@ export const TrackListItem = ({
 interface ContainerProps {
   $active: boolean;
   $hasOverlay?: boolean;
+  $hasHandle?: boolean;
 }
 
 const Container = styled(ListItem)<ContainerProps>`
   padding: ${token('spacing.xs')} ${token('spacing.lg')};
   padding-right: ${token('spacing.2xs')};
+  height: unset;
 
   &:hover {
     background: ${token('colors.surface01')};
@@ -122,6 +145,12 @@ const Container = styled(ListItem)<ContainerProps>`
     $active &&
     css`
       background: ${token('colors.surface01')};
+    `}
+
+  ${({ $hasHandle }) =>
+    $hasHandle &&
+    css`
+      padding-left: ${token('spacing.xs')};
     `}
 `;
 

@@ -29,7 +29,6 @@ export const connectToReduxHub = (extensionId: string): ReduxHub => {
     });
 
     hubPort.onDisconnect.addListener(() => {
-      console.log('reconnecting to hub');
       connect();
     });
   };

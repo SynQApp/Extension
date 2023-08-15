@@ -59,7 +59,10 @@ export class SessionController {
     throw new NotImplementedError();
   }
 
-  public updateSessionQueueItemPosition(queueItemId: number, toIndex: number) {
+  public updateSessionQueueItemPosition(
+    sourceIndex: number,
+    destinationIndex: number
+  ) {
     throw new NotImplementedError();
   }
 
