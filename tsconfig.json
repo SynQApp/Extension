@@ -1,18 +1,11 @@
 {
   "extends": "plasmo/templates/tsconfig.base",
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    ".plasmo/index.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx"
-  ],
+  "exclude": ["node_modules", "./src/types/ReactBeautifulDnd.d.ts"],
+  "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
     "paths": {
-      "~*": [
-        "./src/*"
-      ]
+      "~*": ["./src/*"],
+      "@synq/react-beautiful-dnd": ["./src/types/ReactBeautifulDnd.d.ts"]
     },
     "baseUrl": "."
   }
