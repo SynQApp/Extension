@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Flex, Icon, token } from '@synq/ui';
+import { Avatar, AvatarGroup, Flex, token } from '@synq/ui';
 import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
 
@@ -12,7 +12,7 @@ export const SessionSection = ({ listeners }: SessionSectionProps) => {
   return (
     <Container>
       <Flex align="center" justify="space-between">
-        <SessionAvatarGroup
+        <AvatarGroup
           overflowAvatarSize="sm"
           overflowAvatarTextSize="sm"
           max={3}
@@ -26,13 +26,7 @@ export const SessionSection = ({ listeners }: SessionSectionProps) => {
               name={listener.name}
             />
           ))}
-        </SessionAvatarGroup>
-        {/* <CopyLinkButton>
-          <CopyLinkIcon icon="send" />
-          <Text type="body" size="sm">
-            Invite
-          </Text>
-        </CopyLinkButton> */}
+        </AvatarGroup>
         <SessionLink to="/session">Session →</SessionLink>
       </Flex>
     </Container>
@@ -45,35 +39,6 @@ const Container = styled.section`
   padding: 0 ${token('spacing.sm')};
 `;
 
-const SessionAvatarGroup = styled(AvatarGroup)`
-  width: 33%;
-`;
-
-const CopyLinkButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-  color: ${token('colors.onBackground')};
-  font-family: ${token('typography.fontFamilies.body')};
-  font-weight: ${token('typography.fontWeights.bold')};
-  font-size: ${token('typography.fontSizes.sm')};
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  gap: ${token('spacing.2xs')};
-`;
-
-const CopyLinkIcon = styled(Icon)`
-  color: ${token('colors.onBackground')};
-  height: 20px;
-  width: 20px;
-`;
-
 const SessionLink = styled(Link)`
   margin: 0;
   text-align: right;
@@ -84,5 +49,4 @@ const SessionLink = styled(Link)`
   font-family: ${token('typography.fontFamilies.body')};
   font-weight: ${token('typography.fontWeights.bold')};
   font-size: ${token('typography.fontSizes.sm')};
-  width: 33%;
 `;
