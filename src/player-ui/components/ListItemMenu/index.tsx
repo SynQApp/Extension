@@ -12,21 +12,21 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
-interface TrackListItemMenuItem {
-  icon: IconProps['icon'];
+interface ListItemMenuItem {
+  icon?: IconProps['icon'];
   onClick: () => void;
   text: string;
 }
 
-interface TrackListItemMenuProps {
-  menuItems: TrackListItemMenuItem[];
+interface ListItemMenuProps {
+  menuItems: ListItemMenuItem[];
   portalContainer?: MenuProps['portalContainer'];
 }
 
-export const TrackListItemMenu = ({
+export const ListItemMenu = ({
   menuItems,
   portalContainer
-}: TrackListItemMenuProps) => {
+}: ListItemMenuProps) => {
   const theme = useTheme();
   const iconRef = useRef<HTMLButtonElement>(null);
   const [showMenu, setShowMenu] = useState(false);
@@ -89,12 +89,14 @@ export const TrackListItemMenu = ({
             key={item.text}
             onClick={() => handleMenuItemClick(item.onClick)}
             leftIcon={
-              <Icon
-                height="16px"
-                width="16px"
-                icon={item.icon}
-                color={theme.colors.onBackgroundMedium}
-              />
+              item.icon && (
+                <Icon
+                  height="16px"
+                  width="16px"
+                  icon={item.icon}
+                  color={theme.colors.onBackgroundMedium}
+                />
+              )
             }
           >
             <Text type="subtitle" size="sm">

@@ -17,6 +17,7 @@ export const useControllerScreen = () => {
   const { height } = useWindowSize();
   const playerState = useAppSelector((state) => state.playerState);
   const sidebarRoot = useSidebarRoot();
+  const listeners = useAppSelector((state) => state.session?.listeners);
 
   const shouldDisplayQueue = useMemo(() => {
     return height > SHOW_QUEUE_BREAKPOINT;
@@ -48,6 +49,7 @@ export const useControllerScreen = () => {
     expanded,
     handleNavigateToSearch,
     handleNavigateToQueue,
+    listeners,
     sidebarRoot,
     queueDisplayCount,
     shouldDisplayQueue

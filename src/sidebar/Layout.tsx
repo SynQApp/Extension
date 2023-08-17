@@ -17,7 +17,11 @@ const Layout = ({ children, header }: LayoutProps) => {
 
   return (
     <Container $expanded={expanded}>
-      {header ?? <Header />}
+      {header ?? (
+        <Header
+          actionButton={{ name: 'Invite Friends', onClick: console.log }}
+        />
+      )}
       <Content>{children}</Content>
     </Container>
   );

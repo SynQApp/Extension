@@ -1,8 +1,8 @@
 import { Flex, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
+import { ListItemMenu } from '~player-ui/components/ListItemMenu';
 import { TrackListItem } from '~player-ui/components/TrackListItem';
-import { TrackListItemMenu } from '~player-ui/components/TrackListItemMenu';
 
 import { GradientAddButton } from './GradientAddButton';
 
@@ -10,7 +10,7 @@ interface QueueItemProps {
   added?: boolean;
   albumCoverUrl: string;
   artistName: string;
-  menuPortalContainer?: HTMLElement | ShadowRoot;
+  menuPortalContainer?: HTMLElement;
   onAddClick: () => void;
   onPlayNowClick: () => void;
   onPlayNextClick: () => void;
@@ -38,7 +38,7 @@ export const SearchResultListItem = ({
       rightNode={
         <ActionsFlex justify="center" align="center">
           <GradientAddButton added={added} onClick={onAddClick} />
-          <TrackListItemMenu
+          <ListItemMenu
             portalContainer={menuPortalContainer}
             menuItems={[
               {

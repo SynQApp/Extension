@@ -8,8 +8,8 @@ import {
 import { List, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
+import { ListItemMenu } from '../ListItemMenu';
 import { TrackListItem } from '../TrackListItem';
-import { TrackListItemMenu } from '../TrackListItemMenu';
 import { useQueue } from './useQueue';
 
 interface QueueProps {
@@ -57,7 +57,11 @@ export const Queue = ({
           <div {...provided.droppableProps} ref={provided.innerRef}>
             <QueueList>
               {queueItems.map(({ songInfo, isPlaying }, index) => (
-                <Draggable draggableId={songInfo?.id} index={index}>
+                <Draggable
+                  draggableId={songInfo?.id}
+                  index={index}
+                  key={songInfo?.id}
+                >
                   {(dragProvided, snapshot) => (
                     <div
                       {...dragProvided.draggableProps}
@@ -77,7 +81,7 @@ export const Queue = ({
                         }
                         primaryText={songInfo?.name}
                         rightNode={
-                          <TrackListItemMenu
+                          <ListItemMenu
                             portalContainer={documentContainer}
                             menuItems={[
                               {
