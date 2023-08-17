@@ -18,13 +18,14 @@ export const useControllerScreen = () => {
   const playerState = useAppSelector((state) => state.playerState);
   const sidebarRoot = useSidebarRoot();
   const listeners = useAppSelector((state) => state.session?.listeners);
+  const session = useAppSelector((state) => state.session);
 
   const shouldDisplayQueue = useMemo(() => {
     return height > SHOW_QUEUE_BREAKPOINT;
   }, [height]);
 
   const queueDisplayCount = useMemo(() => {
-    if (!playerState?.queue?.length) {
+    if (session && !session?.queue?.length && !playerState?.queue?.length) {
       return 0;
     }
 
@@ -35,7 +36,7 @@ export const useControllerScreen = () => {
           QUEUE_ITEM_HEIGHT
       )
     );
-  }, [expanded, height, playerState]);
+  }, [expanded, height, playerState, session]);
 
   const handleNavigateToSearch = () => {
     navigate('/search');

@@ -290,7 +290,7 @@ export class SpotifyController implements MusicController {
     const queueItems =
       queue?.map((item: any) => {
         const queueItem: QueueItem = {
-          songInfo: this._itemToSongInfo(item),
+          track: this._itemToSongInfo(item),
           isPlaying: false
         };
 
@@ -299,7 +299,7 @@ export class SpotifyController implements MusicController {
 
     const currentSongInfo = await this.getCurrentTrack();
     const currentSongQueueItem: QueueItem = {
-      songInfo: currentSongInfo,
+      track: currentSongInfo,
       isPlaying: true
     };
 
@@ -341,7 +341,7 @@ export class SpotifyController implements MusicController {
     }
 
     const queue = await this.getQueue(true);
-    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
+    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     const trackRows = await waitForElement(

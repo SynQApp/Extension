@@ -161,7 +161,7 @@ export class AppleMusicController implements MusicController {
 
     return appleMusicQueueItems.map((item, index) => {
       const queueItem: QueueItem = {
-        songInfo: this._mediaItemToSongInfo(item.item),
+        track: this._mediaItemToSongInfo(item.item),
         isPlaying: index === nowPlayingIndex
       };
 
@@ -180,7 +180,7 @@ export class AppleMusicController implements MusicController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
+    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this.getPlayer().changeToMediaAtIndex(trackIndex);

@@ -56,11 +56,11 @@ export const Queue = ({
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             <QueueList>
-              {queueItems.map(({ songInfo, isPlaying }, index) => (
+              {queueItems.map(({ track, isPlaying, ...queueItem }, index) => (
                 <Draggable
-                  draggableId={songInfo?.id}
+                  draggableId={track?.id}
                   index={index}
-                  key={songInfo?.id}
+                  key={track?.id}
                 >
                   {(dragProvided, snapshot) => (
                     <div
@@ -72,14 +72,14 @@ export const Queue = ({
                     >
                       <TrackListItem
                         active={isPlaying || snapshot.isDragging}
-                        imageAlt={`Album cover for ${songInfo?.albumName}`}
+                        imageAlt={`Album cover for ${track?.albumName}`}
                         imageIconOverlay={isPlaying ? 'playing' : 'play'}
-                        imageUrl={songInfo?.albumCoverUrl}
+                        imageUrl={track?.albumCoverUrl}
                         key={index}
                         onImageClick={() =>
-                          handlePlayQueueTrack(songInfo?.id, index)
+                          handlePlayQueueTrack(track?.id, index)
                         }
-                        primaryText={songInfo?.name}
+                        primaryText={track?.name}
                         rightNode={
                           <ListItemMenu
                             portalContainer={documentContainer}
@@ -99,7 +99,8 @@ export const Queue = ({
                             ]}
                           />
                         }
-                        secondaryText={`${songInfo?.artistName} • ${songInfo?.albumName}`}
+                        secondaryText={`${track?.artistName} • ${track?.albumName}`}
+                        tertiaryText={`Added by ${queueItem?.addedBy}`}
                         handleProps={inSession && dragProvided.dragHandleProps}
                       />
                     </div>

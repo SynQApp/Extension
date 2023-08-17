@@ -40,7 +40,39 @@ const mockActiveSession: Session = {
       trackCount: 4
     }
   ],
-  tabId: 0
+  tabId: 0,
+  queue: [
+    {
+      id: '1',
+      isPlaying: true,
+      addedBy: 'Mitchell',
+      musicService: MusicService.YOUTUBE_MUSIC,
+      track: {
+        id: '1',
+        name: 'Crash Into Me',
+        artistName: 'Dave Matthews Band',
+        albumName: 'Crash',
+        albumCoverUrl:
+          'https://www.billboard.com/wp-content/uploads/media/DMB-1995-billboard-1240.jpg?w=1024',
+        duration: 203
+      }
+    },
+    {
+      id: '2',
+      isPlaying: false,
+      addedBy: 'Rachael',
+      musicService: MusicService.YOUTUBE_MUSIC,
+      track: {
+        id: '2',
+        name: '22',
+        artistName: 'Taylor Swift',
+        albumName: 'Red',
+        albumCoverUrl:
+          'https://upload.wikimedia.org/wikipedia/en/f/f6/Taylor_Swift_-_1989.png',
+        duration: 198
+      }
+    }
+  ]
 };
 
 const initialState: Session | null = mockActiveSession;

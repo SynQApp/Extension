@@ -221,7 +221,7 @@ export class YouTubeMusicController implements MusicController {
 
     return ytQueueItems.map((item, index) => {
       const queueItem: QueueItem = {
-        songInfo: this._queueItemToSongInfo(item),
+        track: this._queueItemToSongInfo(item),
         isPlaying: index === currentSongIndex
       };
 
@@ -244,7 +244,7 @@ export class YouTubeMusicController implements MusicController {
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.songInfo.id === id);
+    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });

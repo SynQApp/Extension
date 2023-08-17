@@ -1,4 +1,4 @@
-import type { Listener, RepeatMode } from '.';
+import type { Listener, RepeatMode, SessionQueueItem } from '.';
 
 export interface Session {
   hostId: string;
@@ -6,4 +6,5 @@ export interface Session {
   repeatMode: RepeatMode;
   listeners: Listener[];
   tabId: number;
+  queue: SessionQueueItem[];
 }

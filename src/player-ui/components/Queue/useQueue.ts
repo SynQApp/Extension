@@ -3,7 +3,12 @@ import type { DropResult } from 'react-beautiful-dnd';
 
 import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
 import { useAppSelector } from '~store';
-import { MusicControllerMessage, SessionControllerMessage } from '~types';
+import {
+  MusicControllerMessage,
+  type QueueItem,
+  SessionControllerMessage,
+  type SessionQueueItem
+} from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 import { sendMessage } from '~util/sendMessage';
@@ -15,28 +20,28 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const { musicServiceTab } = useMusicServiceTab();
 
   const queue = useMemo(() => {
-    if (!playerState?.queue) {
+    let currentQueue = session ? session.queue : playerState?.queue;
+
+    if (!currentQueue) {
       return [];
     }
 
-    let { queue } = playerState;
-
     if (startAt === 'top') {
-      queue = queue.slice(0);
+      currentQueue = currentQueue.slice(0);
     } else {
-      const currentTrackIndex = queue.findIndex(
-        (item) => item.songInfo?.id === currentTrack?.id
+      const currentTrackIndex = currentQueue.findIndex(
+        (item) => item.track?.id === currentTrack?.id
       );
 
-      queue = queue.slice(currentTrackIndex);
+      currentQueue = currentQueue.slice(currentTrackIndex);
     }
 
     if (count) {
-      queue = queue.slice(0, count);
+      currentQueue = currentQueue.slice(0, count);
     }
 
-    return queue;
-  }, [playerState]);
+    return currentQueue;
+  }, [playerState, session.queue]);
 
   const musicServiceName = useMemo(
     () =>
@@ -47,7 +52,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const handlePlayQueueTrack = (trackId: string, trackIndex: number) => {
     const trackIndexes = findIndexes(
       queue,
-      (item) => item.songInfo?.id === trackId
+      (item) => item.track?.id === trackId
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
@@ -94,6 +99,6 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     handleQueueItemReorder,
     inSession: !!session,
     musicServiceName,
-    queueItems: queue
+    queueItems: queue as SessionQueueItem[] | QueueItem[]
   };
 };

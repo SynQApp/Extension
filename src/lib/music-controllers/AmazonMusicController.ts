@@ -250,7 +250,7 @@ export class AmazonMusicController implements MusicController {
     const queueItems =
       queue?.map((item: any) => {
         const queueItem: AmazonQueueItem = {
-          songInfo: this._queueItemToSongInfo(item),
+          track: this._queueItemToSongInfo(item),
           isPlaying: false,
           queueItemId: item.id
         };
@@ -260,7 +260,7 @@ export class AmazonMusicController implements MusicController {
 
     const currentSongInfo = await this.getCurrentTrack();
     const currentQueueItem: AmazonQueueItem = {
-      songInfo: currentSongInfo,
+      track: currentSongInfo,
       isPlaying: true,
       queueItemId: ''
     };
@@ -297,14 +297,14 @@ export class AmazonMusicController implements MusicController {
 
     const trackIndexes = findIndexes(
       queueItems,
-      (item) => item.songInfo.id === id
+      (item) => item.track.id === id
     );
     const trackIndex = trackIndexes[duplicateIndex];
 
     const queueItem = queueItems[trackIndex];
 
     const playTrackAction = this._createPlayAtQueueEntityAction(
-      queueItem.songInfo.id,
+      queueItem.track.id,
       queueItem.queueItemId,
       currentTrack.id
     );
