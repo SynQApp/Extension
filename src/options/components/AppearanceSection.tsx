@@ -1,4 +1,4 @@
-import { Radio, RadioGroup, Stack } from '@synq/ui';
+import { Radio, RadioGroup, Stack, type ThemeName } from '@synq/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import { setAppearance } from '~store/slices/settings';
@@ -9,7 +9,7 @@ export const AppearanceSection = () => {
   const appearance = useAppSelector((state) => state.settings.appearance);
   const dispatch = useAppDispatch();
 
-  const handleChange = (value: 'light' | 'dark') => {
+  const handleChange = (value: ThemeName) => {
     dispatch(setAppearance(value));
   };
 

@@ -1,3 +1,5 @@
+import type { ThemeName } from '@synq/ui';
+
 import type { MusicService } from './MusicService';
 
 interface LastFmSettings {
@@ -6,7 +8,7 @@ interface LastFmSettings {
 }
 
 export interface Settings {
-  appearance: 'light' | 'dark';
+  appearance: ThemeName;
   preferredMusicService: MusicService;
   miniPlayerKeyControlsEnabled: boolean;
   musicServiceKeyControlsEnabled: boolean;
