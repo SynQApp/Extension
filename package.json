@@ -19,7 +19,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@synq/music-service-clients": "1.0.5",
     "@synq/react-beautiful-dnd": "13.1.1",
-    "@synq/ui": "0.0.4-alpha.8",
+    "@synq/ui": "0.0.4-alpha.25",
     "i": "^0.3.7",
     "plasmo": "0.75.2",
     "pnpm": "^8.6.12",

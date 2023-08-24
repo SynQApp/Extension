@@ -7,6 +7,7 @@ import playerStateReducer from './slices/playerState';
 import queueReducer from './slices/queue';
 import searchReducer from './slices/search';
 import sessionReducer from './slices/session';
+import settingsReducer from './slices/settings';
 
 const rootReducer = combineReducers({
   autoplayReady: autoplayReadyReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   playerState: playerStateReducer,
   queue: queueReducer,
   search: searchReducer,
-  session: sessionReducer
+  session: sessionReducer,
+  settings: settingsReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
