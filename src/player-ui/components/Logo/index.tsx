@@ -1,12 +1,28 @@
-import { Image, Text, token } from '@synq/ui';
+import { Image, Text, type TextProps, token } from '@synq/ui';
 import Icon from 'data-base64:~assets/images/icon-filled.svg';
 import styled from 'styled-components';
 
-const Logo = () => {
+type LogoSize = 'controller' | 'page';
+
+const TextSizeMap: Record<LogoSize, TextProps['size']> = {
+  controller: 'xl',
+  page: '4xl'
+};
+
+const ImageSizeMap: Record<LogoSize, number> = {
+  controller: 50,
+  page: 75
+};
+
+interface LogoProps {
+  size: LogoSize;
+}
+
+const Logo = ({ size = 'controller' }: LogoProps) => {
   return (
     <Container>
-      <LogoImage src={Icon} alt="SynQ Logo" />
-      <LogoText type="display" size="xl" forwardedAs="h1">
+      <LogoImage src={Icon} alt="SynQ Logo" $size={ImageSizeMap[size]} />
+      <LogoText type="display" size={TextSizeMap[size]} forwardedAs="h1">
         SynQ
       </LogoText>
     </Container>
@@ -18,9 +34,13 @@ const Container = styled.div`
   display: inline-flex;
 `;
 
-const LogoImage = styled(Image)`
-  height: 50px;
-  width: 50px;
+interface LogoImageProps {
+  $size: number;
+}
+
+const LogoImage = styled(Image)<LogoImageProps>`
+  height: ${({ $size }) => $size}px;
+  width: ${({ $size }) => $size}px;
 `;
 
 const LogoText = styled(Text)`

@@ -2,6 +2,8 @@ import { Button, Flex, token } from '@synq/ui';
 import { Icon } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
 import Logo from '../Logo';
 
 interface HeaderProps {
@@ -12,17 +14,25 @@ interface HeaderProps {
 }
 
 const Header = ({ actionButton }: HeaderProps) => {
+  const handleSettingsClick = () => {
+    sendToBackground({
+      name: 'OPEN_OPTIONS_PAGE'
+    });
+  };
+
   return (
     <HeaderStyled>
       <Flex align="center">
-        <Logo />
+        <Logo size="controller" />
         <Flex align="center" justify="flex-end">
           {actionButton && (
             <SessionButton size="small" rounded onClick={actionButton.onClick}>
               {actionButton.name}
             </SessionButton>
           )}
-          <SettingsIcon icon="settings" />
+          <SettingsButton onClick={handleSettingsClick} variant="tertiary">
+            <SettingsIcon icon="settings" />
+          </SettingsButton>
         </Flex>
       </Flex>
     </HeaderStyled>
@@ -46,6 +56,19 @@ const SessionButton = styled(Button)`
   &::before {
     display: none;
   }
+`;
+
+const SettingsButton = styled(Button)`
+  align-items: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  outline: none;
+  padding: 0;
+  width: fit-content;
 `;
 
 const SettingsIcon = styled(Icon)`

@@ -12,6 +12,7 @@ export * from './RepeatMode';
 export * from './SessionControllerMessage';
 export * from './Session';
 export * from './SessionQueueItem';
+export * from './Settings';
 export * from './Track';
 export * from './TrackSearchResult';
 export * from './UIStateMessage';
