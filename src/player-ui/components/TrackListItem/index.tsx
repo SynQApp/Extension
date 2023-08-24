@@ -21,6 +21,7 @@ interface TrackListItemProps {
   imageAlt: string;
   primaryText: string;
   secondaryText: string;
+  tertiaryText?: string;
   onClick?: () => void;
   onImageClick?: () => void;
   rightNode?: React.ReactNode;
@@ -37,6 +38,7 @@ export const TrackListItem = ({
   onClick,
   onImageClick,
   secondaryText,
+  tertiaryText,
   rightNode
 }: TrackListItemProps) => {
   const theme = useTheme();
@@ -110,6 +112,11 @@ export const TrackListItem = ({
       <SecondaryText type="body" size="xs">
         {secondaryText}
       </SecondaryText>
+      {tertiaryText && (
+        <SecondaryText type="body" size="xs">
+          {tertiaryText}
+        </SecondaryText>
+      )}
     </Container>
   );
 };
@@ -165,13 +172,13 @@ const PrimaryText = styled(MarqueeText)`
 `;
 
 const SecondaryText = styled(MarqueeText)`
-  color: ${token('colors.onBackgroundMedium')};
   margin-top: ${token('spacing.2xs')};
   height: 100%;
   width: 100%;
 
   .text {
     margin: 0;
+    color: ${token('colors.onBackgroundMedium')};
   }
 `;
 
