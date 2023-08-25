@@ -4,7 +4,11 @@ import { AMAZON_KEY_CONTROLS } from '~constants/amazon';
 import { APPLE_KEY_CONTROLS } from '~constants/apple';
 import { SPOTIFY_KEY_CONTROLS } from '~constants/spotify';
 import { YTM_KEY_CONTROLS } from '~constants/youtube';
-import { addKeyControlsListener } from '~lib/key-controls/keyControlsListener';
+import {
+  addKeyControlsListener,
+  removeKeyControlsListener
+} from '~lib/key-controls/keyControlsListener';
+import { persistor, store } from '~store';
 
 export const config: PlasmoCSConfig = {
   matches: [
@@ -16,21 +20,39 @@ export const config: PlasmoCSConfig = {
   run_at: 'document_start'
 };
 
-window.addEventListener('SynQ:GetExtensionId', () => {
-  window.dispatchEvent(
-    new CustomEvent('SynQ:ExtensionId', { detail: chrome.runtime.id })
-  );
-});
+const enableKeyControls = () => {
+  persistor.subscribe(() => {
+    const state = store.getState();
+    const { musicServiceKeyControlsEnabled } = state.settings;
 
-const keyControlsOptionsMap = {
-  'music.youtube.com': YTM_KEY_CONTROLS,
-  'music.apple.com': APPLE_KEY_CONTROLS,
-  'open.spotify.com': SPOTIFY_KEY_CONTROLS,
-  'music.amazon.com': AMAZON_KEY_CONTROLS
+    if (!musicServiceKeyControlsEnabled) {
+      removeKeyControlsListener();
+      return;
+    }
+
+    const keyControlsOptionsMap = {
+      'music.youtube.com': YTM_KEY_CONTROLS,
+      'music.apple.com': APPLE_KEY_CONTROLS,
+      'open.spotify.com': SPOTIFY_KEY_CONTROLS,
+      'music.amazon.com': AMAZON_KEY_CONTROLS
+    };
+
+    const keyControlsOptions = keyControlsOptionsMap[window.location.host];
+
+    if (keyControlsOptions) {
+      addKeyControlsListener(keyControlsOptions);
+    }
+  });
 };
 
-const keyControlsOptions = keyControlsOptionsMap[window.location.host];
+const initialize = () => {
+  window.addEventListener('SynQ:GetExtensionId', () => {
+    window.dispatchEvent(
+      new CustomEvent('SynQ:ExtensionId', { detail: chrome.runtime.id })
+    );
+  });
 
-if (keyControlsOptions) {
-  addKeyControlsListener(keyControlsOptions);
-}
+  enableKeyControls();
+};
+
+initialize();

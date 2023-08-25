@@ -16,6 +16,7 @@ import AppRoutes from './AppRoutes';
 const App = () => {
   const navigate = useNavigate();
   const tabs = useAppSelector((state) => state.musicServiceTabs);
+  const settings = useAppSelector((state) => state.settings);
   const { musicServiceTab: selectedTab } = useMusicServiceTab();
 
   useEffect(() => {
@@ -25,6 +26,12 @@ const App = () => {
     sendMessage({
       name: TabsMessage.UPDATE_TAB
     });
+  }, []);
+
+  useEffect(() => {
+    if (!settings?.miniPlayerKeyControlsEnabled) {
+      return;
+    }
 
     addKeyControlsListener({
       playPause: true,
@@ -37,7 +44,7 @@ const App = () => {
     return () => {
       removeKeyControlsListener();
     };
-  }, []);
+  }, [settings]);
 
   useEffect(() => {
     if (selectedTab) {

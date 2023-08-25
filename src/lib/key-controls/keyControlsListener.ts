@@ -14,6 +14,10 @@ let keyControlsListener: (event: KeyboardEvent) => void;
 export const addKeyControlsListener = (
   keyControlsOptions: KeyControlsOptions
 ) => {
+  if (keyControlsListener) {
+    return;
+  }
+
   keyControlsListener = (event) => {
     const { key } = event;
 
@@ -68,5 +72,10 @@ export const addKeyControlsListener = (
 };
 
 export const removeKeyControlsListener = () => {
+  if (!keyControlsListener) {
+    return;
+  }
+
   document.removeEventListener('keydown', keyControlsListener);
+  keyControlsListener = undefined;
 };
