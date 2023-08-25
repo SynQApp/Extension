@@ -16,7 +16,7 @@ import AutoplayPopup from './autoplay/AutoplayPopup';
 export const config: PlasmoCSConfig = {
   matches: [
     '*://music.apple.com/*',
-    '*://*.spotify.com/*',
+    '*://open.spotify.com/*',
     '*://music.youtube.com/*',
     '*://music.amazon.com/*'
   ],

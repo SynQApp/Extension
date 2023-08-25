@@ -4,6 +4,7 @@ import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, TrackSearchResult } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
+import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
 
 import type { MusicController } from './MusicController';
@@ -151,7 +152,13 @@ export class SpotifyController implements MusicController {
     )?.click();
   }
 
-  public async setVolume(volume: number): Promise<void> {
+  public async setVolume(volume: number, relative?: boolean): Promise<void> {
+    if (relative) {
+      volume = this._getVolume() + volume;
+    }
+
+    volume = normalizeVolume(volume);
+
     debounce(
       async () => {
         const searchParams = new URLSearchParams({

@@ -7,6 +7,7 @@ import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
 import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
+import { normalizeVolume } from '~util/volume';
 
 import type { MusicController } from './MusicController';
 
@@ -130,7 +131,13 @@ export class YouTubeMusicController implements MusicController {
     }
   }
 
-  public setVolume(volume: number): void {
+  public setVolume(volume: number, relative?: boolean): void {
+    if (relative) {
+      volume = this.getPlayer().getVolume() + volume;
+    }
+
+    volume = normalizeVolume(volume);
+
     this.getPlayer().setVolume(volume);
 
     this._ytmApp.store.dispatch({

@@ -46,7 +46,7 @@ export const createMusicControllerHandler = (
         break;
 
       case MusicControllerMessage.SET_VOLUME:
-        await controller.setVolume(message.body.volume);
+        await controller.setVolume(message.body.volume, message.body.relative);
         break;
 
       case MusicControllerMessage.SEEK_TO:
