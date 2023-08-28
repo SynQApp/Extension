@@ -31,8 +31,9 @@ const persistConfig: PersistConfig<unknown> = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = configureStore({
+export const store = configureStore<RootState>({
   reducer: persistedReducer,
+  // @ts-ignore
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -48,6 +49,7 @@ export const store = configureStore({
       }
     })
 });
+
 export const persistor = persistStore(store);
 
 // This is what makes Redux sync properly with multiple pages

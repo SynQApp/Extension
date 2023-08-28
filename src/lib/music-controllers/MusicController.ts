@@ -56,7 +56,7 @@ export interface MusicController {
   /**
    * Set the volume.
    */
-  setVolume(volume: number): ValueOrPromise<void>;
+  setVolume(volume: number, relative?: boolean): ValueOrPromise<void>;
 
   /**
    * Seek to a time in the current track.

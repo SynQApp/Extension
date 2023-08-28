@@ -7,6 +7,7 @@ import type { TrackSearchResult } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { convertToAscii, generateRequestId } from '~util/skyfireUtils';
 import { lengthTextToSeconds } from '~util/time';
+import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
 
 import type { MusicController } from './MusicController';
@@ -161,7 +162,15 @@ export class AmazonMusicController implements MusicController {
     }
   }
 
-  public setVolume(volume: number): void {
+  public async setVolume(volume: number, relative?: boolean): Promise<void> {
+    if (relative) {
+      const maestro = await this.getMaestroInstance();
+      const currentVolume = maestro.getVolume() * 100;
+      volume = currentVolume + volume;
+    }
+
+    volume = normalizeVolume(volume);
+
     this.getStore().dispatch({
       type: 'PlaybackInterface.v1_0.SetVolumeMethod',
       payload: {

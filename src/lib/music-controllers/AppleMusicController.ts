@@ -8,6 +8,7 @@ import type {
   ValueOrPromise
 } from '~types';
 import { findIndexes } from '~util/findIndexes';
+import { normalizeVolume } from '~util/volume';
 
 import type { MusicController } from './MusicController';
 
@@ -92,7 +93,13 @@ export class AppleMusicController implements MusicController {
     }
   }
 
-  public setVolume(volume: number): void {
+  public setVolume(volume: number, relative?: boolean): void {
+    if (relative) {
+      volume = this.getPlayer().volume * 100 + volume;
+    }
+
+    volume = normalizeVolume(volume);
+
     this.getPlayer().volume = volume / 100;
   }
 

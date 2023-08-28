@@ -1,32 +1,50 @@
 import { useEffect } from 'react';
-import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { POPUP_PORT } from '~constants/port';
+import {
+  addKeyControlsListener,
+  removeKeyControlsListener
+} from '~lib/key-controls/keyControlsListener';
 import { useMusicServiceTab } from '~player-ui/contexts/MusicServiceTab';
-import { useAppDispatch, useAppSelector } from '~store';
-import { clearMusicServiceTabs } from '~store/slices/musicServiceTabs';
+import { useAppSelector } from '~store';
 import { TabsMessage } from '~types/TabsMessage';
 import { sendMessage } from '~util/sendMessage';
 
 import AppRoutes from './AppRoutes';
-import Layout from './Layout';
 
 const App = () => {
   const navigate = useNavigate();
   const tabs = useAppSelector((state) => state.musicServiceTabs);
+  const settings = useAppSelector((state) => state.settings);
   const { musicServiceTab: selectedTab } = useMusicServiceTab();
 
   useEffect(() => {
     chrome.runtime.connect({ name: POPUP_PORT });
-
-    // Clear previous persisted tabs list on popup open
-    // dispatch(clearMusicServiceTabs());
 
     // Then request the current tabs to be updated in the store
     sendMessage({
       name: TabsMessage.UPDATE_TAB
     });
   }, []);
+
+  useEffect(() => {
+    if (!settings?.miniPlayerKeyControlsEnabled) {
+      return;
+    }
+
+    addKeyControlsListener({
+      playPause: true,
+      next: true,
+      previous: true,
+      volumeUp: true,
+      volumeDown: true
+    });
+
+    return () => {
+      removeKeyControlsListener();
+    };
+  }, [settings]);
 
   useEffect(() => {
     if (selectedTab) {
