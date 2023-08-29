@@ -1,7 +1,6 @@
-import { store } from '~store';
 import type { HubMessageHandler } from '~types/HubMessageHandler';
 
-export const handler: HubMessageHandler<any> = async (
+export const handler: HubMessageHandler<undefined> = async (
   message,
   sender,
   sendResponse

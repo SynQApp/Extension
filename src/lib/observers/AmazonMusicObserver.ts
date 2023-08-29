@@ -93,7 +93,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
   private async _setupMaestroObserver() {
     const maestro = await this._controller.getMaestroInstance();
 
-    this._onStateChangeHandler = async (...params) => {
+    this._onStateChangeHandler = async () => {
       await this._sendPlaybackUpdatedMessage();
     };
 

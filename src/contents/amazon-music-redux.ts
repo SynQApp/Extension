@@ -18,7 +18,7 @@ interface ComposeConfig {
   name?: string;
 }
 
-(window as any).__REDUX_STORES__ = [] as Store[];
+window.__REDUX_STORES__ = [];
 
 /**
  * A custom compose function which exposes the store on the window object.
@@ -34,11 +34,13 @@ const synqCompose =
       // We return a new StoreEnhancerStoreCreator function which wraps createStore
       // so we can expose the store on the window object.
       return ((...enhancerArgs) => {
-        const store = createStore(...enhancerArgs);
+        const store = createStore(...enhancerArgs) as unknown as Store & {
+          name: string;
+        };
 
         // We need to set the name of the store so that we can find it later.
-        (store as any).name = config.name;
-        (window as any).__REDUX_STORES__.push(store);
+        store.name = config.name;
+        window.__REDUX_STORES__.push(store);
 
         return store;
       }) as StoreEnhancerStoreCreator;

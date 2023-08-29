@@ -4,7 +4,8 @@
  * the Sources tab.
  */
 
-export const convertToAscii = (str: String) => {
+export const convertToAscii = (str: string) => {
+  // eslint-disable-next-line no-control-regex
   return str.replace(/[^\x00-\x7F]/g, (c) => unescape(encodeURIComponent(c)));
 };
 

@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "npx rimraf ./build ./.plasmo && plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "format:all": "prettier --write \"**/*.{js,ts,json}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,json}\"",
+    "lint:all": "eslint --fix \"**/*.{js,ts,json}\"",
+    "lint:check": "eslint \"**/*.{js,ts,json}\""
   },
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
@@ -17,7 +21,9 @@
     "@plasmohq/redux-persist": "^6.1.0",
     "@plasmohq/storage": "^1.7.2",
     "@reduxjs/toolkit": "^1.9.5",
+    "@synq/eslint-config": "^1.0.16",
     "@synq/music-service-clients": "1.0.5",
+    "@synq/prettier-config": "^1.0.6",
     "@synq/react-beautiful-dnd": "13.1.1",
     "@synq/ui": "0.0.4-alpha.25",
     "i": "^0.3.7",

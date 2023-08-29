@@ -1,5 +1,7 @@
+import type { PlasmoMessaging } from '@plasmohq/messaging';
+
 import type { MusicController } from '~lib/music-controllers/MusicController';
-import { MusicServiceObserver } from '~lib/observers/MusicServiceObserver';
+import type { MusicServiceObserver } from '~lib/observers/MusicServiceObserver';
 import { updateMusicServiceTab } from '~store/slices/musicServiceTabs';
 import type { MusicServiceTab } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
@@ -46,7 +48,7 @@ const handleUpdateTab = async (
 const handleSetSelectedTab = async (
   observer: MusicServiceObserver,
   hub: ReduxHub,
-  message: any
+  message: PlasmoMessaging.Request<string, number>
 ): Promise<void> => {
   const tab = await hub.asyncPostMessage<chrome.tabs.Tab>({
     name: 'GET_SELF_TAB'

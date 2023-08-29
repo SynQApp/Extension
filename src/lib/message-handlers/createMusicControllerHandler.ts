@@ -13,79 +13,96 @@ export const createMusicControllerHandler = (
 ) => {
   hub.addListener(async (message) => {
     switch (message?.name) {
-      case MusicControllerMessage.PLAY:
+      case MusicControllerMessage.PLAY: {
         await controller.play();
         break;
+      }
 
-      case MusicControllerMessage.PLAY_PAUSE:
+      case MusicControllerMessage.PLAY_PAUSE: {
         await controller.playPause();
         break;
+      }
 
-      case MusicControllerMessage.PAUSE:
+      case MusicControllerMessage.PAUSE: {
         await controller.pause();
         break;
+      }
 
-      case MusicControllerMessage.NEXT:
+      case MusicControllerMessage.NEXT: {
         await controller.next();
         break;
+      }
 
-      case MusicControllerMessage.PREVIOUS:
+      case MusicControllerMessage.PREVIOUS: {
         await controller.previous();
         break;
+      }
 
-      case MusicControllerMessage.TOGGLE_LIKE:
+      case MusicControllerMessage.TOGGLE_LIKE: {
         await controller.toggleLike();
         break;
+      }
 
-      case MusicControllerMessage.TOGGLE_DISLIKE:
+      case MusicControllerMessage.TOGGLE_DISLIKE: {
         await controller.toggleDislike();
         break;
+      }
 
-      case MusicControllerMessage.TOGGLE_MUTE:
+      case MusicControllerMessage.TOGGLE_MUTE: {
         await controller.toggleMute();
         break;
+      }
 
-      case MusicControllerMessage.SET_VOLUME:
+      case MusicControllerMessage.SET_VOLUME: {
         await controller.setVolume(message.body.volume, message.body.relative);
         break;
+      }
 
-      case MusicControllerMessage.SEEK_TO:
+      case MusicControllerMessage.SEEK_TO: {
         await controller.seekTo(message.body.time);
         break;
+      }
 
-      case MusicControllerMessage.START_TRACK:
+      case MusicControllerMessage.START_TRACK: {
         await controller.startTrack(message.body.trackId, message.body.albumId);
         break;
+      }
 
-      case MusicControllerMessage.TOGGLE_REPEAT_MODE:
+      case MusicControllerMessage.TOGGLE_REPEAT_MODE: {
         await controller.toggleRepeatMode();
         break;
+      }
 
-      case MusicControllerMessage.PREPARE_FOR_SESSION:
+      case MusicControllerMessage.PREPARE_FOR_SESSION: {
         await controller.prepareForSession();
         break;
+      }
 
-      case MusicControllerMessage.PREPARE_FOR_AUTOPLAY:
+      case MusicControllerMessage.PREPARE_FOR_AUTOPLAY: {
         await controller.prepareForAutoplay();
         break;
+      }
 
-      case MusicControllerMessage.PLAY_QUEUE_TRACK:
+      case MusicControllerMessage.PLAY_QUEUE_TRACK: {
         await controller.playQueueTrack(
           message.body.trackId,
           message.body.duplicateIndex
         );
         break;
+      }
 
-      case MusicControllerMessage.SEARCH_TRACKS:
+      case MusicControllerMessage.SEARCH_TRACKS: {
         hub.dispatch(setSearchLoading(true));
 
         const searchResults = await controller.searchTracks(message.body.query);
 
         hub.dispatch(setSearchResults(searchResults));
         break;
+      }
 
-      default:
+      default: {
         break;
+      }
     }
   });
 };

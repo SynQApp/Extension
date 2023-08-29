@@ -7,13 +7,14 @@ import type {
   TrackSearchResult,
   ValueOrPromise
 } from '~types';
+import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
 import type { MusicController } from './MusicController';
 
 declare let window: Window & {
-  MusicKit: any;
+  MusicKit: { getInstance: () => MusicKit };
 };
 
 const REPEAT_MAP: Record<RepeatMode, number> = {
@@ -163,7 +164,7 @@ export class AppleMusicController implements MusicController {
   }
 
   public getQueue(): QueueItem[] {
-    const appleMusicQueueItems = this.getPlayer().queue._queueItems as any[];
+    const appleMusicQueueItems = this.getPlayer().queue._queueItems;
     const nowPlayingIndex = this.getPlayer().nowPlayingItemIndex;
 
     return appleMusicQueueItems.map((item, index) => {
@@ -201,7 +202,7 @@ export class AppleMusicController implements MusicController {
       types: 'songs'
     });
 
-    const tracks = results?.songs?.data?.map((song: any) => {
+    const tracks = results?.songs?.data?.map((song) => {
       return this._mediaItemToSongInfo(song);
     });
 
@@ -213,7 +214,7 @@ export class AppleMusicController implements MusicController {
     return me.subscription.active;
   }
 
-  private _mediaItemToSongInfo(mediaItem: any): Track {
+  private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {
     const track = mediaItem.attributes;
 
     return {
@@ -227,6 +228,6 @@ export class AppleMusicController implements MusicController {
   }
 
   public getPlayer() {
-    return (window as any).MusicKit.getInstance();
+    return window.MusicKit.getInstance();
   }
 }

@@ -20,7 +20,7 @@ const useControllerScreen = () => {
     if (!autoplayReady) {
       navigate('/enable-autoplay');
     }
-  }, [autoplayReady]);
+  }, [autoplayReady, navigate]);
 
   useEffect(() => {
     sendMessage(
@@ -32,7 +32,7 @@ const useControllerScreen = () => {
       },
       musicServiceTab?.tabId
     );
-  }, []);
+  }, [musicServiceTab?.tabId]);
 
   const queueCount = useMemo(
     () => playerState?.queue?.length ?? 0,

@@ -4,6 +4,7 @@ import screenshotMessageHandler from './hubMessages/SCREENSHOT';
 
 export const registerHubMessageHandlers = (port: chrome.runtime.Port) => {
   port.onMessage.addListener(async (message) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sendResponse = (response: any) => {
       const responseMessage = {
         requestId: message.requestId,
