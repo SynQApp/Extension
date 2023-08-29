@@ -410,7 +410,9 @@ export class YouTubeMusicController implements MusicController {
   }
 
   private async _addCurtain() {
-    const screenshot = await this._hub.asyncPostMessage({ name: 'SCREENSHOT' });
+    const screenshot = await this._hub.asyncPostMessage<string>({
+      name: 'SCREENSHOT'
+    });
 
     this._curtain = document.createElement('div');
     this._curtain.className = 'synq-curtain';

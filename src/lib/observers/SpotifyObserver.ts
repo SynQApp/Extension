@@ -147,7 +147,7 @@ export class SpotifyObserver extends MusicServiceObserver {
 
       const currentTrack = await this._controller.getCurrentTrack();
 
-      const tab = await this._hub.asyncPostMessage({
+      const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
         name: 'GET_SELF_TAB'
       });
 

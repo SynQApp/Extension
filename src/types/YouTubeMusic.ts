@@ -51,6 +51,7 @@ export interface NativeYouTubeMusicQueueItemRendererData {
 }
 
 export interface NativeYouTubeMusicMoviePlayer {
+  addEventListener: (event: string, callback: () => void) => void;
   getCurrentTime: () => number;
   getPlayerState: () => number;
   getVolume: () => number;
@@ -58,6 +59,7 @@ export interface NativeYouTubeMusicMoviePlayer {
   pauseVideo: () => void;
   playVideo: () => void;
   previousVideo: () => void;
+  removeEventListener: (event: string, callback: () => void) => void;
   seekTo: (seconds: number) => void;
   setVolume: (volume: number) => void;
 }

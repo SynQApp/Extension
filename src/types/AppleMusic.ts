@@ -54,4 +54,6 @@ export interface MusicKit {
   playLater: (options: { song: string }) => Promise<void>;
   me: () => Promise<NativeAppleMusicUser>;
   api: AppleMusicApi;
+  addEventListener: (event: string, callback: () => void) => void;
+  removeEventListener: (event: string, callback: () => void) => void;
 }

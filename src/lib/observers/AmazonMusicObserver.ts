@@ -152,7 +152,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
 
     const currentTrack = this._controller.getCurrentTrack();
 
-    const tab = await this._hub.asyncPostMessage({
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
