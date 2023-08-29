@@ -3,7 +3,6 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { MusicService, type Settings } from '~types';
 
 const initialState: Settings = {
-  appearance: 'light',
   preferredMusicService: MusicService.APPLE_MUSIC,
   miniPlayerKeyControlsEnabled: true,
   musicServiceKeyControlsEnabled: true,
@@ -15,9 +14,6 @@ const sessionSlice = createSlice({
   name: 'session',
   initialState: initialState,
   reducers: {
-    setAppearance: (state, action: PayloadAction<Settings['appearance']>) => {
-      state.appearance = action.payload;
-    },
     setPreferredMusicService: (state, action: PayloadAction<MusicService>) => {
       state.preferredMusicService = action.payload;
     },
@@ -43,7 +39,6 @@ const sessionSlice = createSlice({
 });
 
 export const {
-  setAppearance,
   setMiniPlayerKeyControlsEnabled,
   setMusicServiceKeyControlsEnabled,
   setNotificationsEnabled,
