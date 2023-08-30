@@ -93,7 +93,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
   private async _setupMaestroObserver() {
     const maestro = await this._controller.getMaestroInstance();
 
-    this._onStateChangeHandler = async (...params) => {
+    this._onStateChangeHandler = async () => {
       await this._sendPlaybackUpdatedMessage();
     };
 
@@ -152,7 +152,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
 
     const currentTrack = this._controller.getCurrentTrack();
 
-    const tab = await this._hub.asyncPostMessage({
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 

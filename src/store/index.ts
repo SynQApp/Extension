@@ -17,7 +17,10 @@ import {
   persistReducer,
   persistStore
 } from '@plasmohq/redux-persist';
-import type { PersistConfig } from '@plasmohq/redux-persist/lib/types';
+import type {
+  PersistConfig,
+  Storage as PersistStorage
+} from '@plasmohq/redux-persist/lib/types';
 import { Storage } from '@plasmohq/storage';
 
 import rootReducer, { type RootState } from './combinedReducers';
@@ -25,14 +28,14 @@ import rootReducer, { type RootState } from './combinedReducers';
 const persistConfig: PersistConfig<unknown> = {
   key: 'synq-root',
   version: 1,
-  // @ts-ignore
-  storage: localStorage
+  storage: localStorage as PersistStorage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore<RootState>({
   reducer: persistedReducer,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

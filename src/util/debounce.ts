@@ -1,6 +1,6 @@
 const debounceMap = new Map<string, NodeJS.Timeout>();
 
-export const debounce = (fn: Function, key: string, delay: number) => {
+export const debounce = (fn: () => unknown, key: string, delay: number) => {
   if (debounceMap.has(key)) {
     clearTimeout(debounceMap.get(key)!);
   }

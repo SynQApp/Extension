@@ -1,0 +1,6 @@
+.plasmo
+build
+node_modules
+package.json
+tsconfig.json
+pnpm-lock.yaml

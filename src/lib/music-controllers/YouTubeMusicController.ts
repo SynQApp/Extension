@@ -3,6 +3,15 @@ import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { TrackSearchResult } from '~types/TrackSearchResult';
+import type {
+  NativeYouTubeMusicMoviePlayer,
+  NativeYouTubeMusicNavigationRequest,
+  NativeYouTubeMusicQueueItem,
+  NativeYouTubeMusicQueueItemRendererData,
+  NativeYouTubeMusicThumbnail,
+  YtConfig,
+  YtmApp
+} from '~types/YouTubeMusic';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -12,7 +21,9 @@ import { normalizeVolume } from '~util/volume';
 import type { MusicController } from './MusicController';
 
 declare let window: Window & {
-  yt: any;
+  yt: {
+    config_: YtConfig;
+  };
 };
 
 export enum YouTubeMusicPlayerState {
@@ -34,12 +45,12 @@ export class YouTubeMusicController implements MusicController {
   /**
    * Reference to a NavigationRequest that we can clone for song change navigation
    */
-  private _navigationRequestInstance: any;
+  private _navigationRequestInstance: NativeYouTubeMusicNavigationRequest;
 
   /**
    * Reference to interval used for session prep
    */
-  private _exploreNavigationIntervalRef: any;
+  private _exploreNavigationIntervalRef: NodeJS.Timer;
 
   /**
    * Used to control the wrapper navigation function. When false, we are in the middle of
@@ -223,7 +234,7 @@ export class YouTubeMusicController implements MusicController {
   }
 
   public getQueue(): QueueItem[] {
-    const ytQueueItems = this._appState.queue.items as any[];
+    const ytQueueItems = this._appState.queue.items;
     const currentSongIndex = this._appState.queue.selectedItemIndex;
 
     return ytQueueItems.map((item, index) => {
@@ -272,7 +283,9 @@ export class YouTubeMusicController implements MusicController {
     });
   }
 
-  private _createNavigationRequestInstance(trackId: string): any {
+  private _createNavigationRequestInstance(
+    trackId: string
+  ): NativeYouTubeMusicNavigationRequest {
     // Clone the navigation request instance
     const navigationRequest = Object.assign(
       Object.create(Object.getPrototypeOf(this._navigationRequestInstance)),
@@ -304,7 +317,9 @@ export class YouTubeMusicController implements MusicController {
     return { artist, album };
   }
 
-  private _getQueueItemRendererData(queueItem: any): any {
+  private _getQueueItemRendererData(
+    queueItem: NativeYouTubeMusicQueueItem
+  ): NativeYouTubeMusicQueueItemRendererData {
     let renderer;
 
     if (queueItem.playlistPanelVideoWrapperRenderer) {
@@ -320,11 +335,13 @@ export class YouTubeMusicController implements MusicController {
     return renderer;
   }
 
-  private _selectAlbumCoverUrl(thumbnails: any[]): string {
+  private _selectAlbumCoverUrl(
+    thumbnails: NativeYouTubeMusicThumbnail[]
+  ): string {
     return thumbnails.find((thumbnail) => thumbnail.width >= 100).url;
   }
 
-  private _queueItemToSongInfo(queueItem: any): Track {
+  private _queueItemToSongInfo(queueItem: NativeYouTubeMusicQueueItem): Track {
     const rendererData = this._getQueueItemRendererData(queueItem);
 
     const trackId = rendererData.videoId;
@@ -352,48 +369,50 @@ export class YouTubeMusicController implements MusicController {
    * take programmatic control of the page.
    */
   private async _forceCaptureNavigationRequest() {
-    return new Promise(async (resolve) => {
-      await this._addCurtain();
+    return new Promise((resolve) => {
+      this._addCurtain().then(() => {
+        this._shouldPlayOnNavigation = false;
+        this._ytmApp.navigate_('FEmusic_explore');
 
-      this._shouldPlayOnNavigation = false;
-      this._ytmApp.navigate_('FEmusic_explore');
+        const popstateHandler = () => {
+          window.removeEventListener('popstate', popstateHandler);
+          onDocumentReady(() => {
+            this._removeCurtain();
+            resolve(void 0);
+          });
+        };
 
-      const popstateHandler = () => {
-        window.removeEventListener('popstate', popstateHandler);
-        onDocumentReady(() => {
-          this._removeCurtain();
-          resolve(void 0);
-        });
-      };
+        const intervalHandler = () => {
+          if (location.pathname !== '/explore') {
+            return;
+          }
 
-      const intervalHandler = () => {
-        if (location.pathname !== '/explore') {
-          return;
-        }
+          const item = document
+            .querySelector(
+              '#items > ytmusic-responsive-list-item-renderer:nth-child(1)'
+            )
+            ?.querySelector('ytmusic-play-button-renderer') as HTMLElement;
 
-        const item = document
-          .querySelector(
-            '#items > ytmusic-responsive-list-item-renderer:nth-child(1)'
-          )
-          ?.querySelector('ytmusic-play-button-renderer') as HTMLElement;
+          if (item) {
+            clearInterval(this._exploreNavigationIntervalRef);
+            item.click();
 
-        if (item) {
-          clearInterval(this._exploreNavigationIntervalRef);
-          item.click();
+            history.back();
 
-          history.back();
+            window.addEventListener('popstate', popstateHandler);
+          }
+        };
 
-          window.addEventListener('popstate', popstateHandler);
-        }
-      };
-
-      // Wait for the explore page to load, then click the first item
-      this._exploreNavigationIntervalRef = setInterval(intervalHandler, 200);
+        // Wait for the explore page to load, then click the first item
+        this._exploreNavigationIntervalRef = setInterval(intervalHandler, 200);
+      });
     });
   }
 
   private async _addCurtain() {
-    const screenshot = await this._hub.asyncPostMessage({ name: 'SCREENSHOT' });
+    const screenshot = await this._hub.asyncPostMessage<string>({
+      name: 'SCREENSHOT'
+    });
 
     this._curtain = document.createElement('div');
     this._curtain.className = 'synq-curtain';
@@ -490,14 +509,18 @@ export class YouTubeMusicController implements MusicController {
   }
 
   public getPlayer() {
-    return document.getElementById('movie_player') as any;
+    return document.getElementById(
+      'movie_player'
+    ) as unknown as NativeYouTubeMusicMoviePlayer;
   }
 
   private get _ytmApp() {
-    return document.getElementsByTagName('ytmusic-app')?.[0] as any;
+    return document.getElementsByTagName(
+      'ytmusic-app'
+    )?.[0] as unknown as YtmApp;
   }
 
   private get _appState() {
-    return this._ytmApp.store.getState() as any;
+    return this._ytmApp.store.getState();
   }
 }

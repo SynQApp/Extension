@@ -41,7 +41,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     }
 
     return currentQueue;
-  }, [playerState, session.queue]);
+  }, [playerState, count, currentTrack?.id, session, startAt]);
 
   const musicServiceName = useMemo(
     () =>

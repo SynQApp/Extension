@@ -2,8 +2,14 @@ import type { Store } from 'redux';
 
 import { BASE_API_URL, BASE_APP_URL } from '~constants/amazon';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlayerState, QueueItem, Track } from '~types';
 import type { TrackSearchResult } from '~types';
+import type {
+  AmznMusic,
+  Maestro,
+  NativeAmazonMusicQueueItem,
+  NativeAmazonSearchResponse
+} from '~types/AmazonMusic';
 import { findIndexes } from '~util/findIndexes';
 import { convertToAscii, generateRequestId } from '~util/skyfireUtils';
 import { lengthTextToSeconds } from '~util/time';
@@ -14,8 +20,10 @@ import type { MusicController } from './MusicController';
 
 declare let window: Window & {
   __REDUX_STORES__: (Store & { name: string })[];
-  amznMusic: any;
-  maestro: any;
+  amznMusic: AmznMusic;
+  maestro: {
+    getInstance(): Promise<Maestro>;
+  };
 };
 
 const SKYFIRE_STORE_NAME = 'DMWebPlayerSkyfire';
@@ -248,7 +256,8 @@ export class AmazonMusicController implements MusicController {
 
   public async getQueue(): Promise<AmazonQueueItem[]> {
     const appState = this.getStore().getState();
-    let queue = appState.Media?.playQueue?.widgets?.[0]?.items as any[];
+    let queue = appState.Media?.playQueue?.widgets?.[0]
+      ?.items as NativeAmazonMusicQueueItem[];
 
     // Amazon Music loads the queue only after a user tries to access it. If the
     // queue is not loaded yet, we'll try to load it.
@@ -257,7 +266,7 @@ export class AmazonMusicController implements MusicController {
     }
 
     const queueItems =
-      queue?.map((item: any) => {
+      queue?.map((item) => {
         const queueItem: AmazonQueueItem = {
           track: this._queueItemToSongInfo(item),
           isPlaying: false,
@@ -337,9 +346,10 @@ export class AmazonMusicController implements MusicController {
     return this._parseSearchResponse(apiResponse);
   }
 
-  private _parseSearchResponse(response: any): TrackSearchResult[] {
-    const tracks = response?.methods?.[0]?.template?.widgets?.[0]
-      ?.items as any[];
+  private _parseSearchResponse(
+    response: NativeAmazonSearchResponse
+  ): TrackSearchResult[] {
+    const tracks = response?.methods?.[0]?.template?.widgets?.[0]?.items;
 
     return (
       tracks?.map((track) => {
@@ -355,7 +365,7 @@ export class AmazonMusicController implements MusicController {
     );
   }
 
-  private async _fetchQueue(): Promise<any> {
+  private async _fetchQueue(): Promise<NativeAmazonMusicQueueItem[]> {
     const appState = this.getStore().getState();
 
     this.getStore().dispatch(
@@ -385,7 +395,7 @@ export class AmazonMusicController implements MusicController {
     });
   }
 
-  private _queueItemToSongInfo(item: any): Track {
+  private _queueItemToSongInfo(item: NativeAmazonMusicQueueItem): Track {
     const searchParams = new URLSearchParams(
       item?.primaryLink?.deeplink?.split('?')[1]
     );
@@ -440,42 +450,45 @@ export class AmazonMusicController implements MusicController {
    * started playing to pause it.
    */
   private async _forceInitializePlayer() {
-    return new Promise(async (resolve) => {
-      const maestro = await this.getMaestroInstance();
-      const isMuted = maestro.getVolume() === 0;
+    return new Promise((resolve) => {
+      this.getMaestroInstance().then((maestro) => {
+        const isMuted = maestro.getVolume() === 0;
 
-      if (isMuted) {
-        this.toggleMute();
-      }
-
-      const playButtons = document.querySelectorAll(
-        'music-button[icon-name="play"]'
-      );
-
-      const mainPlayButton = playButtons[playButtons.length - 1] as HTMLElement;
-
-      mainPlayButton.click();
-
-      const observer = new MutationObserver(
-        async (mutations, observerInstance) => {
-          if (mainPlayButton.getAttribute('icon-name') === 'pause') {
-            setTimeout(() => {
-              mainPlayButton.click();
-
-              if (isMuted) {
-                this.toggleMute();
-              }
-            }, 100);
-
-            observerInstance.disconnect();
-            resolve(void 0);
-          }
+        if (isMuted) {
+          this.toggleMute();
         }
-      );
 
-      observer.observe(mainPlayButton, {
-        attributes: true,
-        attributeFilter: ['aria-label']
+        const playButtons = document.querySelectorAll(
+          'music-button[icon-name="play"]'
+        );
+
+        const mainPlayButton = playButtons[
+          playButtons.length - 1
+        ] as HTMLElement;
+
+        mainPlayButton.click();
+
+        const observer = new MutationObserver(
+          async (mutations, observerInstance) => {
+            if (mainPlayButton.getAttribute('icon-name') === 'pause') {
+              setTimeout(() => {
+                mainPlayButton.click();
+
+                if (isMuted) {
+                  this.toggleMute();
+                }
+              }, 100);
+
+              observerInstance.disconnect();
+              resolve(void 0);
+            }
+          }
+        );
+
+        observer.observe(mainPlayButton, {
+          attributes: true,
+          attributeFilter: ['aria-label']
+        });
       });
     });
   }
@@ -626,7 +639,7 @@ export class AmazonMusicController implements MusicController {
   }
 
   public getStore() {
-    return (window as any).__REDUX_STORES__.find(
+    return window.__REDUX_STORES__.find(
       (store) => store.name === SKYFIRE_STORE_NAME
     );
   }

@@ -2,6 +2,7 @@ import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, TrackSearchResult } from '~types';
+import type { NativeSpotifyTrack } from '~types/Spotify';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
@@ -79,10 +80,9 @@ export class SpotifyController implements MusicController {
   }
 
   public async toggleRepeatMode(): Promise<void> {
-    const playerState = await this._fetchSpotify(
-      SpotifyEndpoints.PLAYER_STATE,
-      'GET'
-    );
+    const playerState = await this._fetchSpotify<{
+      repeat_state: keyof typeof REPEAT_MAP;
+    }>(SpotifyEndpoints.PLAYER_STATE, 'GET');
 
     const repeatMode = REPEAT_MAP[playerState.repeat_state];
 
@@ -109,10 +109,9 @@ export class SpotifyController implements MusicController {
   }
 
   public async toggleLike(): Promise<void> {
-    const currentlyPlaying = await this._fetchSpotify(
-      SpotifyEndpoints.CURRENTLY_PLAYING,
-      'GET'
-    );
+    const currentlyPlaying = await this._fetchSpotify<{
+      item: NativeSpotifyTrack;
+    }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
 
     const ids = [currentlyPlaying.item.id];
 
@@ -121,7 +120,7 @@ export class SpotifyController implements MusicController {
     });
 
     // Returns array of booleans, get the first one
-    const [inLibrary] = await this._fetchSpotify(
+    const [inLibrary] = await this._fetchSpotify<boolean[]>(
       `${SpotifyEndpoints.IS_IN_LIBRARY}?${searchParams.toString()}`,
       'GET'
     );
@@ -249,10 +248,9 @@ export class SpotifyController implements MusicController {
   }
 
   public async getCurrentTrack(): Promise<Track> {
-    const currentlyPlaying = await this._fetchSpotify(
-      SpotifyEndpoints.CURRENTLY_PLAYING,
-      'GET'
-    );
+    const currentlyPlaying = await this._fetchSpotify<{
+      item: NativeSpotifyTrack;
+    }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
 
     if (!currentlyPlaying?.item) {
       return null;
@@ -288,14 +286,14 @@ export class SpotifyController implements MusicController {
       return this._cachedQueue.items ?? [];
     }
 
-    const queueRes = await this._fetchSpotify(
+    const queueRes = await this._fetchSpotify<{ queue: NativeSpotifyTrack[] }>(
       SpotifyEndpoints.GET_QUEUE,
       'GET'
     );
 
-    const queue = queueRes.queue as any[];
+    const queue = queueRes.queue;
     const queueItems =
-      queue?.map((item: any) => {
+      queue?.map((item) => {
         const queueItem: QueueItem = {
           track: this._itemToSongInfo(item),
           isPlaying: false
@@ -378,12 +376,11 @@ export class SpotifyController implements MusicController {
       market: this._market
     });
 
-    const results = await this._fetchSpotify(
-      `${SpotifyEndpoints.SEARCH}?${queryParams.toString()}`,
-      'GET'
-    );
+    const results = await this._fetchSpotify<{
+      tracks: { items: NativeSpotifyTrack[] };
+    }>(`${SpotifyEndpoints.SEARCH}?${queryParams.toString()}`, 'GET');
 
-    const tracks = results.tracks.items.map((item: any) =>
+    const tracks = results.tracks.items.map((item) =>
       this._itemToSongInfo(item)
     );
 
@@ -412,7 +409,7 @@ export class SpotifyController implements MusicController {
     queueButton.click();
   }
 
-  private _itemToSongInfo(item: any): Track {
+  private _itemToSongInfo(item: NativeSpotifyTrack): Track {
     return {
       id: item.id,
       name: item.name,
@@ -426,9 +423,10 @@ export class SpotifyController implements MusicController {
   /**
    * Fetch from Spotify API.
    */
-  private async _fetchSpotify(
+  private async _fetchSpotify<T>(
     url: string,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body?: any
   ) {
     return fetch(url, {
@@ -442,7 +440,7 @@ export class SpotifyController implements MusicController {
         return;
       }
 
-      return res.json();
+      return res.json() as Promise<T>;
     });
   }
 

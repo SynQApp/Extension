@@ -22,27 +22,30 @@ export const useSearchScreen = () => {
   const sidebarRoot = useSidebarRoot();
   const dispatch = useAppDispatch();
 
-  const search = useCallback(async (searchQuery: string) => {
-    setShowRecentSearches(false);
+  const search = useCallback(
+    async (searchQuery: string) => {
+      setShowRecentSearches(false);
 
-    setRecentSearches((prevRecentSearches) => {
-      if (prevRecentSearches.includes(searchQuery)) {
-        return prevRecentSearches;
-      }
-
-      return [searchQuery, ...prevRecentSearches].slice(0, 10);
-    });
-
-    sendMessage(
-      {
-        name: MusicControllerMessage.SEARCH_TRACKS,
-        body: {
-          query: searchQuery
+      setRecentSearches((prevRecentSearches) => {
+        if (prevRecentSearches.includes(searchQuery)) {
+          return prevRecentSearches;
         }
-      },
-      musicServiceTab?.tabId
-    );
-  }, []);
+
+        return [searchQuery, ...prevRecentSearches].slice(0, 10);
+      });
+
+      sendMessage(
+        {
+          name: MusicControllerMessage.SEARCH_TRACKS,
+          body: {
+            query: searchQuery
+          }
+        },
+        musicServiceTab?.tabId
+      );
+    },
+    [musicServiceTab?.tabId, setRecentSearches]
+  );
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value ?? '');

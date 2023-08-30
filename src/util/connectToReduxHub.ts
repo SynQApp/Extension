@@ -1,14 +1,23 @@
+import type { Action } from 'redux';
+
+import type { PlasmoMessaging } from '@plasmohq/messaging';
 import { connectToHub } from '@plasmohq/messaging/pub-sub';
 
 import { generateRequestId } from './generateRequestId';
 
-type Listener = (message: any, from?: number, to?: number) => void;
+type Listener = (
+  message: PlasmoMessaging.Request,
+  from?: number,
+  to?: number
+) => void;
 
 export interface ReduxHub {
-  dispatch: (action: any) => void;
+  dispatch: (action: Action) => void;
   addListener: (listener: Listener) => void;
-  postMessage: (message: any) => void;
-  asyncPostMessage: <T = any>(message: any) => Promise<T>;
+  postMessage: (message: PlasmoMessaging.Request) => void;
+  asyncPostMessage: <T = unknown>(
+    message: PlasmoMessaging.Request
+  ) => Promise<T>;
   port: chrome.runtime.Port;
 }
 
@@ -40,7 +49,7 @@ export const connectToReduxHub = (extensionId: string): ReduxHub => {
 
 const createReduxHub = (): ReduxHub => {
   return {
-    dispatch: (action: any) =>
+    dispatch: (action) =>
       hubPort.postMessage({ name: 'DISPATCH', body: action }),
     addListener: (listener: Listener) => {
       listeners.push(listener);
@@ -48,11 +57,11 @@ const createReduxHub = (): ReduxHub => {
         listener(message.payload, message.from, message.to);
       });
     },
-    postMessage: (message: any) => {
+    postMessage: (message) => {
       hubPort.postMessage(message);
     },
-    asyncPostMessage: (message: any) => {
-      return new Promise((resolve, reject) => {
+    asyncPostMessage: (message) => {
+      return new Promise((resolve) => {
         const requestId = generateRequestId();
 
         hubPort.onMessage.addListener((response) => {

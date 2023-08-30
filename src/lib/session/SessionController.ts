@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import type { Listener, Session, SessionQueueItem } from '~types';
 
 class NotImplementedError extends Error {

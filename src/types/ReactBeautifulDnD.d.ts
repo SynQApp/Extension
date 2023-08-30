@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as reactBeautifulDnd from 'react-beautiful-dnd';
 
 declare module 'react-beautiful-dnd' {
