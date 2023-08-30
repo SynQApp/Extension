@@ -8,7 +8,6 @@ interface LastFmSettings {
 }
 
 export interface Settings {
-  appearance: ThemeName;
   preferredMusicService: MusicService;
   miniPlayerKeyControlsEnabled: boolean;
   musicServiceKeyControlsEnabled: boolean;

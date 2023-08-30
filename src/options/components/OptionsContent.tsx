@@ -1,11 +1,9 @@
-import { Radio, RadioGroup, Stack, Switch, Text, token } from '@synq/ui';
+import { Text, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
-import { AppearanceSection } from './AppearanceSection';
 import { KeyControlsSection } from './KeyControlsSection';
 import { LastFmSection } from './LastFmSection';
 import { NotificationsSection } from './NotificationsSection';
-import { OptionsSection } from './OptionsSection';
 import { PreferredMusicServiceSection } from './PreferredMusicServiceSection';
 import { SynqLinksSection } from './SynqLinksSection';
 
@@ -15,7 +13,6 @@ export const OptionsContent = () => {
       <Title type="display" size="4xl">
         Settings
       </Title>
-      <AppearanceSection />
       <PreferredMusicServiceSection />
       <KeyControlsSection />
       <NotificationsSection />
