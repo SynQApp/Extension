@@ -1,6 +1,7 @@
 import dispatchMessageHandler from './hubMessages/DISPATCH';
 import getSelfTabMessageHandler from './hubMessages/GET_SELF_TAB';
 import screenshotMessageHandler from './hubMessages/SCREENSHOT';
+import trackChangedMessageHandler from './hubMessages/TRACK_CHANGED';
 
 export const registerHubMessageHandlers = (port: chrome.runtime.Port) => {
   port.onMessage.addListener(async (message) => {
@@ -25,6 +26,14 @@ export const registerHubMessageHandlers = (port: chrome.runtime.Port) => {
 
       case 'GET_SELF_TAB':
         await getSelfTabMessageHandler(message.body, port.sender, sendResponse);
+        break;
+
+      case 'TRACK_CHANGED':
+        await trackChangedMessageHandler(
+          message.body,
+          port.sender,
+          sendResponse
+        );
         break;
     }
   });

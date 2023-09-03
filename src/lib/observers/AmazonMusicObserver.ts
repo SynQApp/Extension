@@ -17,8 +17,7 @@ const playbackStateChangedEvents = [
 ];
 
 export class AmazonMusicObserver extends MusicServiceObserver {
-  private _controller: AmazonMusicController;
-  private _hub: ReduxHub;
+  declare _controller: AmazonMusicController;
   private _onStateChangeHandler: () => void;
   private _queueObserverInterval: NodeJS.Timer;
   private _unsubscribeStoreObserver: () => void;
@@ -33,7 +32,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
   };
 
   constructor(controller: AmazonMusicController, hub: ReduxHub) {
-    super();
+    super(controller, hub);
 
     this._controller = controller;
     this._currentState = {
@@ -70,8 +69,8 @@ export class AmazonMusicObserver extends MusicServiceObserver {
   public resume(filter?: ObserverStateFilter): void {
     super.resume(filter);
 
-    this._sendPlaybackUpdatedMessage();
-    this._sendSongInfoUpdatedMessage();
+    this._handlePlaybackUpdated();
+    this._handleTrackUpdated();
   }
 
   public async unobserve(): Promise<void> {
@@ -94,7 +93,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     const maestro = await this._controller.getMaestroInstance();
 
     this._onStateChangeHandler = async () => {
-      await this._sendPlaybackUpdatedMessage();
+      await this._handlePlaybackUpdated();
     };
 
     playbackStateChangedEvents.forEach((event) => {
@@ -112,40 +111,38 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     const maestro = await this._controller.getMaestroInstance();
 
     this._unsubscribeStoreObserver = store.subscribe(async () => {
-      if (this.isPaused()) {
-        return;
-      }
-
       const state = store.getState();
 
       if (state.Storage?.RATINGS?.TRACK_RATING !== this._currentState.rating) {
         this._currentState.rating = state.Storage?.RATINGS?.TRACK_RATING;
-        await this._sendSongInfoUpdatedMessage();
+        await this._handleTrackUpdated();
       }
 
       if (state.Media?.mediaId !== this._currentState.trackId) {
         this._currentState.trackId = state.Media?.mediaId;
-        await this._sendSongInfoUpdatedMessage();
+        await this._handleTrackUpdated();
       }
 
       if (state.PlaybackStates?.repeat?.state !== this._currentState.repeat) {
         this._currentState.repeat = state.PlaybackStates?.repeat?.state;
-        await this._sendPlaybackUpdatedMessage();
+        await this._handlePlaybackUpdated();
       }
 
       if (state.PlaybackStates?.play?.state !== this._currentState.isPlaying) {
         this._currentState.isPlaying = state.PlaybackStates?.play?.state;
-        await this._sendPlaybackUpdatedMessage();
+        await this._handlePlaybackUpdated();
       }
 
       if (maestro.getVolume() !== this._currentState.volume) {
         this._currentState.volume = maestro.getVolume();
-        await this._sendPlaybackUpdatedMessage();
+        await this._handlePlaybackUpdated();
       }
     });
   }
 
-  private async _sendSongInfoUpdatedMessage(): Promise<void> {
+  private async _handleTrackUpdated(): Promise<void> {
+    super.handleTrackUpdated();
+
     if (this.isPaused()) {
       return;
     }
@@ -170,7 +167,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     }
   }
 
-  private async _sendPlaybackUpdatedMessage(): Promise<void> {
+  private async _handlePlaybackUpdated(): Promise<void> {
     if (this.isPaused('playerState')) {
       return;
     }

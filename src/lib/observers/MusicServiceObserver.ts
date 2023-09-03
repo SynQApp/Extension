@@ -1,4 +1,6 @@
+import type { MusicController } from '~lib/music-controllers/MusicController';
 import type { ValueOrPromise } from '~types';
+import type { ReduxHub } from '~util/connectToReduxHub';
 
 export interface ObserverStateFilter {
   tabs?: boolean;
@@ -6,41 +8,22 @@ export interface ObserverStateFilter {
   playerState?: boolean;
 }
 
-/**
- * Observer emitters are responsible for observing the state of the music player
- * and emitting events when the state changes.
- */
-// export interface MusicServiceObserver {
-//   /**
-//    * Begin observing the music player and emitting events when the state changes.
-//    */
-//   observe(): ValueOrPromise<void>;
-
-//   /**
-//    * Pause updating state. If a filter is provided, the observer will only pause
-//    * updating the state for the specified properties.
-//    */
-//   pause(filter?: ObserverStateFilter): ValueOrPromise<void>;
-
-//   /**
-//    * Resume updating state. If a filter is provided, the observer will only
-//    * resume updating the state for the specified properties.
-//    */
-//   resume(filter?: ObserverStateFilter): ValueOrPromise<void>;
-
-//   /**
-//    * Stop observing the music player. Remove all listeners.
-//    */
-//   unobserve(): ValueOrPromise<void>;
-// }
-
 export class MusicServiceObserver {
-  private paused: boolean = true;
-  private pausedProperties: Record<keyof ObserverStateFilter, boolean> = {
+  protected _controller: MusicController;
+  protected _hub: ReduxHub;
+
+  private _paused: boolean = true;
+  private _pausedProperties: Record<keyof ObserverStateFilter, boolean> = {
     tabs: true,
     currentTrack: true,
     playerState: true
   };
+  private _currentTrackId: string = undefined;
+
+  constructor(controller: MusicController, hub: ReduxHub) {
+    this._controller = controller;
+    this._hub = hub;
+  }
 
   /**
    * Begin observing the music player and emitting events when the state changes.
@@ -55,13 +38,13 @@ export class MusicServiceObserver {
    */
   public pause(filter?: ObserverStateFilter): ValueOrPromise<void> {
     if (filter) {
-      this.pausedProperties = {
-        ...this.pausedProperties,
+      this._pausedProperties = {
+        ...this._pausedProperties,
         ...filter
       };
     } else {
-      this.paused = true;
-      this.pausedProperties = {
+      this._paused = true;
+      this._pausedProperties = {
         tabs: true,
         currentTrack: true,
         playerState: true
@@ -88,13 +71,13 @@ export class MusicServiceObserver {
         return acc;
       }, {});
 
-      this.pausedProperties = {
-        ...this.pausedProperties,
+      this._pausedProperties = {
+        ...this._pausedProperties,
         ...newPausedState
       };
     } else {
-      this.paused = false;
-      this.pausedProperties = {
+      this._paused = false;
+      this._pausedProperties = {
         tabs: false,
         currentTrack: false,
         playerState: false
@@ -114,9 +97,24 @@ export class MusicServiceObserver {
    */
   protected isPaused(key?: keyof ObserverStateFilter): boolean {
     if (!key) {
-      return this.paused;
+      return this._paused;
     }
 
-    return this.pausedProperties[key];
+    return this._pausedProperties[key];
+  }
+
+  protected async handleTrackUpdated(): Promise<void> {
+    const currentTrack = await this._controller.getCurrentTrack();
+
+    if (currentTrack?.id === this._currentTrackId) {
+      return;
+    }
+
+    this._hub.postMessage({
+      name: 'TRACK_CHANGED',
+      body: currentTrack
+    });
+
+    this._currentTrackId = currentTrack?.id;
   }
 }

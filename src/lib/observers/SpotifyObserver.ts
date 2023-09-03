@@ -13,12 +13,11 @@ import {
 } from './MusicServiceObserver';
 
 export class SpotifyObserver extends MusicServiceObserver {
-  private _controller: SpotifyController;
-  private _hub: ReduxHub;
+  declare _controller: SpotifyController;
   private _mutationObservers: MutationObserver[] = [];
 
   constructor(controller: SpotifyController, hub: ReduxHub) {
-    super();
+    super(controller, hub);
 
     this._controller = controller;
     this._hub = hub;
@@ -34,8 +33,8 @@ export class SpotifyObserver extends MusicServiceObserver {
   public resume(filter: ObserverStateFilter): void {
     super.resume(filter);
 
-    this._sendPlaybackUpdatedMessage();
-    this._sendSongInfoUpdatedMessage();
+    this._handlePlaybackUpdated();
+    this._handleTrackUpdated();
   }
 
   public unobserve(): void {
@@ -44,7 +43,7 @@ export class SpotifyObserver extends MusicServiceObserver {
 
   private _setupPlayerStateObserver() {
     const playerStateObserver = new MutationObserver(async () => {
-      await this._sendPlaybackUpdatedMessage();
+      await this._handlePlaybackUpdated();
     });
 
     const playPauseButtonElement = document.querySelector(
@@ -101,7 +100,7 @@ export class SpotifyObserver extends MusicServiceObserver {
 
   private async _setupSongInfoObserver() {
     const songInfoObserver = new MutationObserver(async () => {
-      await this._sendSongInfoUpdatedMessage();
+      await this._handleTrackUpdated();
     });
 
     const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
@@ -130,7 +129,9 @@ export class SpotifyObserver extends MusicServiceObserver {
    * song info. This method will retry up to 5 times to get the current song info that
    * matches the UI's song info.
    */
-  private async _sendSongInfoUpdatedMessage(): Promise<void> {
+  private async _handleTrackUpdated(): Promise<void> {
+    super.handleTrackUpdated();
+
     const nowPlayingText = this._getNowPlayingText();
 
     if (this.isPaused()) {
@@ -168,7 +169,7 @@ export class SpotifyObserver extends MusicServiceObserver {
     }
   }
 
-  private async _sendPlaybackUpdatedMessage(): Promise<void> {
+  private async _handlePlaybackUpdated(): Promise<void> {
     if (this.isPaused('playerState')) {
       return;
     }
