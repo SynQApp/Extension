@@ -1,6 +1,17 @@
+import type { PlasmoMessaging } from '@plasmohq/messaging';
+
 import type { MusicController } from '~lib/music-controllers/MusicController';
-import type { ValueOrPromise } from '~types';
+import type { Track, ValueOrPromise } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
+
+export enum ObserverEvent {
+  TRACK_UPDATED = 'TRACK_UPDATED',
+  PLAYER_STATE_UPDATED = 'PLAYER_STATE_UPDATED'
+}
+
+type ObserverHandler = (
+  message: PlasmoMessaging.Request<ObserverEvent>
+) => ValueOrPromise<void>;
 
 export interface ObserverStateFilter {
   tabs?: boolean;
@@ -8,7 +19,7 @@ export interface ObserverStateFilter {
   playerState?: boolean;
 }
 
-export class MusicServiceObserver {
+export abstract class MusicServiceObserver {
   protected _controller: MusicController;
   protected _hub: ReduxHub;
 
@@ -18,7 +29,9 @@ export class MusicServiceObserver {
     currentTrack: true,
     playerState: true
   };
-  private _currentTrackId: string = undefined;
+  private _currentTrack: Track = undefined;
+  private _lastScrobbledTrackId: string = undefined;
+  private _listeners: ObserverHandler[] = [];
 
   constructor(controller: MusicController, hub: ReduxHub) {
     this._controller = controller;
@@ -28,9 +41,7 @@ export class MusicServiceObserver {
   /**
    * Begin observing the music player and emitting events when the state changes.
    */
-  public observe(): ValueOrPromise<void> {
-    throw new Error('Not implemented');
-  }
+  public abstract observe(): ValueOrPromise<void>;
 
   /**
    * Pause updating state. If a filter is provided, the observer will only pause
@@ -88,8 +99,17 @@ export class MusicServiceObserver {
   /**
    * Stop observing the music player. Remove all listeners.
    */
-  public unobserve(): ValueOrPromise<void> {
-    throw new Error('Not implemented');
+  public abstract unobserve(): ValueOrPromise<void>;
+
+  /**
+   * Subscribe to observer events.
+   */
+  public subscribe(listener: ObserverHandler): void {
+    this._listeners.push(listener);
+  }
+
+  protected emit(message: PlasmoMessaging.Request<ObserverEvent>): void {
+    this._listeners.forEach((listener) => listener(message));
   }
 
   /**
@@ -106,15 +126,15 @@ export class MusicServiceObserver {
   protected async handleTrackUpdated(): Promise<void> {
     const currentTrack = await this._controller.getCurrentTrack();
 
-    if (currentTrack?.id === this._currentTrackId) {
+    if (currentTrack?.id === this._currentTrack?.id) {
       return;
     }
 
-    this._hub.postMessage({
-      name: 'TRACK_CHANGED',
+    this._currentTrack = currentTrack;
+
+    this.emit({
+      name: ObserverEvent.TRACK_UPDATED,
       body: currentTrack
     });
-
-    this._currentTrackId = currentTrack?.id;
   }
 }

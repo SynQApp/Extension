@@ -4,6 +4,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
 import { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
+import { createNotificationObserverHandler } from '~lib/notifications/notificationObserverHandler';
 import { YouTubeMusicObserver } from '~lib/observers/YouTubeMusicObserver';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
@@ -27,6 +28,7 @@ const initialize = (extensionId: string) => {
   createTabsHandler(controller, observer, hub);
 
   observer.observe();
+  observer.subscribe(createNotificationObserverHandler(hub));
 };
 
 onDocumentReady(() => {

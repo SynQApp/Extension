@@ -1,11 +1,4 @@
-import type { ThemeName } from '@synq/ui';
-
 import type { MusicService } from './MusicService';
-
-interface LastFmSettings {
-  username: string;
-  token: string;
-}
 
 export interface Settings {
   preferredMusicService: MusicService;
@@ -13,5 +6,4 @@ export interface Settings {
   musicServiceKeyControlsEnabled: boolean;
   notificationsEnabled: boolean;
   synqLinkPopupsEnabled: boolean;
-  lastFm?: LastFmSettings;
 }

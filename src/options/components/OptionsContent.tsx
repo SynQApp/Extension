@@ -2,7 +2,6 @@ import { Text, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
 import { KeyControlsSection } from './KeyControlsSection';
-import { LastFmSection } from './LastFmSection';
 import { NotificationsSection } from './NotificationsSection';
 import { PreferredMusicServiceSection } from './PreferredMusicServiceSection';
 import { SynqLinksSection } from './SynqLinksSection';
@@ -17,7 +16,6 @@ export const OptionsContent = () => {
       <KeyControlsSection />
       <NotificationsSection />
       <SynqLinksSection />
-      <LastFmSection />
     </Container>
   );
 };

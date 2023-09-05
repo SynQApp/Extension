@@ -243,7 +243,11 @@ export class SpotifyController implements MusicController {
       isPlaying,
       repeatMode,
       volume,
-      queue: await this.getQueue()
+      // TODO: Decouple queue, removing it from PlayerState, as it doesn't make sense there and causes problems especially
+      // for ObserverEmitter related tasks. Temp commented out so we can still test other functionality without overloading
+      // Spotify API.
+      // queue: await this.getQueue()
+      queue: []
     };
   }
 
