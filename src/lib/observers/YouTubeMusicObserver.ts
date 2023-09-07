@@ -10,14 +10,13 @@ import {
 } from './MusicServiceObserver';
 
 export class YouTubeMusicObserver extends MusicServiceObserver {
-  private _controller: YouTubeMusicController;
-  private _hub: ReduxHub;
+  declare _controller: YouTubeMusicController;
   private _onStateChangeHandler: () => void;
   private _onVideoDataChangeHandler: () => void;
   private _mutationObservers: MutationObserver[] = [];
 
   constructor(controller: YouTubeMusicController, hub: ReduxHub) {
-    super();
+    super(controller, hub);
 
     this._controller = controller;
     this._hub = hub;
@@ -37,8 +36,8 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
   public resume(filter: ObserverStateFilter): void {
     super.resume(filter);
 
-    this._sendPlaybackUpdatedMessage();
-    this._sendSongInfoUpdatedMessage();
+    this._handlePlaybackUpdated();
+    this._handleTrackUpdated();
   }
 
   public unobserve(): void {
@@ -55,7 +54,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
 
   private _setupPlayerStateObserver() {
     this._onStateChangeHandler = async () => {
-      await this._sendPlaybackUpdatedMessage();
+      await this._handlePlaybackUpdated();
     };
 
     this._controller
@@ -63,7 +62,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
       .addEventListener('onStateChange', this._onStateChangeHandler);
 
     const playerStateObserver = new MutationObserver(async () => {
-      await this._sendPlaybackUpdatedMessage();
+      await this._handlePlaybackUpdated();
     });
 
     const progressBarKnobElement = document.querySelector(
@@ -94,7 +93,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
 
   private _setupSongInfoObserver() {
     this._onVideoDataChangeHandler = async () => {
-      await this._sendSongInfoUpdatedMessage();
+      await this._handleTrackUpdated();
     };
 
     this._controller
@@ -102,7 +101,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
       .addEventListener('videodatachange', this._onVideoDataChangeHandler);
 
     const songInfoObserver = new MutationObserver(async () => {
-      await this._sendSongInfoUpdatedMessage();
+      await this._handleTrackUpdated();
     });
 
     const likeButton = document.querySelector(
@@ -124,7 +123,9 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
     }
   }
 
-  private async _sendSongInfoUpdatedMessage(): Promise<void> {
+  private async _handleTrackUpdated(): Promise<void> {
+    super.handleTrackUpdated();
+
     if (this.isPaused()) {
       return;
     }
@@ -149,7 +150,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
     }
   }
 
-  private async _sendPlaybackUpdatedMessage(): Promise<void> {
+  private async _handlePlaybackUpdated(): Promise<void> {
     if (this.isPaused('playerState')) {
       return;
     }

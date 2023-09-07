@@ -19,16 +19,12 @@ const playbackStateChangedEvents = [
 ];
 
 export class AppleMusicObserver extends MusicServiceObserver {
-  private _controller: AppleMusicController;
-  private _hub: ReduxHub;
+  declare _controller: AppleMusicController;
   private _nowPlayingItemDidChangeHandler: () => void;
   private _playbackStateChangeHandler: () => void;
 
   constructor(controller: AppleMusicController, hub: ReduxHub) {
-    super();
-
-    this._controller = controller;
-    this._hub = hub;
+    super(controller, hub);
   }
 
   public observe(): void {
@@ -41,11 +37,11 @@ export class AppleMusicObserver extends MusicServiceObserver {
          * Needs to be wrapped this way so that we can use `this`.
          */
         this._nowPlayingItemDidChangeHandler = async () => {
-          await this._sendSongInfoUpdatedMessage();
+          await this._handleTrackUpdated();
         };
 
         this._playbackStateChangeHandler = async () => {
-          await this._sendPlaybackUpdatedMessage();
+          await this._handlePlaybackUpdated();
         };
 
         /**
@@ -67,11 +63,11 @@ export class AppleMusicObserver extends MusicServiceObserver {
     }, 500);
   }
 
-  public resume(filter: ObserverStateFilter): void {
+  public async resume(filter: ObserverStateFilter): Promise<void> {
     super.resume(filter);
 
-    this._sendPlaybackUpdatedMessage();
-    this._sendSongInfoUpdatedMessage();
+    this._handlePlaybackUpdated();
+    this._handleTrackUpdated();
   }
 
   public unobserve(): void {
@@ -89,10 +85,8 @@ export class AppleMusicObserver extends MusicServiceObserver {
     });
   }
 
-  private async _sendSongInfoUpdatedMessage(): Promise<void> {
-    if (this.isPaused()) {
-      return;
-    }
+  private async _handleTrackUpdated(): Promise<void> {
+    super.handleTrackUpdated();
 
     const currentTrack = this._controller.getCurrentTrack();
 
@@ -114,7 +108,7 @@ export class AppleMusicObserver extends MusicServiceObserver {
     }
   }
 
-  private async _sendPlaybackUpdatedMessage(): Promise<void> {
+  private async _handlePlaybackUpdated(): Promise<void> {
     if (this.isPaused('playerState')) {
       return;
     }

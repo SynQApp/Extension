@@ -1,4 +1,17 @@
-import type { ValueOrPromise } from '~types';
+import type { PlasmoMessaging } from '@plasmohq/messaging';
+
+import type { MusicController } from '~lib/music-controllers/MusicController';
+import type { Track, ValueOrPromise } from '~types';
+import type { ReduxHub } from '~util/connectToReduxHub';
+
+export enum ObserverEvent {
+  TRACK_UPDATED = 'TRACK_UPDATED',
+  PLAYER_STATE_UPDATED = 'PLAYER_STATE_UPDATED'
+}
+
+type ObserverHandler = (
+  message: PlasmoMessaging.Request<ObserverEvent>
+) => ValueOrPromise<void>;
 
 export interface ObserverStateFilter {
   tabs?: boolean;
@@ -6,48 +19,29 @@ export interface ObserverStateFilter {
   playerState?: boolean;
 }
 
-/**
- * Observer emitters are responsible for observing the state of the music player
- * and emitting events when the state changes.
- */
-// export interface MusicServiceObserver {
-//   /**
-//    * Begin observing the music player and emitting events when the state changes.
-//    */
-//   observe(): ValueOrPromise<void>;
+export abstract class MusicServiceObserver {
+  protected _controller: MusicController;
+  protected _hub: ReduxHub;
 
-//   /**
-//    * Pause updating state. If a filter is provided, the observer will only pause
-//    * updating the state for the specified properties.
-//    */
-//   pause(filter?: ObserverStateFilter): ValueOrPromise<void>;
-
-//   /**
-//    * Resume updating state. If a filter is provided, the observer will only
-//    * resume updating the state for the specified properties.
-//    */
-//   resume(filter?: ObserverStateFilter): ValueOrPromise<void>;
-
-//   /**
-//    * Stop observing the music player. Remove all listeners.
-//    */
-//   unobserve(): ValueOrPromise<void>;
-// }
-
-export class MusicServiceObserver {
-  private paused: boolean = true;
-  private pausedProperties: Record<keyof ObserverStateFilter, boolean> = {
+  private _paused: boolean = true;
+  private _pausedProperties: Record<keyof ObserverStateFilter, boolean> = {
     tabs: true,
     currentTrack: true,
     playerState: true
   };
+  private _currentTrack: Track = undefined;
+  private _lastScrobbledTrackId: string = undefined;
+  private _listeners: ObserverHandler[] = [];
+
+  constructor(controller: MusicController, hub: ReduxHub) {
+    this._controller = controller;
+    this._hub = hub;
+  }
 
   /**
    * Begin observing the music player and emitting events when the state changes.
    */
-  public observe(): ValueOrPromise<void> {
-    throw new Error('Not implemented');
-  }
+  public abstract observe(): ValueOrPromise<void>;
 
   /**
    * Pause updating state. If a filter is provided, the observer will only pause
@@ -55,13 +49,13 @@ export class MusicServiceObserver {
    */
   public pause(filter?: ObserverStateFilter): ValueOrPromise<void> {
     if (filter) {
-      this.pausedProperties = {
-        ...this.pausedProperties,
+      this._pausedProperties = {
+        ...this._pausedProperties,
         ...filter
       };
     } else {
-      this.paused = true;
-      this.pausedProperties = {
+      this._paused = true;
+      this._pausedProperties = {
         tabs: true,
         currentTrack: true,
         playerState: true
@@ -88,13 +82,13 @@ export class MusicServiceObserver {
         return acc;
       }, {});
 
-      this.pausedProperties = {
-        ...this.pausedProperties,
+      this._pausedProperties = {
+        ...this._pausedProperties,
         ...newPausedState
       };
     } else {
-      this.paused = false;
-      this.pausedProperties = {
+      this._paused = false;
+      this._pausedProperties = {
         tabs: false,
         currentTrack: false,
         playerState: false
@@ -105,8 +99,17 @@ export class MusicServiceObserver {
   /**
    * Stop observing the music player. Remove all listeners.
    */
-  public unobserve(): ValueOrPromise<void> {
-    throw new Error('Not implemented');
+  public abstract unobserve(): ValueOrPromise<void>;
+
+  /**
+   * Subscribe to observer events.
+   */
+  public subscribe(listener: ObserverHandler): void {
+    this._listeners.push(listener);
+  }
+
+  protected emit(message: PlasmoMessaging.Request<ObserverEvent>): void {
+    this._listeners.forEach((listener) => listener(message));
   }
 
   /**
@@ -114,9 +117,24 @@ export class MusicServiceObserver {
    */
   protected isPaused(key?: keyof ObserverStateFilter): boolean {
     if (!key) {
-      return this.paused;
+      return this._paused;
     }
 
-    return this.pausedProperties[key];
+    return this._pausedProperties[key];
+  }
+
+  protected async handleTrackUpdated(): Promise<void> {
+    const currentTrack = await this._controller.getCurrentTrack();
+
+    if (currentTrack?.id === this._currentTrack?.id) {
+      return;
+    }
+
+    this._currentTrack = currentTrack;
+
+    this.emit({
+      name: ObserverEvent.TRACK_UPDATED,
+      body: currentTrack
+    });
   }
 }
