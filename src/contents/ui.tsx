@@ -6,12 +6,12 @@ import { StyleSheetManager } from 'styled-components';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
-import Sidebar from '~sidebar';
-import { ContextProvidersWrapper } from '~sidebar/ContextProvidersWrapper';
-import { SidebarRootProvider } from '~sidebar/contexts/SidebarRoot';
 import { store } from '~store';
+import Sidebar from '~ui/sidebar';
+import { ContextProvidersWrapper } from '~ui/sidebar/ContextProvidersWrapper';
+import { SidebarRootProvider } from '~ui/sidebar/contexts/SidebarRoot';
 
-import AutoplayPopup from './autoplay/AutoplayPopup';
+import AutoplayPopup from '../ui/autoplay/AutoplayPopup';
 
 export const config: PlasmoCSConfig = {
   matches: [
