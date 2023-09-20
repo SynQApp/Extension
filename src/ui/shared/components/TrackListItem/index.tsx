@@ -106,7 +106,7 @@ export const TrackListItem = ({
       rightNode={rightNode}
       onClick={onClick}
     >
-      <PrimaryText type="display" size="sm">
+      <PrimaryText type="display" size="sm" weight="semibold">
         {primaryText}
       </PrimaryText>
       <SecondaryText type="body" size="xs">
@@ -162,7 +162,6 @@ const Container = styled(ListItem)<ContainerProps>`
 `;
 
 const PrimaryText = styled(MarqueeText)`
-  font-weight: ${token('typography.fontWeights.bold')};
   height: 100%;
   width: 100%;
 

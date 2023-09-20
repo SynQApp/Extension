@@ -1,13 +1,15 @@
+// TODO: Remove Sidebar completely once full screen is complete and we're satisfied with it.
 import { UiProvider } from '@synq/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { useEffect, useMemo } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
-import { sendToBackground } from '@plasmohq/messaging';
+// import { sendToBackground } from '@plasmohq/messaging';
 
 import { store } from '~store';
-import Sidebar from '~ui/sidebar';
+import Player from '~ui/player';
+// import Sidebar from '~ui/sidebar';
 import { ContextProvidersWrapper } from '~ui/sidebar/ContextProvidersWrapper';
 import { SidebarRootProvider } from '~ui/sidebar/contexts/SidebarRoot';
 
@@ -47,7 +49,8 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
             <StyleSheetManager
               target={anchor.element.firstElementChild.shadowRoot as any}
             >
-              <Sidebar />
+              {/* <Sidebar /> */}
+              <Player />
               <AutoplayPopup />
             </StyleSheetManager>
           </UiProvider>

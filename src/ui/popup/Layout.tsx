@@ -1,9 +1,6 @@
 import { token } from '@synq/ui';
 import { styled } from 'styled-components';
 
-import { useAppSelector } from '~store';
-import { useExpanded } from '~ui/shared/contexts/Expanded';
-
 import Header from '../shared/components/Header';
 
 interface LayoutProps {

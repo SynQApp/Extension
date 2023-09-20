@@ -1,54 +1,103 @@
-import { Flex, Text, token } from '@synq/ui';
+import { Flex, Stack, Text, token } from '@synq/ui';
 import { Slider } from '@synq/ui';
-import { useMemo } from 'react';
-import { styled, useTheme } from 'styled-components';
+import { css, styled } from 'styled-components';
 
 import { secondsToLengthText } from '~util/time';
 
+import { useTrackSeeker } from './useTrackSeeker';
+
 interface TrackSeekerProps {
-  currentTime: number;
-  duration: number;
-  onSeek: (time: number) => void;
+  width?: number;
+  inline?: boolean;
+  sliderThickness?: number;
 }
 
 export const TrackSeeker = ({
-  currentTime,
-  duration,
-  onSeek
+  width,
+  inline,
+  sliderThickness
 }: TrackSeekerProps) => {
-  const theme = useTheme();
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSeek(parseInt(e.target.value));
-  };
+  const { currentTime, duration, handleSeek } = useTrackSeeker();
 
-  return (
-    <>
-      <SeekContainer>
+  const renderSeekSlider = () => {
+    return (
+      <SeekContainer $sliderThickness={sliderThickness} $width={width}>
         <Slider
           min={0}
           max={duration}
           value={currentTime}
-          onChange={handleSliderChange}
+          onChange={handleSeek}
         />
       </SeekContainer>
+    );
+  };
+
+  const renderCurrentTime = () => {
+    return (
+      <TimeText type="body" size="xs" $inline={inline}>
+        {secondsToLengthText(currentTime)}
+      </TimeText>
+    );
+  };
+
+  const renderDuration = () => {
+    return (
+      <TimeText type="body" size="xs" $inline={inline}>
+        {secondsToLengthText(duration)}
+      </TimeText>
+    );
+  };
+
+  return inline ? (
+    <Stack direction="row" spacing="xs" align="center">
+      {renderCurrentTime()}
+      {renderSeekSlider()}
+      {renderDuration()}
+    </Stack>
+  ) : (
+    <Stack direction="column" spacing="none">
+      {renderSeekSlider()}
       <Flex justify="space-between">
-        <TimeText type="body" size="xs">
-          {secondsToLengthText(currentTime)}
-        </TimeText>
-        <TimeText type="body" size="xs">
-          {secondsToLengthText(duration)}
-        </TimeText>
+        {renderCurrentTime()}
+        {renderDuration()}
       </Flex>
-    </>
+    </Stack>
   );
 };
 
-const SeekContainer = styled.div`
+interface SeekContainerProps {
+  $width?: number;
+  $sliderThickness?: number;
+}
+
+const SeekContainer = styled.div<SeekContainerProps>`
   height: 6px;
   width: 100%;
   position: relative;
+
+  ${({ $width }) =>
+    $width &&
+    css`
+      width: ${$width}px;
+    `}
+
+  ${({ $sliderThickness }) =>
+    $sliderThickness &&
+    css`
+      height: ${$sliderThickness}px;
+    `}
 `;
 
-const TimeText = styled(Text)`
-  margin: ${token('spacing.2xs')} 0 0;
+interface TimeTextProps {
+  $inline?: boolean;
+}
+
+const TimeText = styled(Text)<TimeTextProps>`
+  margin: 0;
+
+  ${({ $inline }) =>
+    !$inline &&
+    css`
+      margin: ${token('spacing.2xs')} 0 0;
+    `}
 `;

@@ -1,6 +1,6 @@
 import { useAppSelector } from '~store';
-import { MusicControllerMessage, MusicService } from '~types';
-import { useExpanded } from '~ui/shared/contexts/Expanded';
+import { MusicControllerMessage } from '~types';
+import { MusicService } from '~types/MusicService';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
@@ -15,8 +15,7 @@ const DISLIKE_ENABLED_SERVICES = new Set([
   MusicService.YOUTUBE_MUSIC
 ]);
 
-export const usePlayer = () => {
-  const expanded = useExpanded();
+export const useAlbumArt = () => {
   const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicServiceTab } = useMusicServiceTab();
 
@@ -47,8 +46,10 @@ export const usePlayer = () => {
     : undefined;
 
   return {
-    expanded,
-    currentTrack,
+    trackName: currentTrack?.name,
+    isLiked: currentTrack?.isLiked,
+    isDisliked: currentTrack?.isDisliked,
+    src: currentTrack?.albumCoverUrl,
     handleLikeClick,
     handleDislikeClick
   };

@@ -6,12 +6,12 @@ type LogoSize = 'controller' | 'page';
 
 const TextSizeMap: Record<LogoSize, TextProps['size']> = {
   controller: 'xl',
-  page: '4xl'
+  page: '3xl'
 };
 
 const ImageSizeMap: Record<LogoSize, number> = {
   controller: 50,
-  page: 75
+  page: 60
 };
 
 interface LogoProps {

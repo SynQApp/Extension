@@ -75,7 +75,7 @@ const mockActiveSession: Session = {
   ]
 };
 
-const initialState: Session | null = mockActiveSession;
+const initialState: Session | null = null;
 
 const sessionSlice = createSlice({
   name: 'session',

@@ -1,15 +1,12 @@
 import { Button, Flex, Scrollable, Text, token } from '@synq/ui';
 import { Link } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { Queue } from '~ui/shared/components/Queue';
-import type { Expandable } from '~ui/shared/types';
-import { expandedStyle } from '~ui/shared/util/expandedStyle';
 import { EmptyText } from '~ui/sidebar/components/EmptyText';
 import { GradientAddButton } from '~ui/sidebar/components/GradientAddButton';
 
 interface QueueSectionProps {
-  expanded: boolean;
   queueDisplayCount: number;
   shouldDisplayQueue: boolean;
   handleNavigateToQueue: () => void;
@@ -18,7 +15,6 @@ interface QueueSectionProps {
 }
 
 export const QueueSection = ({
-  expanded,
   queueDisplayCount,
   shouldDisplayQueue,
   handleNavigateToQueue,
@@ -67,7 +63,7 @@ export const QueueSection = ({
   };
 
   return (
-    <Container $expanded={expanded}>
+    <Container>
       <QueueHeaderFlex align="center">
         <QueueHeaderText type="display" size="lg">
           Queue
@@ -79,16 +75,10 @@ export const QueueSection = ({
   );
 };
 
-const Container = styled.section<Expandable>`
+const Container = styled.section`
   background: ${token('colors.surface')};
   height: calc(100% - 175px - ${token('spacing.xs')} - ${token('spacing.sm')});
   width: 100%;
-
-  ${expandedStyle(css`
-    height: calc(
-      100% - 380px - ${token('spacing.xs')} - ${token('spacing.sm')}
-    );
-  `)}
 `;
 
 const QueueHeaderFlex = styled(Flex)`

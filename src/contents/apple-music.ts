@@ -4,7 +4,7 @@ import { createMusicControllerHandler } from '~lib/message-handlers/createMusicC
 import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
 import { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
-import { createNotificationObserverHandler } from '~lib/notifications/notificationObserverHandler';
+import { createNotificationObserverHandler } from '~lib/observer-handlers/notificationObserverHandler';
 import { AppleMusicObserver } from '~lib/observers/AppleMusicObserver';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';

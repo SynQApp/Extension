@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector } from '~store';
 import { AutoplayMessage } from '~types';
-import { useExpanded } from '~ui/shared/contexts/Expanded';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 const useControllerScreen = () => {
-  const expanded = useExpanded();
   const navigate = useNavigate();
   const playerState = useAppSelector((state) => state.playerState);
   const autoplayReady = useAppSelector((state) => state.autoplayReady);
@@ -40,7 +38,6 @@ const useControllerScreen = () => {
   );
 
   return {
-    expanded,
     queueCount,
     showQueue,
     setShowQueue

@@ -7,32 +7,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Image, Stack, token } from '@synq/ui';
 import { css, styled } from 'styled-components';
 
-import { useExpanded } from '~ui/shared/contexts/Expanded';
-import type { Expandable } from '~ui/shared/types';
-import { expandedStyle } from '~ui/shared/util/expandedStyle';
+import { useAlbumArt } from './useAlbumArt';
 
 interface AlbumArtProps {
-  disliked: boolean;
-  liked: boolean;
-  onDislikeClick?: () => void;
-  onLikeClick?: () => void;
-  src: string;
-  trackName: string;
+  height?: string;
+  thumbs?: boolean;
+  width?: string;
 }
 
-export const AlbumArt = ({
-  disliked,
-  liked,
-  onDislikeClick,
-  onLikeClick,
-  src,
-  trackName
-}: AlbumArtProps) => {
-  const expanded = useExpanded();
+export const AlbumArt = ({ height, thumbs, width }: AlbumArtProps) => {
+  const {
+    src,
+    isLiked,
+    isDisliked,
+    trackName,
+    handleLikeClick,
+    handleDislikeClick
+  } = useAlbumArt();
 
   return (
-    <AlbumArtContainer justify="center" align="center">
-      <AlbumGlow className="album-glow" src={src} $expanded={expanded} />
+    <Container justify="center" align="center" $height={height} $width={width}>
+      <AlbumGlow className="album-glow" src={src} />
       <AlbumArtImg
         src={src}
         alt={`Album art for: ${trackName}`}
@@ -45,21 +40,17 @@ export const AlbumArt = ({
         justify="center"
         spacing="sm"
       >
-        {onLikeClick && (
+        {thumbs && handleLikeClick && (
           <>
-            <ThumbButton onClick={onLikeClick} $expanded={expanded}>
-              <ThumbIcon
-                icon={liked ? faThumbsUpSolid : faThumbsUp}
-                $expanded={expanded}
-              />
+            <ThumbButton onClick={handleLikeClick}>
+              <ThumbIcon icon={isLiked ? faThumbsUpSolid : faThumbsUp} />
             </ThumbButton>
-            {onDislikeClick && (
+            {handleDislikeClick && (
               <>
                 <Line />
-                <ThumbButton onClick={onDislikeClick} $expanded={expanded}>
+                <ThumbButton onClick={handleDislikeClick}>
                   <ThumbIcon
-                    icon={disliked ? faThumbsDownSolid : faThumbsDown}
-                    $expanded={expanded}
+                    icon={isDisliked ? faThumbsDownSolid : faThumbsDown}
                   />
                 </ThumbButton>
               </>
@@ -67,14 +58,27 @@ export const AlbumArt = ({
           </>
         )}
       </ThumbsContainer>
-    </AlbumArtContainer>
+    </Container>
   );
 };
 
-const AlbumArtContainer = styled(Flex)`
-  height: 100%;
+interface ContainerProps {
+  $height?: string;
+  $width?: string;
+}
+
+const Container = styled(Flex)<ContainerProps>`
   position: relative;
-  width: 100%;
+  ${({ $height }: ContainerProps) =>
+    $height &&
+    css`
+      height: ${$height};
+    `}
+  ${({ $width }: ContainerProps) =>
+    $width &&
+    css`
+      width: ${$width};
+    `}
 
   &:hover {
     .thumbs-overlay {
@@ -92,7 +96,7 @@ const AlbumArtContainer = styled(Flex)`
   }
 `;
 
-interface AlbumGlowProps extends Expandable {
+interface AlbumGlowProps {
   src?: string;
 }
 
@@ -110,10 +114,6 @@ const AlbumGlow = styled.div<AlbumGlowProps>`
   width: 100%;
   z-index: 0;
   transition: filter 0.2s ease-in-out, transform 0.2s ease-in-out;
-
-  ${expandedStyle(css`
-    filter: blur(10px);
-  `)}
 `;
 
 const AlbumArtImg = styled(Image)`
@@ -155,7 +155,7 @@ const ThumbsContainer = styled(Stack)`
   transform: rotate(45deg);
 `;
 
-const ThumbButton = styled.button<Expandable>`
+const ThumbButton = styled.button`
   align-items: center;
   background: transparent;
   border-radius: 50%;
@@ -166,23 +166,13 @@ const ThumbButton = styled.button<Expandable>`
   outline: none;
   justify-content: center;
   width: 35px;
-
-  ${expandedStyle(css`
-    height: 50px;
-    width: 50px;
-  `)}
 `;
 
-const ThumbIcon = styled(FontAwesomeIcon)<Expandable>`
+const ThumbIcon = styled(FontAwesomeIcon)`
   color: ${token('colors.onBackground')};
   width: 30px;
   height: 30px;
   transform: rotate(-45deg);
-
-  ${expandedStyle(css`
-    width: 45px;
-    height: 45px;
-  `)}
 `;
 
 const Line = styled.div`

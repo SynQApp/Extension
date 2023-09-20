@@ -4,17 +4,15 @@ import { Scrollable, Text, token } from '@synq/ui';
 import styled, { css } from 'styled-components';
 
 import Layout from '~ui/popup/Layout';
-import { Player } from '~ui/shared/components/Player';
+import { Player } from '~ui/popup/components/Player';
 import { Queue } from '~ui/shared/components/Queue';
-import type { Expandable } from '~ui/shared/types';
 
 import useControllerScreen from './useControllerScreen';
 
 const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
-  const { expanded, queueCount, showQueue, setShowQueue } =
-    useControllerScreen();
+  const { queueCount, showQueue, setShowQueue } = useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
     setShowQueue(!showQueue);
@@ -27,10 +25,7 @@ const ControllerScreen = () => {
           <Player />
         </div>
         <ExpandButton onClick={handleShowQueueButtonPress}>
-          <ExpandIcon
-            icon={showQueue ? faChevronUp : faChevronDown}
-            $expanded={expanded}
-          />
+          <ExpandIcon icon={showQueue ? faChevronUp : faChevronDown} />
         </ExpandButton>
       </PlayerSection>
       <QueueSection $show={showQueue}>
@@ -70,7 +65,7 @@ const ExpandButton = styled.button`
   justify-content: center;
 `;
 
-const ExpandIcon = styled(FontAwesomeIcon)<Expandable>`
+const ExpandIcon = styled(FontAwesomeIcon)`
   color: ${token('colors.onBackground')};
 `;
 

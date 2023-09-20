@@ -2,10 +2,7 @@ import { token } from '@synq/ui';
 import type React from 'react';
 import { styled } from 'styled-components';
 
-import { useAppSelector } from '~store';
 import Header from '~ui/shared/components/Header';
-import { useExpanded } from '~ui/shared/contexts/Expanded';
-import type { Expandable } from '~ui/shared/types';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,10 +10,8 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, header }: LayoutProps) => {
-  const expanded = useExpanded();
-
   return (
-    <Container $expanded={expanded}>
+    <Container>
       {header ?? (
         <Header
           actionButton={{ name: 'Invite Friends', onClick: console.log }}
@@ -27,7 +22,7 @@ const Layout = ({ children, header }: LayoutProps) => {
   );
 };
 
-const Container = styled.div<Expandable>`
+const Container = styled.div`
   background: ${token('colors.background')};
   transition: all 0.2s ease-in-out;
   width: 350px;
