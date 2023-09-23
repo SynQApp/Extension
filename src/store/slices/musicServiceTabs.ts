@@ -27,17 +27,30 @@ const musicServiceTabsSlice = createSlice({
         state.push(tab);
       }
     },
-    updateMusicServiceTabPreview: (
+    updateMusicServiceTabPlayerState: (
       state,
       action: PayloadAction<{
         tabId: number;
-        preview: MusicServiceTab['preview'];
+        playerState: MusicServiceTab['playerState'];
       }>
     ) => {
-      const { tabId, preview } = action.payload;
-      const tab = state.find((tab) => tab.tabId === tabId);
-      if (tab) {
-        tab.preview = preview;
+      const { tabId, playerState } = action.payload;
+      const index = state.findIndex((tab) => tab.tabId === tabId);
+      if (index !== -1) {
+        state[index].playerState = playerState;
+      }
+    },
+    updateMusicServiceTabCurrentTrack: (
+      state,
+      action: PayloadAction<{
+        tabId: number;
+        currentTrack: MusicServiceTab['currentTrack'];
+      }>
+    ) => {
+      const { tabId, currentTrack } = action.payload;
+      const index = state.findIndex((tab) => tab.tabId === tabId);
+      if (index !== -1) {
+        state[index].currentTrack = currentTrack;
       }
     },
     clearMusicServiceTabs: () => initialState
@@ -49,7 +62,8 @@ export const {
   removeMusicServiceTab,
   clearMusicServiceTabs,
   updateMusicServiceTab,
-  updateMusicServiceTabPreview
+  updateMusicServiceTabCurrentTrack,
+  updateMusicServiceTabPlayerState
 } = musicServiceTabsSlice.actions;
 
 export default musicServiceTabsSlice.reducer;

@@ -75,11 +75,12 @@ const mockActiveSession: Session = {
   ]
 };
 
-const initialState: Session | null = null;
+type SessionSliceState = Session | null;
+const initialState: SessionSliceState = mockActiveSession;
 
 const sessionSlice = createSlice({
   name: 'session',
-  initialState: initialState,
+  initialState: initialState as SessionSliceState,
   reducers: {
     setSession: (_, action) => action.payload,
     clearSession: () => null

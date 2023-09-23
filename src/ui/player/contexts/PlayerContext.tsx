@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { UiStateMessage } from '~types';
+import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 interface PlayerContextValue {
@@ -24,6 +25,7 @@ interface PlayerProviderProps {
  * must be selected manually.
  */
 export const PlayerProvider = ({ children }: PlayerProviderProps) => {
+  const { musicServiceTab } = useMusicServiceTab();
   const [playerOpen, setPlayerOpen] = useState(false);
 
   // For development purposes only
@@ -36,11 +38,14 @@ export const PlayerProvider = ({ children }: PlayerProviderProps) => {
   );
 
   useEffect(() => {
-    sendMessage({
-      name: playerOpen
-        ? UiStateMessage.SIDEBAR_OPENED
-        : UiStateMessage.SIDEBAR_CLOSED
-    });
+    sendMessage(
+      {
+        name: playerOpen
+          ? UiStateMessage.SIDEBAR_OPENED
+          : UiStateMessage.SIDEBAR_CLOSED
+      },
+      musicServiceTab?.tabId
+    );
   }, [playerOpen]);
 
   const closePlayer = () => {

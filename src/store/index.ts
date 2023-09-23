@@ -31,6 +31,7 @@ const persistConfig: PersistConfig<unknown> = {
   storage: localStorage as PersistStorage
 };
 
+// @ts-ignore
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore<RootState>({

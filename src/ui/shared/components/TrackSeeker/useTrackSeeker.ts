@@ -6,9 +6,11 @@ import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 export const useTrackSeeker = () => {
-  const playerState = useAppSelector((state) => state.playerState);
-  const currentTrack = useAppSelector((state) => state.currentTrack);
+  // const playerState = useAppSelector((state) => state.playerState);
+  // const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicServiceTab } = useMusicServiceTab();
+  const playerState = musicServiceTab?.playerState;
+  const currentTrack = musicServiceTab?.currentTrack;
 
   const percentage = useMemo(() => {
     if (!currentTrack?.duration || !playerState?.currentTime) {

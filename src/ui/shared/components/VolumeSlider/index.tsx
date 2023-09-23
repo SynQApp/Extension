@@ -15,7 +15,7 @@ export const VolumeSlider = ({ sliderThickness, width }: VolumeSliderProps) => {
     <Container
       min={0}
       max={100}
-      value={volume}
+      value={volume ?? 50}
       onChange={handleVolumeSliderChange}
       progressColor={'colors.onBackground'}
       height={sliderThickness}

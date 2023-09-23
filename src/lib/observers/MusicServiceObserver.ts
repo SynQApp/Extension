@@ -29,8 +29,7 @@ export abstract class MusicServiceObserver {
     currentTrack: true,
     playerState: true
   };
-  private _currentTrack: Track = undefined;
-  private _lastScrobbledTrackId: string = undefined;
+  private _currentTrack?: Track = undefined;
   private _listeners: ObserverHandler[] = [];
 
   constructor(controller: MusicController, hub: ReduxHub) {

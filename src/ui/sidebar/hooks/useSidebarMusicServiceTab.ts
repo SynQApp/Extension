@@ -7,7 +7,10 @@ import type { MusicServiceTab } from '~types';
 
 export const useSidebarMusicServiceTab = () => {
   const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
-  const [tab, setTab] = useState<MusicServiceTab>(musicServiceTabs[0]);
+  const [tabId, setTabId] = useState<number | undefined>(undefined);
+  const [musicServiceTab, setMusicServiceTab] = useState<
+    MusicServiceTab | undefined
+  >(undefined);
 
   useEffect(() => {
     const updateTab = async () => {
@@ -15,17 +18,27 @@ export const useSidebarMusicServiceTab = () => {
         name: 'GET_SELF_TAB'
       });
 
-      const musicServiceTab = musicServiceTabs.find(
-        (musicServiceTab) => musicServiceTab.tabId === tab.id
-      );
-
-      if (musicServiceTab) {
-        setTab(musicServiceTab);
-      }
+      setTabId(tab.id);
     };
 
     updateTab();
-  }, [musicServiceTabs]);
+  }, []);
 
-  return tab;
+  useEffect(() => {
+    if (!tabId) {
+      return;
+    }
+
+    const musicServiceTab = musicServiceTabs.find(
+      (musicServiceTab) => musicServiceTab.tabId === tabId
+    );
+
+    if (!musicServiceTab) {
+      return;
+    }
+
+    setMusicServiceTab(musicServiceTab);
+  }, [musicServiceTabs, tabId]);
+
+  return musicServiceTab;
 };

@@ -34,6 +34,9 @@ const sessionSlice = createSlice({
     },
     setSynqLinkPopupsEnabled: (state, action: PayloadAction<boolean>) => {
       state.synqLinkPopupsEnabled = action.payload;
+    },
+    setSettings: (state, action: PayloadAction<Settings>) => {
+      return action.payload;
     }
   }
 });
@@ -43,7 +46,8 @@ export const {
   setMusicServiceKeyControlsEnabled,
   setNotificationsEnabled,
   setPreferredMusicService,
-  setSynqLinkPopupsEnabled
+  setSynqLinkPopupsEnabled,
+  setSettings
 } = sessionSlice.actions;
 
 export default sessionSlice.reducer;

@@ -1,9 +1,10 @@
 import wait from 'waait';
 
 import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
-import { setCurrentTrack } from '~store/slices/currentTrack';
-import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
-import { setPlayerState } from '~store/slices/playerState';
+import {
+  updateMusicServiceTabCurrentTrack,
+  updateMusicServiceTabPlayerState
+} from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { waitForElement } from '~util/waitForElement';
 
@@ -58,7 +59,7 @@ export class SpotifyObserver extends MusicServiceObserver {
     const playbackProgressBarElement = document.querySelector(
       'div[data-testid="playback-progressbar"]'
     );
-    const playbackProgressBarInput = playbackProgressBarElement.querySelector(
+    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
       'input[type="range"]'
     );
     if (playbackProgressBarInput) {
@@ -70,7 +71,7 @@ export class SpotifyObserver extends MusicServiceObserver {
     const volumeContainerElement = document.querySelector(
       'div[data-testid="volume-bar"]'
     );
-    const volumeInputElement = volumeContainerElement.querySelector(
+    const volumeInputElement = volumeContainerElement?.querySelector(
       'input[type="range"]'
     );
     if (volumeInputElement) {
@@ -152,17 +153,13 @@ export class SpotifyObserver extends MusicServiceObserver {
         name: 'GET_SELF_TAB'
       });
 
-      if (!this.isPaused('tabs')) {
+      if (!this.isPaused('currentTrack')) {
         this._hub.dispatch(
-          updateMusicServiceTabPreview({
-            tabId: tab.id,
-            preview: currentTrack
+          updateMusicServiceTabCurrentTrack({
+            tabId: tab.id!,
+            currentTrack
           })
         );
-      }
-
-      if (!this.isPaused('currentTrack')) {
-        this._hub.dispatch(setCurrentTrack(currentTrack));
       }
 
       return;
@@ -175,7 +172,16 @@ export class SpotifyObserver extends MusicServiceObserver {
     }
 
     const playerState = await this._controller.getPlayerState();
-    const action = setPlayerState(playerState);
-    this._hub.dispatch(action);
+
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+      name: 'GET_SELF_TAB'
+    });
+
+    this._hub.dispatch(
+      updateMusicServiceTabPlayerState({
+        tabId: tab.id!,
+        playerState
+      })
+    );
   }
 }

@@ -36,8 +36,8 @@ export const getStyle: PlasmoGetStyle = () => {
 
 const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
   const container = useMemo(() => {
-    const shadowRoot = anchor.element.firstElementChild.shadowRoot;
-    const container = shadowRoot.getElementById('plasmo-shadow-container');
+    const shadowRoot = anchor?.element?.firstElementChild?.shadowRoot;
+    const container = shadowRoot?.getElementById('plasmo-shadow-container');
     return container as HTMLElement;
   }, [anchor]);
 
@@ -47,7 +47,7 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
         <ContextProvidersWrapper>
           <UiProvider>
             <StyleSheetManager
-              target={anchor.element.firstElementChild.shadowRoot as any}
+              target={anchor?.element?.firstElementChild?.shadowRoot as any}
             >
               {/* <Sidebar /> */}
               <Player />

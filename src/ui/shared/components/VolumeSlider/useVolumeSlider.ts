@@ -4,8 +4,9 @@ import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 export const useVolumeSlider = () => {
-  const playerState = useAppSelector((state) => state.playerState);
+  // const playerState = useAppSelector((state) => state.playerState);
   const { musicServiceTab } = useMusicServiceTab();
+  const playerState = musicServiceTab?.playerState;
 
   const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const volume = parseInt(e.target.value);

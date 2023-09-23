@@ -10,7 +10,7 @@ export const lengthTextToSeconds = (lengthText: string): number => {
   return duration;
 };
 
-export const secondsToLengthText = (seconds: number): string => {
+export const secondsToLengthText = (seconds?: number): string => {
   if (seconds !== 0 && !seconds) {
     return '-:--';
   }

@@ -3,12 +3,11 @@ import React, { createContext, useContext } from 'react';
 import type { MusicServiceTab } from '~types';
 
 interface MusicServiceTabContextValue {
-  musicServiceTab: MusicServiceTab;
+  musicServiceTab?: MusicServiceTab;
   setMusicServiceTab?: (tab: MusicServiceTab) => void;
 }
 
 const MusicServiceTabContext = createContext<MusicServiceTabContextValue>({
-  musicServiceTab: null,
   setMusicServiceTab: () => {}
 });
 

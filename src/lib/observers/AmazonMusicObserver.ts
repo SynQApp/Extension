@@ -1,7 +1,8 @@
 import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
-import { setCurrentTrack } from '~store/slices/currentTrack';
-import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
-import { setPlayerState } from '~store/slices/playerState';
+import {
+  updateMusicServiceTabCurrentTrack,
+  updateMusicServiceTabPlayerState
+} from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
 import {
@@ -18,17 +19,17 @@ const playbackStateChangedEvents = [
 
 export class AmazonMusicObserver extends MusicServiceObserver {
   declare _controller: AmazonMusicController;
-  private _onStateChangeHandler: () => void;
-  private _queueObserverInterval: NodeJS.Timer;
-  private _unsubscribeStoreObserver: () => void;
+  private _onStateChangeHandler!: () => void;
+  private _queueObserverInterval!: NodeJS.Timer;
+  private _unsubscribeStoreObserver!: () => void;
 
   private _currentState: {
-    trackId: string;
+    trackId?: string;
     queueIds: string[];
-    rating: string;
-    volume: number;
-    repeat: string;
-    isPlaying: boolean;
+    rating?: string;
+    volume?: number;
+    repeat?: string;
+    isPlaying?: boolean;
   };
 
   constructor(controller: AmazonMusicController, hub: ReduxHub) {
@@ -110,6 +111,10 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     const store = this._controller.getStore();
     const maestro = await this._controller.getMaestroInstance();
 
+    if (!store) {
+      return;
+    }
+
     this._unsubscribeStoreObserver = store.subscribe(async () => {
       const state = store.getState();
 
@@ -153,17 +158,13 @@ export class AmazonMusicObserver extends MusicServiceObserver {
       name: 'GET_SELF_TAB'
     });
 
-    if (!this.isPaused('tabs')) {
+    if (!this.isPaused('currentTrack')) {
       this._hub.dispatch(
-        updateMusicServiceTabPreview({
-          tabId: tab.id,
-          preview: currentTrack
+        updateMusicServiceTabCurrentTrack({
+          tabId: tab.id!,
+          currentTrack
         })
       );
-    }
-
-    if (!this.isPaused('currentTrack')) {
-      this._hub.dispatch(setCurrentTrack(currentTrack));
     }
   }
 
@@ -173,6 +174,16 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     }
 
     const playerState = await this._controller.getPlayerState();
-    this._hub.dispatch(setPlayerState(playerState));
+
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+      name: 'GET_SELF_TAB'
+    });
+
+    this._hub.dispatch(
+      updateMusicServiceTabPlayerState({
+        tabId: tab.id!,
+        playerState
+      })
+    );
   }
 }

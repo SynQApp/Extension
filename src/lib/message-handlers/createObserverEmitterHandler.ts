@@ -21,6 +21,7 @@ export const createObserverEmitterHandler = (
       case UiStateMessage.POPUP_CLOSED:
         UI_STATE.popupOpen = false;
 
+        console.log('sidebar open', UI_STATE.sidebarOpen);
         if (!UI_STATE.sidebarOpen) {
           await observerEmitter.pause();
         }
@@ -28,6 +29,7 @@ export const createObserverEmitterHandler = (
         break;
 
       case UiStateMessage.SIDEBAR_OPENED:
+        console.log('sidebar opened');
         UI_STATE.sidebarOpen = true;
         await observerEmitter.resume();
         break;

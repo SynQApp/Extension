@@ -5,7 +5,7 @@ import { sendMessage } from '~util/sendMessage';
 
 export const useRepeatButton = () => {
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = useAppSelector((state) => state.playerState);
+  const playerState = musicServiceTab?.playerState;
 
   const repeatMode = playerState?.repeatMode;
 

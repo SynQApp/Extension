@@ -1,7 +1,8 @@
 import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
-import { setCurrentTrack } from '~store/slices/currentTrack';
-import { updateMusicServiceTabPreview } from '~store/slices/musicServiceTabs';
-import { setPlayerState } from '~store/slices/playerState';
+import {
+  updateMusicServiceTabCurrentTrack,
+  updateMusicServiceTabPlayerState
+} from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
 import {
@@ -20,8 +21,8 @@ const playbackStateChangedEvents = [
 
 export class AppleMusicObserver extends MusicServiceObserver {
   declare _controller: AppleMusicController;
-  private _nowPlayingItemDidChangeHandler: () => void;
-  private _playbackStateChangeHandler: () => void;
+  private _nowPlayingItemDidChangeHandler!: () => void;
+  private _playbackStateChangeHandler!: () => void;
 
   constructor(controller: AppleMusicController, hub: ReduxHub) {
     super(controller, hub);
@@ -94,17 +95,13 @@ export class AppleMusicObserver extends MusicServiceObserver {
       name: 'GET_SELF_TAB'
     });
 
-    if (!this.isPaused('tabs')) {
+    if (!this.isPaused('currentTrack')) {
       this._hub.dispatch(
-        updateMusicServiceTabPreview({
-          tabId: tab.id,
-          preview: currentTrack
+        updateMusicServiceTabCurrentTrack({
+          tabId: tab.id!,
+          currentTrack
         })
       );
-    }
-
-    if (!this.isPaused('currentTrack')) {
-      this._hub.dispatch(setCurrentTrack(currentTrack));
     }
   }
 
@@ -114,6 +111,16 @@ export class AppleMusicObserver extends MusicServiceObserver {
     }
 
     const playerState = this._controller.getPlayerState();
-    this._hub.dispatch(setPlayerState(playerState));
+
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+      name: 'GET_SELF_TAB'
+    });
+
+    this._hub.dispatch(
+      updateMusicServiceTabPlayerState({
+        tabId: tab.id!,
+        playerState
+      })
+    );
   }
 }

@@ -24,8 +24,8 @@ export const TrackSeeker = ({
       <SeekContainer $sliderThickness={sliderThickness} $width={width}>
         <Slider
           min={0}
-          max={duration}
-          value={currentTime}
+          max={duration ?? 0}
+          value={currentTime ?? 0}
           onChange={handleSeek}
         />
       </SeekContainer>

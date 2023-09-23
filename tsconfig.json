@@ -7,6 +7,7 @@
       "~*": ["./src/*"],
       "@synq/react-beautiful-dnd": ["./src/types/ReactBeautifulDnd.d.ts"]
     },
-    "baseUrl": "."
+    "baseUrl": ".",
+    "strict": true
   }
 }

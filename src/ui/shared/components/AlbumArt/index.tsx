@@ -29,7 +29,7 @@ export const AlbumArt = ({ height, thumbs, width }: AlbumArtProps) => {
     <Container justify="center" align="center" $height={height} $width={width}>
       <AlbumGlow className="album-glow" src={src} />
       <AlbumArtImg
-        src={src}
+        src={src ?? ''}
         alt={`Album art for: ${trackName}`}
         fallback={<AlbumArtFallback />}
       />

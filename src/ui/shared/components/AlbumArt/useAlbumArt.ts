@@ -4,20 +4,21 @@ import { MusicService } from '~types/MusicService';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
-const LIKE_ENABLED_SERVICES = new Set([
+const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
   MusicService.AMAZON_MUSIC,
   MusicService.SPOTIFY,
   MusicService.YOUTUBE_MUSIC
 ]);
 
-const DISLIKE_ENABLED_SERVICES = new Set([
+const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
   MusicService.AMAZON_MUSIC,
   MusicService.YOUTUBE_MUSIC
 ]);
 
 export const useAlbumArt = () => {
-  const currentTrack = useAppSelector((state) => state.currentTrack);
+  // const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicServiceTab } = useMusicServiceTab();
+  const currentTrack = musicServiceTab?.currentTrack;
 
   const handleLikeClick = LIKE_ENABLED_SERVICES.has(
     musicServiceTab?.musicService
@@ -27,7 +28,7 @@ export const useAlbumArt = () => {
           {
             name: MusicControllerMessage.TOGGLE_LIKE
           },
-          musicServiceTab.tabId
+          musicServiceTab?.tabId
         );
       }
     : undefined;
@@ -40,7 +41,7 @@ export const useAlbumArt = () => {
           {
             name: MusicControllerMessage.TOGGLE_DISLIKE
           },
-          musicServiceTab.tabId
+          musicServiceTab?.tabId
         );
       }
     : undefined;
