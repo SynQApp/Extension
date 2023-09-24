@@ -141,7 +141,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
       this._hub.dispatch(
         updateMusicServiceTabCurrentTrack({
           tabId: tab.id!,
-          currentTrack
+          currentTrack: currentTrack ?? undefined
         })
       );
     }
@@ -161,7 +161,7 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
     this._hub.dispatch(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
-        playerState
+        playerState: playerState ?? undefined
       })
     );
   }

@@ -1,7 +1,7 @@
 import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, TrackSearchResult } from '~types';
+import type { PlayerState, QueueItem, Track } from '~types';
 import type { NativeSpotifyTrack } from '~types/Spotify';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
@@ -37,11 +37,17 @@ export class SpotifyController implements MusicController {
 
   constructor() {
     const sessionElement = document.getElementById('session');
+    if (!sessionElement) {
+      throw new Error('Session element not found');
+    }
     const session = JSON.parse(sessionElement.innerText);
 
     this._accessToken = session.accessToken;
 
     const configElement = document.getElementById('config');
+    if (!configElement) {
+      throw new Error('Config element not found');
+    }
     const config = JSON.parse(configElement.innerText);
     this._market = config.market;
   }
@@ -53,7 +59,7 @@ export class SpotifyController implements MusicController {
   public async playPause(): Promise<void> {
     const playerState = await this.getPlayerState();
 
-    if (playerState.isPlaying) {
+    if (playerState?.isPlaying) {
       await this.pause();
     } else {
       await this.play();
@@ -71,7 +77,7 @@ export class SpotifyController implements MusicController {
   public async previous(): Promise<void> {
     const playerState = await this.getPlayerState();
 
-    if (playerState.currentTime < 5) {
+    if (!playerState?.currentTime || playerState.currentTime < 5) {
       await this._fetchSpotify(SpotifyEndpoints.PREVIOUS, 'POST');
       return;
     }
@@ -83,6 +89,10 @@ export class SpotifyController implements MusicController {
     const playerState = await this._fetchSpotify<{
       repeat_state: keyof typeof REPEAT_MAP;
     }>(SpotifyEndpoints.PLAYER_STATE, 'GET');
+
+    if (!playerState) {
+      return;
+    }
 
     const repeatMode = REPEAT_MAP[playerState.repeat_state];
 
@@ -113,6 +123,10 @@ export class SpotifyController implements MusicController {
       item: NativeSpotifyTrack;
     }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
 
+    if (!currentlyPlaying?.item) {
+      return;
+    }
+
     const ids = [currentlyPlaying.item.id];
 
     const searchParams = new URLSearchParams({
@@ -120,10 +134,11 @@ export class SpotifyController implements MusicController {
     });
 
     // Returns array of booleans, get the first one
-    const [inLibrary] = await this._fetchSpotify<boolean[]>(
-      `${SpotifyEndpoints.IS_IN_LIBRARY}?${searchParams.toString()}`,
-      'GET'
-    );
+    const [inLibrary] =
+      (await this._fetchSpotify<boolean[]>(
+        `${SpotifyEndpoints.IS_IN_LIBRARY}?${searchParams.toString()}`,
+        'GET'
+      )) || [];
 
     if (inLibrary) {
       await this._fetchSpotify(SpotifyEndpoints.MODIFY_LIBRARY, 'DELETE', {
@@ -191,36 +206,29 @@ export class SpotifyController implements MusicController {
     );
   }
 
-  /**
-   * EXAMPLE IDs:
-   * - 2Ou1Hyvr08mr0pZauPvv6j
-   * - 1Bh8jtOXIBIRUUghbrwUTX
-   */
-  public async startTrack(trackId: string): Promise<void> {
-    await this._fetchSpotify(SpotifyEndpoints.PLAY, 'PUT', {
-      uris: [`spotify:track:${trackId}`],
-      position_ms: 0
-    });
-  }
-
-  public async prepareForSession(): Promise<void> {
-    await this._preparePlayer();
-  }
-
   public async prepareForAutoplay(): Promise<void> {
     await this._preparePlayer();
   }
 
-  public async getPlayerState(): Promise<PlayerState> {
+  public async getPlayerState(): Promise<PlayerState | null> {
     const playbackProgressBarElement = document.querySelector(
       'div[data-testid="playback-progressbar"]'
     );
-    const playbackProgressBarInput = playbackProgressBarElement.querySelector(
+    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
       'input[type="range"]'
     ) as HTMLInputElement;
-    const currentTime = parseInt(
-      playbackProgressBarInput.getAttribute('value')
-    );
+
+    if (!playbackProgressBarInput) {
+      return null;
+    }
+
+    const currentTimeValue = playbackProgressBarInput.getAttribute('value');
+
+    if (!currentTimeValue) {
+      return null;
+    }
+
+    const currentTime = parseInt(currentTimeValue);
 
     const playPauseButton = document.querySelector(
       'button[data-testid="control-button-playpause"]'
@@ -251,7 +259,7 @@ export class SpotifyController implements MusicController {
     };
   }
 
-  public async getCurrentTrack(): Promise<Track> {
+  public async getCurrentTrack(): Promise<Track | null> {
     const currentlyPlaying = await this._fetchSpotify<{
       item: NativeSpotifyTrack;
     }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
@@ -266,12 +274,12 @@ export class SpotifyController implements MusicController {
       ids: currentlyPlaying.item.id
     });
 
-    const isLiked = await this._fetchSpotify(
+    const isLiked = await this._fetchSpotify<boolean[]>(
       `${SpotifyEndpoints.IS_IN_LIBRARY}?${isInLibraryParams.toString()}`,
       'GET'
     );
 
-    currentSongInfo.isLiked = isLiked[0];
+    currentSongInfo.isLiked = isLiked?.[0];
 
     this._currentTrackId = currentlyPlaying.item.id;
 
@@ -295,7 +303,7 @@ export class SpotifyController implements MusicController {
       'GET'
     );
 
-    const queue = queueRes.queue;
+    const queue = queueRes?.queue;
     const queueItems =
       queue?.map((item) => {
         const queueItem: QueueItem = {
@@ -320,13 +328,6 @@ export class SpotifyController implements MusicController {
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
-    const configElement = document.getElementById('config');
-    const config = JSON.parse(configElement.innerText);
-
-    if (!config.isPremium) {
-      return NotReadyReason.NON_PREMIUM_USER;
-    }
-
     const playerReady = await this._isPlayerReady();
 
     if (!playerReady) {
@@ -350,7 +351,7 @@ export class SpotifyController implements MusicController {
     }
 
     const queue = await this.getQueue(true);
-    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
+    const trackIndexes = findIndexes(queue, (item) => item.track?.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     const trackRows = await waitForElement(
@@ -371,30 +372,15 @@ export class SpotifyController implements MusicController {
     return;
   }
 
-  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
-    const queryParams = new URLSearchParams({
-      q: query,
-      type: 'track',
-      limit: SEARCH_LIMIT.toString(),
-      offset: SEARCH_OFFSET.toString(),
-      market: this._market
-    });
-
-    const results = await this._fetchSpotify<{
-      tracks: { items: NativeSpotifyTrack[] };
-    }>(`${SpotifyEndpoints.SEARCH}?${queryParams.toString()}`, 'GET');
-
-    const tracks = results.tracks.items.map((item) =>
-      this._itemToSongInfo(item)
-    );
-
-    return tracks;
-  }
-
   private _getVolume(): number {
     const volumeContainerElement = document.querySelector(
       'div[data-testid="volume-bar"]'
     );
+
+    if (!volumeContainerElement) {
+      return 50;
+    }
+
     const volumeInputElement = volumeContainerElement.querySelector(
       'input[type="range"]'
     ) as HTMLInputElement;
@@ -497,7 +483,8 @@ export class SpotifyController implements MusicController {
       playButton.click();
 
       const observer = new MutationObserver((mutations, observerInstance) => {
-        if (playButton.attributes['aria-label'].value === 'Pause') {
+        const playButtonValue = playButton.getAttribute('aria-label');
+        if (playButtonValue === 'Pause') {
           playButton.click();
           observerInstance.disconnect();
 
@@ -519,7 +506,7 @@ export class SpotifyController implements MusicController {
   /**
    * Cache the queue to prevent overwhelming the Spotify API.
    */
-  private _cacheQueue(queue: QueueItem[], trackId: string) {
+  private _cacheQueue(queue: QueueItem[], trackId?: string) {
     this._cachedQueue = {
       items: queue,
       trackId

@@ -1,8 +1,5 @@
-import { YoutubeMusicServiceClient } from '@synq/music-service-clients';
-
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
-import type { TrackSearchResult } from '~types/TrackSearchResult';
 import type {
   NativeYouTubeMusicMoviePlayer,
   NativeYouTubeMusicNavigationRequest,
@@ -12,9 +9,7 @@ import type {
   YtConfig,
   YtmApp
 } from '~types/YouTubeMusic';
-import type { ReduxHub } from '~util/connectToReduxHub';
 import { findIndexes } from '~util/findIndexes';
-import { onDocumentReady } from '~util/onDocumentReady';
 import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 
@@ -42,46 +37,11 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
 };
 
 export class YouTubeMusicController implements MusicController {
-  /**
-   * Reference to a NavigationRequest that we can clone for song change navigation
-   */
-  private _navigationRequestInstance: NativeYouTubeMusicNavigationRequest;
-
-  /**
-   * Reference to interval used for session prep
-   */
-  private _exploreNavigationIntervalRef: NodeJS.Timer;
-
-  /**
-   * Used to control the wrapper navigation function. When false, we are in the middle of
-   * forcing a navigation to the capture instance, so we don't want to play the song. When true,
-   * we are navigating to the capture instance because the user clicked on a song, so we want to
-   * play the song.
-   */
-  private _shouldPlayOnNavigation = true;
-  private _curtain: HTMLDivElement;
   private _unmuteVolume: number = 50;
-  private _ytmServiceClient: YoutubeMusicServiceClient;
-  private _hub: ReduxHub;
 
-  constructor(hub: ReduxHub) {
-    this._createNavigationWrapper();
-    this._addCurtainStyles();
-
-    this._ytmServiceClient = new YoutubeMusicServiceClient();
-
-    this._hub = hub;
-  }
+  constructor() {}
 
   public prepareForAutoplay(): ValueOrPromise<void> {
-    return;
-  }
-
-  public async prepareForSession() {
-    if (!this._navigationRequestInstance) {
-      await this._forceCaptureNavigationRequest();
-    }
-
     return;
   }
 
@@ -161,30 +121,20 @@ export class YouTubeMusicController implements MusicController {
     this.getPlayer().seekTo(time);
   }
 
-  /**
-   * EXAMPLE IDs:
-   * - DZhNgVyIrHw
-   * - lYBUbBu4W08
-   */
-  public async startTrack(trackId: string): Promise<void> {
-    if (!this._navigationRequestInstance) {
-      throw new Error('No navigation request instance');
-    }
-
-    const navigationRequest = this._createNavigationRequestInstance(trackId);
-
-    // Trigger the event
-    this._ytmApp.navigator_.navigate(navigationRequest);
-  }
-
-  public getPlayerState(): PlayerState | undefined {
+  public getPlayerState(): PlayerState | null {
     if (this._ytmApp.playerUiState_ === 'INACTIVE') {
-      return undefined;
+      return null;
     }
 
     const repeatButton = document.querySelector('.repeat.ytmusic-player-bar');
+    const repeatButtonLabel = repeatButton?.getAttribute('aria-label');
+
+    if (!repeatButtonLabel) {
+      return null;
+    }
+
     const repeatMode =
-      REPEAT_STATES_MAP[repeatButton?.getAttribute('aria-label')];
+      REPEAT_STATES_MAP[repeatButtonLabel as keyof typeof REPEAT_STATES_MAP];
 
     return {
       currentTime: Math.round(this.getPlayer().getCurrentTime()),
@@ -196,7 +146,7 @@ export class YouTubeMusicController implements MusicController {
     };
   }
 
-  public getCurrentTrack(): Track {
+  public getCurrentTrack(): Track | null {
     const videoDetails = this._appState.player?.playerResponse?.videoDetails;
 
     if (!videoDetails) {
@@ -210,6 +160,10 @@ export class YouTubeMusicController implements MusicController {
 
       return rendererData?.videoId === trackId;
     });
+
+    if (!queueItem) {
+      return null;
+    }
 
     const songInfo: Track = this._queueItemToSongInfo(queueItem);
 
@@ -248,60 +202,16 @@ export class YouTubeMusicController implements MusicController {
   }
 
   public isReady(): true | NotReadyReason {
-    if (!window.yt.config_.IS_SUBSCRIBER) {
-      return NotReadyReason.NON_PREMIUM_USER;
-    }
-
-    if (!this._navigationRequestInstance) {
-      return NotReadyReason.AUTOPLAY_NOT_READY;
-    }
-
     return true;
   }
 
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
+    const trackIndexes = findIndexes(queue, (item) => item.track?.id === id);
     const trackIndex = trackIndexes[duplicateIndex];
 
     this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
-  }
-
-  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
-    const searchResults = await this._ytmServiceClient.search(query);
-
-    return searchResults.results.map((result) => {
-      const trackSearchResult: TrackSearchResult = {
-        id: result.id,
-        name: result.trackName,
-        artistName: result.artists.join(', '),
-        albumCoverUrl: result.albumCoverUrl
-      };
-
-      return trackSearchResult;
-    });
-  }
-
-  private _createNavigationRequestInstance(
-    trackId: string
-  ): NativeYouTubeMusicNavigationRequest {
-    // Clone the navigation request instance
-    const navigationRequest = Object.assign(
-      Object.create(Object.getPrototypeOf(this._navigationRequestInstance)),
-      this._navigationRequestInstance
-    );
-
-    navigationRequest.data = {
-      videoId: trackId,
-      watchEndpointMusicSupportedConfigs: {
-        watchEndpointMusicConfig: {
-          musicVideoType: 'MUSIC_VIDEO_TYPE_ATV'
-        }
-      }
-    };
-
-    return navigationRequest;
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {
@@ -337,8 +247,8 @@ export class YouTubeMusicController implements MusicController {
 
   private _selectAlbumCoverUrl(
     thumbnails: NativeYouTubeMusicThumbnail[]
-  ): string {
-    return thumbnails.find((thumbnail) => thumbnail.width >= 100).url;
+  ): string | undefined {
+    return thumbnails.find((thumbnail) => thumbnail.width >= 100)?.url;
   }
 
   private _queueItemToSongInfo(queueItem: NativeYouTubeMusicQueueItem): Track {
@@ -349,9 +259,8 @@ export class YouTubeMusicController implements MusicController {
     const { artist, album } = this._longBylineToArtistAlbum(
       rendererData.longBylineText.runs
     );
-    const albumCoverUrl = this._selectAlbumCoverUrl(
-      rendererData.thumbnail.thumbnails
-    );
+    const albumCoverUrl =
+      this._selectAlbumCoverUrl(rendererData.thumbnail.thumbnails) ?? '';
 
     return {
       duration: lengthTextToSeconds(rendererData.lengthText.runs[0].text),
@@ -361,151 +270,6 @@ export class YouTubeMusicController implements MusicController {
       albumName: album,
       albumCoverUrl
     };
-  }
-
-  /**
-   * Forces app the capture a navigation request so we can clone it later. This
-   * is necessary when the user hasn't already clicked on a song and we want to
-   * take programmatic control of the page.
-   */
-  private async _forceCaptureNavigationRequest() {
-    return new Promise((resolve) => {
-      this._addCurtain().then(() => {
-        this._shouldPlayOnNavigation = false;
-        this._ytmApp.navigate_('FEmusic_explore');
-
-        const popstateHandler = () => {
-          window.removeEventListener('popstate', popstateHandler);
-          onDocumentReady(() => {
-            this._removeCurtain();
-            resolve(void 0);
-          });
-        };
-
-        const intervalHandler = () => {
-          if (location.pathname !== '/explore') {
-            return;
-          }
-
-          const item = document
-            .querySelector(
-              '#items > ytmusic-responsive-list-item-renderer:nth-child(1)'
-            )
-            ?.querySelector('ytmusic-play-button-renderer') as HTMLElement;
-
-          if (item) {
-            clearInterval(this._exploreNavigationIntervalRef);
-            item.click();
-
-            history.back();
-
-            window.addEventListener('popstate', popstateHandler);
-          }
-        };
-
-        // Wait for the explore page to load, then click the first item
-        this._exploreNavigationIntervalRef = setInterval(intervalHandler, 200);
-      });
-    });
-  }
-
-  private async _addCurtain() {
-    const screenshot = await this._hub.asyncPostMessage<string>({
-      name: 'SCREENSHOT'
-    });
-
-    this._curtain = document.createElement('div');
-    this._curtain.className = 'synq-curtain';
-
-    // create image element that overlays full screen with screenshot
-    const img = document.createElement('img');
-    img.src = screenshot;
-
-    // add spinner on top of the image
-    const spinner = document.createElement('div');
-    spinner.className = 'synq-curtain-spinner';
-
-    this._curtain.appendChild(img);
-    this._curtain.appendChild(spinner);
-
-    document.body.appendChild(this._curtain);
-  }
-
-  private _removeCurtain() {
-    this._curtain.remove();
-  }
-
-  private _isMusicVideoTypeATV(navigationRequest) {
-    return (
-      navigationRequest?.data?.watchEndpointMusicSupportedConfigs
-        ?.watchEndpointMusicConfig?.musicVideoType === 'MUSIC_VIDEO_TYPE_ATV'
-    );
-  }
-
-  private _createNavigationWrapper() {
-    this._ytmApp.navigator_.originalNavigate = this._ytmApp.navigator_.navigate;
-
-    this._ytmApp.navigator_.navigate = (navigationRequest) => {
-      if (this._isMusicVideoTypeATV(navigationRequest)) {
-        this._navigationRequestInstance = navigationRequest;
-
-        this._ytmApp.navigator_.navigate =
-          this._ytmApp.navigator_.originalNavigate;
-
-        if (!this._shouldPlayOnNavigation) {
-          return;
-        }
-      }
-
-      return this._ytmApp.navigator_.originalNavigate(navigationRequest);
-    };
-  }
-
-  private _addCurtainStyles() {
-    const curtainStyle = document.createElement('style');
-    curtainStyle.innerText = `
-@keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-.synq-curtain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 100;
-}
-
-.synq-curtain img {
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  filter: blur(5px);
-}
-
-.synq-curtain .synq-curtain-spinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 100;
-  pointer-events: none;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 5px solid #fff;
-  border-top: 5px solid #000;
-  animation: spin 1s linear infinite;
-}
-    `;
-    document.head.appendChild(curtainStyle);
   }
 
   public getPlayer() {

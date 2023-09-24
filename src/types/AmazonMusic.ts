@@ -39,20 +39,6 @@ export interface NativeAmazonMusicQueueItem {
   image: string;
 }
 
-export interface NativeAmazonSearchResponse {
-  methods: [
-    {
-      template: {
-        widgets: [
-          {
-            items: NativeAmazonMusicSearchResult[];
-          }
-        ];
-      };
-    }
-  ];
-}
-
 export interface NativeAmazonMusicSearchResult {
   primaryLink: string;
   image: string;

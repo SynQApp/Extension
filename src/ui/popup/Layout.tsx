@@ -13,11 +13,13 @@ const Layout = ({ children, hideButton }: LayoutProps) => {
     <Container>
       <Header
         actionButton={
-          !hideButton && {
-            name: 'Start Session',
-            // TODO: Implement session start handler
-            onClick: () => console.info('Start session')
-          }
+          !hideButton
+            ? {
+                name: 'Share',
+                // TODO: Implement session start handler
+                onClick: () => console.info('Share')
+              }
+            : undefined
         }
       />
       <Content>{children}</Content>

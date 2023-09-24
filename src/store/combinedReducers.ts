@@ -5,7 +5,6 @@ import musicServiceTabsReducer from './slices/musicServiceTabs';
 import popupOpenReducer from './slices/popupOpen';
 import queueReducer from './slices/queue';
 import searchReducer from './slices/search';
-import sessionReducer from './slices/session';
 import settingsReducer from './slices/settings';
 
 const rootReducer = combineReducers({
@@ -14,7 +13,6 @@ const rootReducer = combineReducers({
   popupOpen: popupOpenReducer,
   queue: queueReducer,
   search: searchReducer,
-  session: sessionReducer,
   settings: settingsReducer
 });
 

@@ -1,4 +1,3 @@
 export enum NotReadyReason {
-  NON_PREMIUM_USER = 'NON_PREMIUM_USER',
   AUTOPLAY_NOT_READY = 'AUTOPLAY_NOT_READY'
 }

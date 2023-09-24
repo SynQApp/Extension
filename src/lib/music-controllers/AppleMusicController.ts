@@ -1,12 +1,6 @@
 import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
-import type {
-  PlayerState,
-  QueueItem,
-  Track,
-  TrackSearchResult,
-  ValueOrPromise
-} from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
@@ -108,17 +102,6 @@ export class AppleMusicController implements MusicController {
     this.getPlayer().seekToTime(time);
   }
 
-  /**
-   * EXAMPLE IDs:
-   * - 388136191
-   * - 560097694
-   */
-  public async startTrack(trackId: string): Promise<void> {
-    // Loads the song in the player which is required to change to it.
-    await this.getPlayer().playLater({ song: trackId });
-    await this.getPlayer().changeToMediaItem(trackId);
-  }
-
   public prepareForAutoplay(): void {
     return;
   }
@@ -127,20 +110,21 @@ export class AppleMusicController implements MusicController {
     return;
   }
 
-  public getPlayerState(): PlayerState | undefined {
+  public getPlayerState(): PlayerState | null {
     if (!this.getPlayer()) {
-      return undefined;
+      return null;
     }
 
     const nowPlayingItem = this.getPlayer().nowPlayingItem;
 
     if (!nowPlayingItem) {
-      return undefined;
+      return null;
     }
 
-    const repeatMode = Object.keys(REPEAT_MAP).find(
-      (key) => REPEAT_MAP[key] === this.getPlayer().repeatMode
-    ) as RepeatMode;
+    const repeatMode = Object.keys(REPEAT_MAP).find((key) => {
+      const typedKey = key as keyof typeof REPEAT_MAP;
+      REPEAT_MAP[typedKey] === this.getPlayer().repeatMode;
+    }) as RepeatMode;
 
     const playerState: PlayerState = {
       currentTime: this.getPlayer().currentPlaybackTime,
@@ -153,7 +137,7 @@ export class AppleMusicController implements MusicController {
     return playerState;
   }
 
-  public getCurrentTrack(): Track {
+  public getCurrentTrack(): Track | null {
     const nowPlayingItem = this.getPlayer().nowPlayingItem;
 
     if (!nowPlayingItem) {
@@ -178,40 +162,22 @@ export class AppleMusicController implements MusicController {
   }
 
   public isReady(): true | NotReadyReason {
-    if (!this._isPremiumUser()) {
-      return NotReadyReason.NON_PREMIUM_USER;
-    }
-
     return true;
   }
 
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.track.id === id);
+    const trackIndexes = findIndexes(queue, (item) => {
+      if (!item.track) {
+        return false;
+      }
+
+      return item.track.id === id;
+    });
     const trackIndex = trackIndexes[duplicateIndex];
 
     this.getPlayer().changeToMediaAtIndex(trackIndex);
-  }
-
-  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
-    const player = this.getPlayer();
-
-    const results = await player.api.search(query, {
-      limit: SEARCH_LIMIT,
-      types: 'songs'
-    });
-
-    const tracks = results?.songs?.data?.map((song) => {
-      return this._mediaItemToSongInfo(song);
-    });
-
-    return tracks ?? [];
-  }
-
-  private async _isPremiumUser(): Promise<boolean> {
-    const me = await this.getPlayer().me();
-    return me.subscription.active;
   }
 
   private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {

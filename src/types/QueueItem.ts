@@ -2,5 +2,5 @@ import type { Track } from '.';
 
 export interface QueueItem {
   isPlaying: boolean;
-  track: Track;
+  track?: Track | null;
 }

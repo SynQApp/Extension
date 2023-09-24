@@ -74,7 +74,7 @@ export const ListItemMenu = ({
       <MenuStyled
         open={showMenu}
         onClose={() => setShowMenu(false)}
-        anchorEl={iconRef.current}
+        anchorEl={iconRef.current!}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right'

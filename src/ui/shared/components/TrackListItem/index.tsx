@@ -44,6 +44,10 @@ export const TrackListItem = ({
   const theme = useTheme();
   const listItemRef = useRef<HTMLDivElement>(null);
 
+  if (!active) {
+    active = false;
+  }
+
   // Scroll item into view if it is active
   useEffect(() => {
     if (active) {
@@ -72,7 +76,7 @@ export const TrackListItem = ({
               className="album-art"
               height="100%"
               radius="lg"
-              src={imageUrl}
+              src={imageUrl ?? ''}
               width="100%"
               fallback={
                 <ImageFallbackFlex align="center" justify="center">

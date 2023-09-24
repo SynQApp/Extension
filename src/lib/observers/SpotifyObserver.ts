@@ -142,7 +142,7 @@ export class SpotifyObserver extends MusicServiceObserver {
     for (let i = 0; i < 5; i++) {
       const songInfo = await this._controller.getCurrentTrack();
 
-      if (!nowPlayingText.includes(songInfo.name)) {
+      if (!songInfo || !nowPlayingText.includes(songInfo.name)) {
         await wait(1000);
         continue;
       }
@@ -157,7 +157,7 @@ export class SpotifyObserver extends MusicServiceObserver {
         this._hub.dispatch(
           updateMusicServiceTabCurrentTrack({
             tabId: tab.id!,
-            currentTrack
+            currentTrack: currentTrack ?? undefined
           })
         );
       }
@@ -180,7 +180,7 @@ export class SpotifyObserver extends MusicServiceObserver {
     this._hub.dispatch(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
-        playerState
+        playerState: playerState ?? undefined
       })
     );
   }

@@ -162,7 +162,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
       this._hub.dispatch(
         updateMusicServiceTabCurrentTrack({
           tabId: tab.id!,
-          currentTrack
+          currentTrack: currentTrack ?? undefined
         })
       );
     }

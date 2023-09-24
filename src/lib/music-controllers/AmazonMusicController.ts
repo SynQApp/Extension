@@ -1,17 +1,13 @@
 import type { Store } from 'redux';
 
-import { BASE_API_URL, BASE_APP_URL } from '~constants/amazon';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track } from '~types';
-import type { TrackSearchResult } from '~types';
 import type {
   AmznMusic,
   Maestro,
-  NativeAmazonMusicQueueItem,
-  NativeAmazonSearchResponse
+  NativeAmazonMusicQueueItem
 } from '~types/AmazonMusic';
 import { findIndexes } from '~util/findIndexes';
-import { convertToAscii, generateRequestId } from '~util/skyfireUtils';
 import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
@@ -56,14 +52,14 @@ export class AmazonMusicController implements MusicController {
   private _unmuteVolume = 50;
 
   public play(): void {
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PlaybackInterface.v1_0.ResumeMediaMethod',
       payload: {}
     });
   }
 
   public playPause(): void {
-    if (this.getStore().getState().PlaybackStates.play.state === 'PAUSED') {
+    if (this.getStore()?.getState().PlaybackStates.play.state === 'PAUSED') {
       this.play();
     } else {
       this.pause();
@@ -71,20 +67,20 @@ export class AmazonMusicController implements MusicController {
   }
 
   public pause(): void {
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PlaybackInterface.v1_0.PauseMediaMethod'
     });
   }
 
   public next(): void {
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PlaybackInterface.v1_0.PlayNextMediaMethod',
       payload: {}
     });
   }
 
   public previous(): void {
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PlaybackInterface.v1_0.PlayPreviousMediaMethod',
       payload: {}
     });
@@ -92,7 +88,9 @@ export class AmazonMusicController implements MusicController {
 
   public toggleRepeatMode(): void {
     const prevRepeatMode =
-      REPEAT_STATES_MAP[this.getStore().getState().PlaybackStates.repeat.state];
+      REPEAT_STATES_MAP[
+        this.getStore()?.getState().PlaybackStates.repeat.state
+      ];
     let newRepeatMode: RepeatMode;
 
     switch (prevRepeatMode) {
@@ -107,7 +105,7 @@ export class AmazonMusicController implements MusicController {
         break;
     }
 
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: REPEAT_ACTIONS_MAP[newRepeatMode]
     });
   }
@@ -179,7 +177,7 @@ export class AmazonMusicController implements MusicController {
 
     volume = normalizeVolume(volume);
 
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PlaybackInterface.v1_0.SetVolumeMethod',
       payload: {
         volume: volume / 100
@@ -188,7 +186,7 @@ export class AmazonMusicController implements MusicController {
   }
 
   public seekTo(time: number): void {
-    this.getStore().dispatch({
+    this.getStore()?.dispatch({
       type: 'PLAYBACK_SCRUBBED',
       payload: {
         position: time
@@ -196,31 +194,14 @@ export class AmazonMusicController implements MusicController {
     });
   }
 
-  /**
-   * EXAMPLE IDs:
-   * - trackId: B0C546ZZQ5
-   *   albumId: B0C5485L91
-   *
-   * - trackId: B0939X2B44
-   *   albumId: B093B55MYN
-   */
-  public async startTrack(trackId: string, albumId: string): Promise<void> {
-    const playTrackAction = this._createStartTrackAction(trackId, albumId);
-    this.getStore().dispatch(playTrackAction);
-  }
-
   public async prepareForAutoplay(): Promise<void> {
     await this._preparePlayer();
-  }
-
-  public prepareForSession(): Promise<void> {
-    return;
   }
 
   public async getPlayerState(): Promise<PlayerState> {
     const maestro = await this.getMaestroInstance();
 
-    const appState = this.getStore().getState();
+    const appState = this.getStore()?.getState();
     const playbackStates = appState.PlaybackStates;
 
     return {
@@ -232,8 +213,8 @@ export class AmazonMusicController implements MusicController {
     };
   }
 
-  public getCurrentTrack(): Track {
-    const appState = this.getStore().getState();
+  public getCurrentTrack(): Track | null {
+    const appState = this.getStore()?.getState();
     const media = appState.Media;
 
     if (!media) {
@@ -255,7 +236,7 @@ export class AmazonMusicController implements MusicController {
   }
 
   public async getQueue(): Promise<AmazonQueueItem[]> {
-    const appState = this.getStore().getState();
+    const appState = this.getStore()?.getState();
     let queue = appState.Media?.playQueue?.widgets?.[0]
       ?.items as NativeAmazonMusicQueueItem[];
 
@@ -289,12 +270,6 @@ export class AmazonMusicController implements MusicController {
   }
 
   public async isReady(): Promise<true | NotReadyReason> {
-    const maestro = await this.getMaestroInstance();
-
-    if (!maestro.getConfig()?.tier?.includes('UNLIMITED')) {
-      return NotReadyReason.NON_PREMIUM_USER;
-    }
-
     if (!(await this._isPlayerReady())) {
       return NotReadyReason.AUTOPLAY_NOT_READY;
     }
@@ -306,7 +281,7 @@ export class AmazonMusicController implements MusicController {
     const currentTrack = await this.getCurrentTrack();
 
     // If current track is the same as the one we want to play, just restart it
-    if (currentTrack.id === id && duplicateIndex === 0) {
+    if (currentTrack?.id === id && duplicateIndex === 0) {
       this.seekTo(0);
       return;
     }
@@ -315,60 +290,29 @@ export class AmazonMusicController implements MusicController {
 
     const trackIndexes = findIndexes(
       queueItems,
-      (item) => item.track.id === id
+      (item) => item.track?.id === id
     );
     const trackIndex = trackIndexes[duplicateIndex];
 
     const queueItem = queueItems[trackIndex];
 
+    if (!queueItem?.track || !currentTrack) {
+      return;
+    }
+
     const playTrackAction = this._createPlayAtQueueEntityAction(
-      queueItem.track.id,
+      queueItem.track?.id,
       queueItem.queueItemId,
-      currentTrack.id
+      currentTrack?.id
     );
 
-    this.getStore().dispatch(playTrackAction);
-  }
-
-  public async searchTracks(query: string): Promise<TrackSearchResult[]> {
-    const apiResponse = await fetch(`${BASE_API_URL}/searchCatalogTracks`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=UTF-8'
-      },
-      body: JSON.stringify({
-        headers: JSON.stringify(this._createApiHeaders()),
-        keyword: query,
-        userHash: JSON.stringify({ level: 'HD_MEMBER' })
-      })
-    }).then((res) => res.json());
-
-    return this._parseSearchResponse(apiResponse);
-  }
-
-  private _parseSearchResponse(
-    response: NativeAmazonSearchResponse
-  ): TrackSearchResult[] {
-    const tracks = response?.methods?.[0]?.template?.widgets?.[0]?.items;
-
-    return (
-      tracks?.map((track) => {
-        const primaryUrl = new URL(track.primaryLink, BASE_APP_URL);
-
-        return {
-          albumCoverUrl: track.image,
-          name: track.primaryText?.text,
-          artistName: track.secondaryText,
-          id: primaryUrl.searchParams.get('trackAsin')
-        };
-      }) ?? []
-    );
+    this.getStore()?.dispatch(playTrackAction);
   }
 
   private async _fetchQueue(): Promise<NativeAmazonMusicQueueItem[]> {
-    const appState = this.getStore().getState();
+    const appState = this.getStore()?.getState();
 
-    this.getStore().dispatch(
+    this.getStore()?.dispatch(
       this._createLoadQueueAction(appState.Media?.mediaId)
     );
 
@@ -382,7 +326,7 @@ export class AmazonMusicController implements MusicController {
           resolve([]);
         }
 
-        const appState = this.getStore().getState();
+        const appState = this.getStore()?.getState();
         const curQueue = appState.Media?.playQueue?.widgets?.[0]?.items;
 
         if (curQueue && curQueue.length) {
@@ -395,12 +339,16 @@ export class AmazonMusicController implements MusicController {
     });
   }
 
-  private _queueItemToSongInfo(item: NativeAmazonMusicQueueItem): Track {
+  private _queueItemToSongInfo(item: NativeAmazonMusicQueueItem): Track | null {
     const searchParams = new URLSearchParams(
       item?.primaryLink?.deeplink?.split('?')[1]
     );
 
     const trackId = searchParams.get('trackAsin');
+
+    if (!trackId) {
+      return null;
+    }
 
     return {
       id: trackId,
@@ -413,14 +361,14 @@ export class AmazonMusicController implements MusicController {
   }
 
   private _isCurrentTrackLiked(): boolean {
-    const appState = this.getStore().getState();
+    const appState = this.getStore()?.getState();
     const rating = appState.Storage.RATINGS?.TRACK_RATING;
 
     return rating === 'THUMBS_UP';
   }
 
   private _isCurrentTrackDisliked(): boolean {
-    const appState = this.getStore().getState();
+    const appState = this.getStore()?.getState();
     const rating = appState.Storage.RATINGS?.TRACK_RATING;
 
     return rating === 'THUMBS_DOWN';
@@ -493,30 +441,6 @@ export class AmazonMusicController implements MusicController {
     });
   }
 
-  private _createStartTrackAction(trackId: string, albumId: string) {
-    return {
-      payload: {
-        type: 'InteractionInterface.v1_0.InvokeHttpSkillMethod',
-        payload: {
-          interface: 'InteractionInterface.v1_0.InvokeHttpSkillMethod',
-          url: `https://na.mesk.skill.music.a2z.com/api/playCatalogAlbum?id=${albumId}&at=${trackId}&userHash=%7B%22level%22%3A%22HD_MEMBER%22%7D`,
-          clientInformation: [],
-          before: [],
-          after: [],
-          onSuccess: [],
-          onError: [],
-          queue: {
-            interface: 'QueuesInterface.v1_0.SingleThreadedQueue',
-            id: 'ST_HTTP'
-          },
-          forced: true,
-          owner: this.getStore().getState().TemplateStack.currentTemplate.id
-        }
-      },
-      type: 'EXECUTE_METHOD'
-    };
-  }
-
   private _createLoadQueueAction(currentTrackId: string) {
     return {
       payload: {
@@ -575,62 +499,6 @@ export class AmazonMusicController implements MusicController {
         }
       },
       type: 'ENQUEUE_SKYFIRE_METHOD'
-    };
-  }
-
-  private _createApiHeaders() {
-    const appState = this.getStore().getState();
-    const config = window.amznMusic.appConfig;
-
-    const headers = {
-      'x-amzn-authentication': JSON.stringify(
-        this._createAuthenticationHeader()
-      ),
-      'x-amzn-device-model': 'WEBPLAYER',
-      'x-amzn-device-width': '1920',
-      'x-amzn-device-family': 'WebPlayer',
-      'x-amzn-device-id': config.deviceId,
-      'x-amzn-user-agent': convertToAscii(window.navigator.userAgent),
-      'x-amzn-session-id': config.sessionId,
-      'x-amzn-device-height': '1080',
-      'x-amzn-request-id': generateRequestId(),
-      'x-amzn-device-language': config.displayLanguage,
-      'x-amzn-currency-of-preference': 'USD',
-      'x-amzn-os-version': '1.0',
-      'x-amzn-application-version': config.version,
-      'x-amzn-device-time-zone':
-        Intl.DateTimeFormat().resolvedOptions().timeZone,
-      'x-amzn-timestamp': new Date().getTime().toString(),
-      'x-amzn-csrf': JSON.stringify(this._createCsrfTokenHeader()),
-      'x-amzn-music-domain': 'music.amazon.com',
-      'x-amzn-referer': 'music.amazon.com',
-      'x-amzn-affiliate-tags': '',
-      'x-amzn-ref-marker': '',
-      'x-amzn-page-url': `${BASE_APP_URL}/search/`,
-      'x-amzn-weblab-id-overrides': '',
-      'x-amzn-video-player-token':
-        appState?.Authentication?.videoPlayerToken?.header,
-      'x-amzn-feature-flags': 'hd-supported'
-    };
-
-    return headers;
-  }
-
-  private _createAuthenticationHeader() {
-    return {
-      interface: 'ClientAuthenticationInterface.v1_0.ClientTokenElement',
-      accessToken: window.amznMusic.appConfig.accessToken
-    };
-  }
-
-  private _createCsrfTokenHeader() {
-    const csrfToken = window.amznMusic.appConfig.csrf;
-
-    return {
-      interface: 'CSRFInterface.v1_0.CSRFHeaderElement',
-      token: csrfToken.token,
-      timestamp: csrfToken.ts,
-      rndNonce: csrfToken.rnd
     };
   }
 

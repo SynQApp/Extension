@@ -6,27 +6,18 @@ import { TabsMessage } from '~types/TabsMessage';
 import { sendMessage } from '~util/sendMessage';
 
 export const usePopupMusicServiceTab = () => {
-  const session = useAppSelector((state) => state.session);
   const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
-  const [musicServiceTab, setMusicServiceTab] = useState(undefined);
+  const [musicServiceTab, setMusicServiceTab] = useState<
+    MusicServiceTab | undefined
+  >(undefined);
   const [manuallySelected, setManuallySelected] = useState(false);
 
   useEffect(() => {
     // If a music service tab is already selected, then just update it
     if (musicServiceTab) {
       setMusicServiceTab(
-        musicServiceTabs?.find((tab) => tab.tabId === musicServiceTab.tabId)
+        musicServiceTabs?.find((tab) => tab.tabId === musicServiceTab?.tabId)
       );
-    }
-
-    // If there is an active session, use that tab
-    if (session?.tabId) {
-      const tab = musicServiceTabs?.find((tab) => tab.tabId === session.tabId);
-
-      if (tab) {
-        setMusicServiceTab(tab);
-        return;
-      }
     }
 
     // If the user has manually selected a music service tab, then don't override it
@@ -43,7 +34,7 @@ export const usePopupMusicServiceTab = () => {
     if (musicServiceTabs?.length === 1) {
       setMusicServiceTab(musicServiceTabs[0]);
     }
-  }, [musicServiceTabs, manuallySelected, session]);
+  }, [musicServiceTabs, manuallySelected]);
 
   useEffect(() => {
     if (!musicServiceTab) {

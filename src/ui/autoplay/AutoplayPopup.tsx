@@ -34,7 +34,7 @@ const AutoplayPopup = () => {
       {
         name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
       },
-      musicServiceTab.tabId
+      musicServiceTab?.tabId
     );
   };
 

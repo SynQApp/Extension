@@ -99,7 +99,7 @@ export class AppleMusicObserver extends MusicServiceObserver {
       this._hub.dispatch(
         updateMusicServiceTabCurrentTrack({
           tabId: tab.id!,
-          currentTrack
+          currentTrack: currentTrack ?? undefined
         })
       );
     }
@@ -119,7 +119,7 @@ export class AppleMusicObserver extends MusicServiceObserver {
     this._hub.dispatch(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
-        playerState
+        playerState: playerState ?? undefined
       })
     );
   }

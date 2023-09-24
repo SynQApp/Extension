@@ -1,26 +1,18 @@
 import { useMemo } from 'react';
-import type { DropResult } from 'react-beautiful-dnd';
 
-import { useAppSelector } from '~store';
-import {
-  MusicControllerMessage,
-  type QueueItem,
-  SessionControllerMessage,
-  type SessionQueueItem
-} from '~types';
+import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 import { sendMessage } from '~util/sendMessage';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
-  const currentTrack = useAppSelector((state) => state.currentTrack);
-  const playerState = useAppSelector((state) => state.playerState);
-  const session = useAppSelector((state) => state.session);
   const { musicServiceTab } = useMusicServiceTab();
+  const playerState = musicServiceTab?.playerState;
+  const currentTrack = musicServiceTab?.currentTrack;
 
   const queue = useMemo(() => {
-    let currentQueue = session ? session.queue : playerState?.queue;
+    let currentQueue = playerState?.queue;
 
     if (!currentQueue) {
       return [];
@@ -41,7 +33,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     }
 
     return currentQueue;
-  }, [playerState, count, currentTrack?.id, session, startAt]);
+  }, [playerState, count, currentTrack?.id, startAt]);
 
   const musicServiceName = useMemo(
     () =>
@@ -68,37 +60,9 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
   };
 
-  const handleQueueItemReorder = (dropResult: DropResult) => {
-    if (!musicServiceTab) {
-      return;
-    }
-
-    const { source, destination } = dropResult;
-
-    if (!source || !destination) {
-      return;
-    }
-
-    const { index: sourceIndex } = source;
-    const { index: destinationIndex } = destination;
-
-    sendMessage(
-      {
-        name: SessionControllerMessage.UPDATE_SESSION_QUEUE_ITEM_POSITION,
-        body: {
-          sourceIndex,
-          destinationIndex
-        }
-      },
-      musicServiceTab.tabId
-    );
-  };
-
   return {
     handlePlayQueueTrack,
-    handleQueueItemReorder,
-    inSession: !!session,
     musicServiceName,
-    queueItems: queue as SessionQueueItem[] | QueueItem[]
+    queueItems: queue
   };
 };

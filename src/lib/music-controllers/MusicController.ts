@@ -3,7 +3,6 @@ import type {
   PlayerState,
   QueueItem,
   Track,
-  TrackSearchResult,
   ValueOrPromise
 } from '~types';
 
@@ -64,26 +63,19 @@ export interface MusicController {
   seekTo(time: number): ValueOrPromise<void>;
 
   /**
-   * Start the specified track.
+   * Prepare the music service UI for autoplay.
    */
-  startTrack(trackId: string, albumId?: string): ValueOrPromise<void>;
-
   prepareForAutoplay(): ValueOrPromise<void>;
-
-  /**
-   * Prepare the controller for use in a session.
-   */
-  prepareForSession(): ValueOrPromise<void>;
 
   /**
    * Get the current player state. Returns undefined if the player is not active.
    */
-  getPlayerState(): ValueOrPromise<PlayerState> | undefined;
+  getPlayerState(): ValueOrPromise<PlayerState | null>;
 
   /**
    * Get the currently-playing song info.
    */
-  getCurrentTrack(): ValueOrPromise<Track | undefined>;
+  getCurrentTrack(): ValueOrPromise<Track | null>;
 
   /**
    * Get the queue.
@@ -101,9 +93,4 @@ export interface MusicController {
    * @param duplicateIndex If there are multiple items with the same ID, this is the duplicate index of the item to play.
    */
   playQueueTrack(id: string, duplicateIndex?: number): ValueOrPromise<void>;
-
-  /**
-   * Search for tracks matching the query.
-   */
-  searchTracks(query: string): Promise<TrackSearchResult[]>;
 }

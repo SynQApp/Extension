@@ -29,7 +29,7 @@ export abstract class MusicServiceObserver {
     currentTrack: true,
     playerState: true
   };
-  private _currentTrack?: Track = undefined;
+  private _currentTrack: Track | null = null;
   private _listeners: ObserverHandler[] = [];
 
   constructor(controller: MusicController, hub: ReduxHub) {
@@ -70,16 +70,18 @@ export abstract class MusicServiceObserver {
     if (filter) {
       // Remove any filter properties that are false
       Object.keys(filter).forEach((key) => {
-        if (!filter[key]) {
-          delete filter[key];
+        const typedKey = key as keyof ObserverStateFilter;
+        if (!filter[typedKey]) {
+          delete filter[typedKey];
         }
       });
 
       // Flip each of the provided true filter to false
       const newPausedState = Object.keys(filter).reduce((acc, key) => {
-        acc[key] = !filter[key];
+        const typedKey = key as keyof ObserverStateFilter;
+        acc[typedKey] = !filter[typedKey];
         return acc;
-      }, {});
+      }, {} as Record<keyof ObserverStateFilter, boolean>);
 
       this._pausedProperties = {
         ...this._pausedProperties,
