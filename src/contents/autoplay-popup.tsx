@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
 import { store } from '~store';
-import { ContextProvidersWrapper } from '~ui/sidebar/ContextProvidersWrapper';
+import { ContextProvidersWrapper } from '~ui/autoplay/ContextProvidersWrapper';
 
 import AutoplayPopup from '../ui/autoplay/AutoplayPopup';
 

@@ -13,7 +13,7 @@ import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from './MusicController';
+import type { MusicController } from '../lib/MusicController';
 
 declare let window: Window & {
   yt: {

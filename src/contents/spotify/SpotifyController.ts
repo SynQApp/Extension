@@ -8,7 +8,7 @@ import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
 
-import type { MusicController } from './MusicController';
+import type { MusicController } from '../lib/MusicController';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,

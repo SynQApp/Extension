@@ -27,7 +27,7 @@
     "@synq/react-beautiful-dnd": "13.1.1",
     "@synq/ui": "0.0.4-alpha.full-screen-setup.7",
     "i": "^0.3.7",
-    "plasmo": "0.75.2",
+    "plasmo": "0.83.0",
     "pnpm": "^8.6.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",

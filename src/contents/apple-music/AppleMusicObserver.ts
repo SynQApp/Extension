@@ -4,11 +4,11 @@ import {
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { AppleMusicController } from '../music-controllers/AppleMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from './MusicServiceObserver';
+} from '../lib/MusicServiceObserver';
+import type { AppleMusicController } from './AppleMusicController';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',

@@ -4,11 +4,11 @@ import {
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { YouTubeMusicController } from '../music-controllers/YouTubeMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from './MusicServiceObserver';
+} from '../lib/MusicServiceObserver';
+import type { YouTubeMusicController } from './YouTubeMusicController';
 
 export class YouTubeMusicObserver extends MusicServiceObserver {
   declare _controller: YouTubeMusicController;

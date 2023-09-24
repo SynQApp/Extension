@@ -4,11 +4,11 @@ import {
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { AmazonMusicController } from '../music-controllers/AmazonMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from './MusicServiceObserver';
+} from '../lib/MusicServiceObserver';
+import type { AmazonMusicController } from './AmazonMusicController';
 
 const playbackStateChangedEvents = [
   'playpause',

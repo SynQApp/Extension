@@ -37,7 +37,10 @@ const enableKeyControls = () => {
       'music.amazon.com': AMAZON_KEY_CONTROLS
     };
 
-    const keyControlsOptions = keyControlsOptionsMap[window.location.host];
+    const keyControlsOptions =
+      keyControlsOptionsMap[
+        window.location.host as keyof typeof keyControlsOptionsMap
+      ];
 
     if (keyControlsOptions) {
       addKeyControlsListener(keyControlsOptions);

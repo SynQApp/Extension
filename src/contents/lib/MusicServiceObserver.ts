@@ -3,7 +3,7 @@ import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { Track, ValueOrPromise } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicController } from '../music-controllers/MusicController';
+import type { MusicController } from './MusicController';
 
 export enum ObserverEvent {
   TRACK_UPDATED = 'TRACK_UPDATED',

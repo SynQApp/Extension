@@ -7,11 +7,11 @@ import {
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { waitForElement } from '~util/waitForElement';
 
-import type { SpotifyController } from '../music-controllers/SpotifyController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from './MusicServiceObserver';
+} from '../lib/MusicServiceObserver';
+import type { SpotifyController } from './SpotifyController';
 
 export class SpotifyObserver extends MusicServiceObserver {
   declare _controller: SpotifyController;

@@ -5,7 +5,7 @@ import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from './MusicController';
+import type { MusicController } from '../lib/MusicController';
 
 declare let window: Window & {
   MusicKit: { getInstance: () => MusicKit };
