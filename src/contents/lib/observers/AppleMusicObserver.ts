@@ -1,10 +1,10 @@
-import type { AppleMusicController } from '~lib/music-controllers/AppleMusicController';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
+import type { AppleMusicController } from '../music-controllers/AppleMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter

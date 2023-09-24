@@ -1,10 +1,10 @@
-import type { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
+import type { AmazonMusicController } from '../music-controllers/AmazonMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter

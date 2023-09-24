@@ -1,4 +1,4 @@
-import type { KeyControlsOptions } from '~lib/key-controls/keyControlsListener';
+import type { KeyControlsOptions } from '~shared/keyControlsListener';
 
 export const SpotifyEndpoints = {
   CURRENTLY_PLAYING: 'https://api.spotify.com/v1/me/player/currently-playing',

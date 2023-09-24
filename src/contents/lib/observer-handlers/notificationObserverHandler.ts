@@ -1,8 +1,9 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
-import { ObserverEvent } from '~lib/observers/MusicServiceObserver';
 import type { Track } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
+
+import { ObserverEvent } from '../observers/MusicServiceObserver';
 
 export const createNotificationObserverHandler =
   (hub: ReduxHub) =>

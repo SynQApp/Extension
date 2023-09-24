@@ -7,7 +7,7 @@ import { YTM_KEY_CONTROLS } from '~constants/youtube';
 import {
   addKeyControlsListener,
   removeKeyControlsListener
-} from '~lib/key-controls/keyControlsListener';
+} from '~shared/keyControlsListener';
 import { persistor, store } from '~store';
 
 export const config: PlasmoCSConfig = {

@@ -5,7 +5,7 @@ export const handler: HubMessageHandler<undefined> = async (
   sender,
   sendResponse
 ) => {
-  sendResponse(sender.tab);
+  sendResponse(sender?.tab);
 };
 
 export default handler;

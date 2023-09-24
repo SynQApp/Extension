@@ -29,7 +29,9 @@ export const handler: HubMessageHandler<Track> = async (
     return;
   }
 
-  if (isPopupOpen() || (await isCurrentTab(sender.tab.id))) {
+  const tabId = sender?.tab?.id;
+
+  if (isPopupOpen() || !tabId || (await isCurrentTab(tabId))) {
     return;
   }
 

@@ -1,14 +1,15 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { createAutoplayReadyHandler } from '~lib/message-handlers/createAutoplayReadyHandler';
-import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
-import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
-import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
-import { SpotifyController } from '~lib/music-controllers/SpotifyController';
-import { createNotificationObserverHandler } from '~lib/observer-handlers/notificationObserverHandler';
-import { SpotifyObserver } from '~lib/observers/SpotifyObserver';
+import { createAutoplayReadyHandler } from '~contents/lib/message-handlers/createAutoplayReadyHandler';
+import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
+import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
+import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
+
+import { SpotifyController } from './lib/music-controllers/SpotifyController';
+import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
+import { SpotifyObserver } from './lib/observers/SpotifyObserver';
 
 export const config: PlasmoCSConfig = {
   matches: ['*://open.spotify.com/*'],

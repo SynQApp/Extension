@@ -1,10 +1,10 @@
-import type { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
+import type { YouTubeMusicController } from '../music-controllers/YouTubeMusicController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter

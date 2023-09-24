@@ -1,14 +1,15 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { createAutoplayReadyHandler } from '~lib/message-handlers/createAutoplayReadyHandler';
-import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
-import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
-import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
-import { AmazonMusicController } from '~lib/music-controllers/AmazonMusicController';
-import { createNotificationObserverHandler } from '~lib/observer-handlers/notificationObserverHandler';
-import { AmazonMusicObserver } from '~lib/observers/AmazonMusicObserver';
+import { createAutoplayReadyHandler } from '~contents/lib/message-handlers/createAutoplayReadyHandler';
+import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
+import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
+import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
+
+import { AmazonMusicController } from './lib/music-controllers/AmazonMusicController';
+import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
+import { AmazonMusicObserver } from './lib/observers/AmazonMusicObserver';
 
 export const config: PlasmoCSConfig = {
   matches: ['*://music.amazon.com/*'],

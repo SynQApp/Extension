@@ -1,12 +1,13 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
-import type { MusicController } from '~lib/music-controllers/MusicController';
-import type { MusicServiceObserver } from '~lib/observers/MusicServiceObserver';
 import { updateMusicServiceTab } from '~store/slices/musicServiceTabs';
 import type { MusicServiceTab } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { getMusicServiceFromUrl } from '~util/musicService';
+
+import type { MusicController } from '../music-controllers/MusicController';
+import type { MusicServiceObserver } from '../observers/MusicServiceObserver';
 
 export const createTabsHandler = (
   controller: MusicController,
@@ -34,12 +35,21 @@ const handleUpdateTab = async (
   const tab = await hub.asyncPostMessage<chrome.tabs.Tab>({
     name: 'GET_SELF_TAB'
   });
+
+  if (!tab.url) {
+    return;
+  }
+
   const musicService = getMusicServiceFromUrl(tab.url);
 
+  if (!musicService) {
+    return;
+  }
+
   const musicServiceTab: MusicServiceTab = {
-    tabId: tab.id,
+    tabId: tab.id!,
     musicService,
-    preview: track
+    currentTrack: track
   };
 
   hub.dispatch(updateMusicServiceTab(musicServiceTab));

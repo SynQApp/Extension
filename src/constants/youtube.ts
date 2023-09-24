@@ -1,4 +1,4 @@
-import type { KeyControlsOptions } from '~lib/key-controls/keyControlsListener';
+import type { KeyControlsOptions } from '~shared/keyControlsListener';
 
 export const YTM_KEY_CONTROLS: KeyControlsOptions = {
   next: true,

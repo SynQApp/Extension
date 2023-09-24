@@ -1,6 +1,5 @@
 import wait from 'waait';
 
-import type { SpotifyController } from '~lib/music-controllers/SpotifyController';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
@@ -8,6 +7,7 @@ import {
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { waitForElement } from '~util/waitForElement';
 
+import type { SpotifyController } from '../music-controllers/SpotifyController';
 import {
   MusicServiceObserver,
   type ObserverStateFilter

@@ -9,7 +9,7 @@ export interface KeyControlsOptions {
   volumeDown?: boolean;
 }
 
-let keyControlsListener: (event: KeyboardEvent) => void;
+let keyControlsListener: ((event: KeyboardEvent) => void) | undefined;
 
 export const addKeyControlsListener = (
   keyControlsOptions: KeyControlsOptions

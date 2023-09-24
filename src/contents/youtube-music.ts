@@ -1,13 +1,14 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { createMusicControllerHandler } from '~lib/message-handlers/createMusicControllerHandler';
-import { createObserverEmitterHandler } from '~lib/message-handlers/createObserverEmitterHandler';
-import { createTabsHandler } from '~lib/message-handlers/createTabsHandler';
-import { YouTubeMusicController } from '~lib/music-controllers/YouTubeMusicController';
-import { createNotificationObserverHandler } from '~lib/observer-handlers/notificationObserverHandler';
-import { YouTubeMusicObserver } from '~lib/observers/YouTubeMusicObserver';
+import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
+import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
+import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
+
+import { YouTubeMusicController } from './lib/music-controllers/YouTubeMusicController';
+import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
+import { YouTubeMusicObserver } from './lib/observers/YouTubeMusicObserver';
 
 export const config: PlasmoCSConfig = {
   matches: ['*://music.youtube.com/*'],
@@ -20,7 +21,7 @@ const initialize = (extensionId: string) => {
 
   const hub = connectToReduxHub(extensionId);
 
-  const controller = new YouTubeMusicController(hub);
+  const controller = new YouTubeMusicController();
   const observer = new YouTubeMusicObserver(controller, hub);
 
   createMusicControllerHandler(controller, hub);

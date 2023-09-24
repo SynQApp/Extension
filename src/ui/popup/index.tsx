@@ -5,7 +5,7 @@ import { POPUP_PORT } from '~constants/port';
 import {
   addKeyControlsListener,
   removeKeyControlsListener
-} from '~lib/key-controls/keyControlsListener';
+} from '~shared/keyControlsListener';
 import { useAppSelector } from '~store';
 import { TabsMessage } from '~types/TabsMessage';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
