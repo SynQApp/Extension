@@ -8,4 +8,5 @@ export interface MusicServiceTab {
   playerState?: PlayerState;
   currentTrack?: Track | null;
   queue?: Track[];
+  pictureInPicture?: boolean;
 }

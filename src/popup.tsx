@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { store } from '~store';
 
-import Popup from './ui/popup';
+import Popup from './ui/popup/Popup';
 import PopupContextProvidersWrapper from './ui/popup/contexts/PopupContextProvidersWrapper';
 
 const PopupIndex = () => {
@@ -17,7 +17,7 @@ const PopupIndex = () => {
       <MemoryRouter>
         <PopupContextProvidersWrapper>
           <UiProvider>
-            <Popup />
+            <Popup queueCollapsible />
           </UiProvider>
         </PopupContextProvidersWrapper>
       </MemoryRouter>

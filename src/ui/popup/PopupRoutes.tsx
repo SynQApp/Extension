@@ -5,10 +5,17 @@ import EnableAutoplayScreen from './screens/EnableAutoplay';
 import SelectPlatformScreen from './screens/SelectPlatform';
 import SelectTabScreen from './screens/SelectTab';
 
-const AppRoutes = () => {
+interface AppRoutesProps {
+  queueCollapsible: boolean;
+}
+
+const AppRoutes = ({ queueCollapsible }: AppRoutesProps) => {
   return (
     <Routes>
-      <Route path="/" element={<ControllerScreen />} />
+      <Route
+        path="/"
+        element={<ControllerScreen queueCollapsible={queueCollapsible} />}
+      />
       <Route path="/enable-autoplay" element={<EnableAutoplayScreen />} />
       <Route path="/select-platform" element={<SelectPlatformScreen />} />
       <Route path="/select-tab" element={<SelectTabScreen />} />

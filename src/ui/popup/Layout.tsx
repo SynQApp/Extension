@@ -1,6 +1,10 @@
 import { token } from '@synq/ui';
 import { styled } from 'styled-components';
 
+import { useAppDispatch } from '~store';
+import { updateMusicServiceTabPictureInPicture } from '~store/slices/musicServiceTabs';
+import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+
 import Header from '../shared/components/Header';
 
 interface LayoutProps {
@@ -9,6 +13,9 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, hideButton }: LayoutProps) => {
+  const { musicServiceTab } = useMusicServiceTab();
+  const dispatch = useAppDispatch();
+
   return (
     <Container>
       <Header
@@ -17,7 +24,14 @@ const Layout = ({ children, hideButton }: LayoutProps) => {
             ? {
                 name: 'Share',
                 // TODO: Implement session start handler
-                onClick: () => console.info('Share')
+                onClick: () =>
+                  musicServiceTab?.tabId &&
+                  dispatch(
+                    updateMusicServiceTabPictureInPicture({
+                      tabId: musicServiceTab?.tabId,
+                      pictureInPicture: !musicServiceTab?.pictureInPicture
+                    })
+                  )
               }
             : undefined
         }

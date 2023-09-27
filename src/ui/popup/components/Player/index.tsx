@@ -29,6 +29,7 @@ const AlbumArtContainer = styled.div`
 `;
 
 const PlayerControlsContainer = styled.div`
+  height: fit-content;
   margin-left: ${token('spacing.sm')};
   margin-top: ${token('spacing.none')};
   width: calc(100% - 105px - ${token('spacing.sm')});

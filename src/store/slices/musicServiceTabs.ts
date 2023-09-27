@@ -53,6 +53,19 @@ const musicServiceTabsSlice = createSlice({
         state[index].currentTrack = currentTrack;
       }
     },
+    updateMusicServiceTabPictureInPicture: (
+      state,
+      action: PayloadAction<{
+        tabId: number;
+        pictureInPicture: MusicServiceTab['pictureInPicture'];
+      }>
+    ) => {
+      const { tabId, pictureInPicture } = action.payload;
+      const index = state.findIndex((tab) => tab.tabId === tabId);
+      if (index !== -1) {
+        state[index].pictureInPicture = pictureInPicture;
+      }
+    },
     clearMusicServiceTabs: () => initialState
   }
 });
@@ -63,7 +76,8 @@ export const {
   clearMusicServiceTabs,
   updateMusicServiceTab,
   updateMusicServiceTabCurrentTrack,
-  updateMusicServiceTabPlayerState
+  updateMusicServiceTabPlayerState,
+  updateMusicServiceTabPictureInPicture
 } = musicServiceTabsSlice.actions;
 
 export default musicServiceTabsSlice.reducer;

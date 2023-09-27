@@ -13,7 +13,11 @@ import { sendMessage } from '~util/sendMessage';
 
 import AppRoutes from './PopupRoutes';
 
-const App = () => {
+interface PopupProps {
+  queueCollapsible: boolean;
+}
+
+const Popup = ({ queueCollapsible }: PopupProps) => {
   const navigate = useNavigate();
   const tabs = useAppSelector((state) => state.musicServiceTabs);
   const settings = useAppSelector((state) => state.settings);
@@ -56,7 +60,7 @@ const App = () => {
     }
   }, [tabs.length, selectedTab]);
 
-  return <AppRoutes />;
+  return <AppRoutes queueCollapsible={queueCollapsible} />;
 };
 
-export default App;
+export default Popup;

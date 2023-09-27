@@ -1,8 +1,8 @@
 /* From https://github.com/justin-chu/react-fast-marquee/blob/master/src/components/Marquee.scss */
 
-import { styled } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
-export const MarqueeStylesProvider = styled.div`
+export const MarqueeStylesProvider = createGlobalStyle`
   .marquee-container {
     overflow-x: hidden !important;
     display: flex !important;

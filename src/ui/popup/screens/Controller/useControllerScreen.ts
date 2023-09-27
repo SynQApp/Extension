@@ -8,9 +8,9 @@ import { sendMessage } from '~util/sendMessage';
 
 const useControllerScreen = () => {
   const navigate = useNavigate();
-  const playerState = useAppSelector((state) => state.playerState);
   const autoplayReady = useAppSelector((state) => state.autoplayReady);
   const { musicServiceTab } = useMusicServiceTab();
+  const playerState = musicServiceTab?.playerState;
 
   const [showQueue, setShowQueue] = useState(false);
 

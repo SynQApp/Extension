@@ -11,7 +11,13 @@ import useControllerScreen from './useControllerScreen';
 
 const PLAYER_HEIGHT = 135;
 
-const ControllerScreen = () => {
+interface ControllerScreenProps {
+  queueCollapsible?: boolean;
+}
+
+const ControllerScreen = ({
+  queueCollapsible = true
+}: ControllerScreenProps) => {
   const { queueCount, showQueue, setShowQueue } = useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
@@ -24,11 +30,17 @@ const ControllerScreen = () => {
         <div>
           <Player />
         </div>
-        <ExpandButton onClick={handleShowQueueButtonPress}>
-          <ExpandIcon icon={showQueue ? faChevronUp : faChevronDown} />
-        </ExpandButton>
+        {queueCollapsible && (
+          <ExpandButton onClick={handleShowQueueButtonPress}>
+            <ExpandIcon
+              height="16px"
+              width="16px"
+              icon={showQueue ? faChevronUp : faChevronDown}
+            />
+          </ExpandButton>
+        )}
       </PlayerSection>
-      <QueueSection $show={showQueue}>
+      <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
         <Scrollable height="100%">
           <QueueHeader type="display" size="lg">
             Queue ({queueCount})
@@ -43,7 +55,7 @@ const ControllerScreen = () => {
 const PlayerSection = styled.section`
   background: ${token('colors.background')};
   height: ${PLAYER_HEIGHT}px;
-  padding: ${token('spacing.xs')} ${token('spacing.md')} 0;
+  padding: ${token('spacing.xs')} ${token('spacing.md')} ${token('spacing.xl')};
   position: relative;
 `;
 
@@ -70,6 +82,7 @@ const ExpandIcon = styled(FontAwesomeIcon)`
 `;
 
 interface QueueSectionProps {
+  $queueCollapsible: boolean;
   $show: boolean;
 }
 
@@ -83,6 +96,12 @@ const QueueSection = styled.section<QueueSectionProps>`
     $show &&
     css`
       height: 390px;
+    `}
+
+  ${({ $queueCollapsible }) =>
+    !$queueCollapsible &&
+    css`
+      height: calc(100% - ${PLAYER_HEIGHT}px);
     `}
 `;
 
