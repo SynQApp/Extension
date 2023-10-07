@@ -92,13 +92,6 @@ export class SpotifyObserver extends MusicServiceObserver {
     this._mutationObservers.push(playerStateObserver);
   }
 
-  private _getNowPlayingText() {
-    const nowPlayingWidget = document.querySelector(
-      'div[data-testid="now-playing-widget"]'
-    );
-    return nowPlayingWidget?.getAttribute('aria-label') ?? '';
-  }
-
   private async _setupSongInfoObserver() {
     const songInfoObserver = new MutationObserver(async () => {
       await this._handleTrackUpdated();
@@ -131,38 +124,39 @@ export class SpotifyObserver extends MusicServiceObserver {
    * matches the UI's song info.
    */
   private async _handleTrackUpdated(): Promise<void> {
-    super.handleTrackUpdated();
-
-    const nowPlayingText = this._getNowPlayingText();
-
+    console.log('handleTrackUpdated');
     if (this.isPaused()) {
+      console.log('paused');
+      super.handleTrackUpdated();
       return;
     }
 
-    for (let i = 0; i < 5; i++) {
-      const songInfo = await this._controller.getCurrentTrack();
+    console.log('updating current track');
+    await this._updateCurrentTrack();
 
-      if (!songInfo || !nowPlayingText.includes(songInfo.name)) {
-        await wait(1000);
-        continue;
-      }
+    setTimeout(async () => {
+      console.log('updating current track again');
+      await this._updateCurrentTrack();
+    }, 5000);
 
-      const currentTrack = await this._controller.getCurrentTrack();
+    console.log('done updating current track');
+    super.handleTrackUpdated();
+  }
 
-      const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
-        name: 'GET_SELF_TAB'
-      });
+  private async _updateCurrentTrack(): Promise<void> {
+    const currentTrack = await this._controller.getCurrentTrack();
 
-      if (!this.isPaused('currentTrack')) {
-        this._hub.dispatch(
-          updateMusicServiceTabCurrentTrack({
-            tabId: tab.id!,
-            currentTrack: currentTrack ?? undefined
-          })
-        );
-      }
+    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+      name: 'GET_SELF_TAB'
+    });
 
-      return;
+    if (!this.isPaused('currentTrack')) {
+      this._hub.dispatch(
+        updateMusicServiceTabCurrentTrack({
+          tabId: tab.id!,
+          currentTrack: currentTrack ?? undefined
+        })
+      );
     }
   }
 

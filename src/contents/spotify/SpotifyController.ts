@@ -1,4 +1,3 @@
-import { SEARCH_LIMIT, SEARCH_OFFSET } from '~constants/search';
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track } from '~types';
@@ -24,6 +23,8 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
 
 const QUEUE_PATH = '/queue';
 
+const QUEUE_CACHE_TIME = 30000;
+
 export class SpotifyController implements MusicController {
   private _accessToken: string;
   private _cachedQueue:
@@ -32,8 +33,9 @@ export class SpotifyController implements MusicController {
         trackId: string | undefined;
       }
     | undefined = undefined;
-  private _currentTrackId: string | undefined = undefined;
-  private _market: string;
+  private _queueLoading: boolean = false;
+  private _currentTrack: Track | null = null;
+  private _currentTrackLoading: boolean = false;
 
   constructor() {
     const sessionElement = document.getElementById('session');
@@ -43,13 +45,6 @@ export class SpotifyController implements MusicController {
     const session = JSON.parse(sessionElement.innerText);
 
     this._accessToken = session.accessToken;
-
-    const configElement = document.getElementById('config');
-    if (!configElement) {
-      throw new Error('Config element not found');
-    }
-    const config = JSON.parse(configElement.innerText);
-    this._market = config.market;
   }
 
   public async play(): Promise<void> {
@@ -254,36 +249,87 @@ export class SpotifyController implements MusicController {
       // TODO: Decouple queue, removing it from PlayerState, as it doesn't make sense there and causes problems especially
       // for ObserverEmitter related tasks. Temp commented out so we can still test other functionality without overloading
       // Spotify API.
-      // queue: await this.getQueue()
-      queue: []
+      queue: await this.getQueue()
     };
   }
 
   public async getCurrentTrack(): Promise<Track | null> {
-    const currentlyPlaying = await this._fetchSpotify<{
-      item: NativeSpotifyTrack;
-    }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
+    const name = (
+      document.querySelector(
+        'div[data-testid="context-item-info-title"]'
+      ) as HTMLElement
+    )?.innerText;
 
-    if (!currentlyPlaying?.item) {
-      return null;
+    const artistNameElements = Array.from(
+      document.querySelectorAll('a[data-testid="context-item-info-artist"]')
+    ) as HTMLElement[];
+
+    const artistName = artistNameElements
+      ?.map((element: HTMLElement) => element.innerText)
+      .join(', ');
+
+    const albumCoverUrl = (
+      document.querySelector(
+        'img[data-testid="cover-art-image"]'
+      ) as HTMLImageElement
+    )?.src;
+
+    const playbackProgressBarElement = document.querySelector(
+      'div[data-testid="playback-progressbar"]'
+    );
+    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
+      'input[type="range"]'
+    ) as HTMLInputElement;
+
+    const duration = playbackProgressBarInput
+      ? parseInt(playbackProgressBarInput.getAttribute('max') ?? '0')
+      : 0;
+
+    let currentTrack: Track | null = {
+      id: '',
+      name: name ?? '',
+      artistName: artistName ?? '',
+      albumName: '',
+      albumCoverUrl: albumCoverUrl ?? '',
+      duration
+    };
+
+    if (
+      !this._currentTrackLoading &&
+      (!this._currentTrack ||
+        !this._compareTracks(currentTrack, this._currentTrack))
+    ) {
+      this._currentTrackLoading = true;
+
+      const trackResponse = await this._fetchSpotify<{
+        item: NativeSpotifyTrack;
+      }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
+
+      this._currentTrackLoading = false;
+
+      if (!trackResponse?.item) {
+        return null;
+      }
+
+      currentTrack.id = trackResponse.item.id;
+
+      const isInLibraryParams = new URLSearchParams({
+        ids: currentTrack.id
+      });
+
+      const isLiked = await this._fetchSpotify<boolean[]>(
+        `${SpotifyEndpoints.IS_IN_LIBRARY}?${isInLibraryParams.toString()}`,
+        'GET'
+      );
+
+      currentTrack.isLiked = isLiked?.[0];
+    } else {
+      currentTrack = this._currentTrack;
     }
 
-    const currentSongInfo = this._itemToSongInfo(currentlyPlaying.item);
+    this._currentTrack = currentTrack;
 
-    const isInLibraryParams = new URLSearchParams({
-      ids: currentlyPlaying.item.id
-    });
-
-    const isLiked = await this._fetchSpotify<boolean[]>(
-      `${SpotifyEndpoints.IS_IN_LIBRARY}?${isInLibraryParams.toString()}`,
-      'GET'
-    );
-
-    currentSongInfo.isLiked = isLiked?.[0];
-
-    this._currentTrackId = currentlyPlaying.item.id;
-
-    return currentSongInfo;
+    return currentTrack;
   }
 
   public async getQueue(noCache?: boolean): Promise<QueueItem[]> {
@@ -292,16 +338,21 @@ export class SpotifyController implements MusicController {
     // the cached queue.
     if (
       !noCache &&
+      !this._queueLoading &&
       this._cachedQueue?.trackId &&
-      this._cachedQueue.trackId === this._currentTrackId
+      this._cachedQueue.trackId === this._currentTrack?.id
     ) {
       return this._cachedQueue.items ?? [];
     }
+
+    this._queueLoading = true;
 
     const queueRes = await this._fetchSpotify<{ queue: NativeSpotifyTrack[] }>(
       SpotifyEndpoints.GET_QUEUE,
       'GET'
     );
+
+    this._queueLoading = false;
 
     const queue = queueRes?.queue;
     const queueItems =
@@ -322,7 +373,7 @@ export class SpotifyController implements MusicController {
 
     queueItems.unshift(currentSongQueueItem);
 
-    this._cacheQueue(queueItems, this._currentTrackId);
+    this._cacheQueue(queueItems, this._currentTrack?.id);
 
     return queueItems;
   }
@@ -339,7 +390,7 @@ export class SpotifyController implements MusicController {
 
   public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
     // If current track is the same as the one we want to play, just restart it
-    if (this._currentTrackId === id && duplicateIndex === 0) {
+    if (this._currentTrack?.id === id && duplicateIndex === 0) {
       await this.seekTo(0);
       return;
     }
@@ -514,6 +565,15 @@ export class SpotifyController implements MusicController {
 
     setTimeout(() => {
       this._cachedQueue = undefined;
-    }, 5000);
+    }, QUEUE_CACHE_TIME);
+  }
+
+  private _compareTracks(track1: Track, track2: Track): boolean {
+    return (
+      track1.name === track2.name &&
+      track1.artistName === track2.artistName &&
+      track1.duration === track2.duration &&
+      track1.albumCoverUrl === track2.albumCoverUrl
+    );
   }
 }
