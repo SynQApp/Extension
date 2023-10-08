@@ -6,9 +6,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { StyleSheetManager, createGlobalStyle } from 'styled-components';
 
 import { store } from '~store';
-import { ContextProvidersWrapper } from '~ui/autoplay/ContextProvidersWrapper';
+import { UiStateMessage } from '~types';
 import Popup from '~ui/popup/Popup';
+import { PopupSettingsProvider } from '~ui/popup/contexts/PopupSettingsContext';
+import { DocumentContextProvidersWrapper } from '~ui/shared/contexts/DocumentContextProvidersWrapper';
 import { MarqueeStylesProvider } from '~ui/shared/styles/MarqueeStylesProvider';
+import { sendMessage } from '~util/sendMessage';
 
 declare let window: {
   documentPictureInPicture?: {
@@ -63,13 +66,18 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
     const container = pipWindow.document.createElement('div');
     pipWindow.document.body.append(container);
 
-    pipWindow.addEventListener('resize', () => {
-      // Prevent the PiP window from being resized in the x direction
-      pipWindow.resizeTo(350, pipWindow.outerHeight);
-    });
-
     const pipRoot = createRoot(container);
     pipRoot.render(<PipUi pipDocument={pipWindow.document} />);
+
+    sendMessage({
+      name: UiStateMessage.PIP_OPENED
+    });
+
+    pipWindow.addEventListener('pagehide', () => {
+      sendMessage({
+        name: UiStateMessage.PIP_CLOSED
+      });
+    });
   };
 
   return (
@@ -98,11 +106,18 @@ export const PipUi = ({ pipDocument }: TestSimpleChildProps) => {
       <MemoryRouter>
         <StyleSheetManager target={pipDocument.head}>
           <UiProvider>
-            <ContextProvidersWrapper>
+            <DocumentContextProvidersWrapper>
               <PipGlobalStyles />
               <MarqueeStylesProvider />
-              <Popup queueCollapsible={false} />
-            </ContextProvidersWrapper>
+              <PopupSettingsProvider
+                value={{
+                  queueCollapsible: false,
+                  document: pipDocument
+                }}
+              >
+                <Popup />
+              </PopupSettingsProvider>
+            </DocumentContextProvidersWrapper>
           </UiProvider>
         </StyleSheetManager>
       </MemoryRouter>

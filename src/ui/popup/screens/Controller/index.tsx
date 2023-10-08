@@ -5,19 +5,15 @@ import styled, { css } from 'styled-components';
 
 import Layout from '~ui/popup/Layout';
 import { Player } from '~ui/popup/components/Player';
+import { usePopupSettings } from '~ui/popup/contexts/PopupSettingsContext';
 import { Queue } from '~ui/shared/components/Queue';
 
 import useControllerScreen from './useControllerScreen';
 
 const PLAYER_HEIGHT = 135;
 
-interface ControllerScreenProps {
-  queueCollapsible?: boolean;
-}
-
-const ControllerScreen = ({
-  queueCollapsible = true
-}: ControllerScreenProps) => {
+const ControllerScreen = () => {
+  const { queueCollapsible, document } = usePopupSettings();
   const { queueCount, showQueue, setShowQueue } = useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
@@ -45,7 +41,7 @@ const ControllerScreen = ({
           <QueueHeader type="display" size="lg">
             Queue ({queueCount})
           </QueueHeader>
-          <Queue documentContainer={document.body} />
+          <Queue documentContainer={document} />
         </Scrollable>
       </QueueSection>
     </Layout>

@@ -1,13 +1,15 @@
 import { MusicServiceTabProvider } from '~ui/shared/contexts/MusicServiceTab';
 
-import { useSidebarMusicServiceTab } from './hooks/useSidebarMusicServiceTab';
+import { useDocumentMusicServiceTab } from '../hooks/useDocumentMusicServiceTab';
 
 interface ContextsWrapperProps {
   children: React.ReactNode;
 }
 
-export const ContextProvidersWrapper = ({ children }: ContextsWrapperProps) => {
-  const musicServiceTab = useSidebarMusicServiceTab();
+export const DocumentContextProvidersWrapper = ({
+  children
+}: ContextsWrapperProps) => {
+  const musicServiceTab = useDocumentMusicServiceTab();
 
   return (
     <MusicServiceTabProvider

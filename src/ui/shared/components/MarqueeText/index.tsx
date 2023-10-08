@@ -7,12 +7,14 @@ import { styled } from 'styled-components';
 interface MarqueeTextProps extends TextProps {
   children: string | string[];
   className?: string;
+  documentContainer?: Document;
 }
 
 export const MarqueeText = ({
   children,
   as,
   className,
+  documentContainer = document,
   ...textProps
 }: MarqueeTextProps) => {
   const [play, setPlay] = useState(false);
@@ -34,22 +36,23 @@ export const MarqueeText = ({
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = divRef.current.getBoundingClientRect();
+      const rect = divRef.current?.getBoundingClientRect();
 
       if (
-        e.clientX < rect.left ||
-        e.clientX > rect.right ||
-        e.clientY < rect.top ||
-        e.clientY > rect.bottom
+        rect &&
+        (e.clientX < rect.left ||
+          e.clientX > rect.right ||
+          e.clientY < rect.top ||
+          e.clientY > rect.bottom)
       ) {
         setPlay(false);
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
+    documentContainer.addEventListener('mousemove', handleMouseMove);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      documentContainer.removeEventListener('mousemove', handleMouseMove);
     };
   }, [divRef.current, play]);
 

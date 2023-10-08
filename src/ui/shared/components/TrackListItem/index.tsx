@@ -15,6 +15,7 @@ import { MarqueeText } from '../MarqueeText';
 interface TrackListItemProps {
   active?: boolean;
   className?: string;
+  documentContainer?: Document;
   handleProps?: React.HTMLAttributes<HTMLDivElement>;
   imageIconOverlay?: IconProps['icon'];
   imageUrl: string;
@@ -30,6 +31,7 @@ interface TrackListItemProps {
 export const TrackListItem = ({
   active,
   className,
+  documentContainer = document,
   handleProps,
   imageIconOverlay,
   imageUrl,
@@ -110,14 +112,27 @@ export const TrackListItem = ({
       rightNode={rightNode}
       onClick={onClick}
     >
-      <PrimaryText type="display" size="sm" weight="semibold">
+      <PrimaryText
+        type="display"
+        size="sm"
+        weight="semibold"
+        documentContainer={documentContainer}
+      >
         {primaryText}
       </PrimaryText>
-      <SecondaryText type="body" size="xs">
+      <SecondaryText
+        type="body"
+        size="xs"
+        documentContainer={documentContainer}
+      >
         {secondaryText}
       </SecondaryText>
       {tertiaryText && (
-        <SecondaryText type="body" size="xs">
+        <SecondaryText
+          type="body"
+          size="xs"
+          documentContainer={documentContainer}
+        >
           {tertiaryText}
         </SecondaryText>
       )}

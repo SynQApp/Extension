@@ -1,10 +1,18 @@
-import type { MusicServiceObserver } from '~lib/observers/MusicServiceObserver';
 import { UiStateMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
+import type { MusicServiceObserver } from '../MusicServiceObserver';
+
 const UI_STATE = {
   popupOpen: false,
-  sidebarOpen: false
+  sidebarOpen: false,
+  pipOpen: false
+};
+
+const handleUiClosed = async (observerEmitter: MusicServiceObserver) => {
+  if (!UI_STATE.popupOpen && !UI_STATE.sidebarOpen && !UI_STATE.pipOpen) {
+    await observerEmitter.pause();
+  }
 };
 
 export const createObserverEmitterHandler = (
@@ -20,27 +28,27 @@ export const createObserverEmitterHandler = (
 
       case UiStateMessage.POPUP_CLOSED:
         UI_STATE.popupOpen = false;
-
-        console.log('sidebar open', UI_STATE.sidebarOpen);
-        if (!UI_STATE.sidebarOpen) {
-          await observerEmitter.pause();
-        }
-
+        await handleUiClosed(observerEmitter);
         break;
 
       case UiStateMessage.SIDEBAR_OPENED:
-        console.log('sidebar opened');
         UI_STATE.sidebarOpen = true;
         await observerEmitter.resume();
         break;
 
       case UiStateMessage.SIDEBAR_CLOSED:
         UI_STATE.sidebarOpen = false;
+        await handleUiClosed(observerEmitter);
+        break;
 
-        if (!UI_STATE.popupOpen) {
-          await observerEmitter.pause();
-        }
+      case UiStateMessage.PIP_OPENED:
+        UI_STATE.pipOpen = true;
+        await observerEmitter.resume();
+        break;
 
+      case UiStateMessage.PIP_CLOSED:
+        UI_STATE.pipOpen = false;
+        await handleUiClosed(observerEmitter);
         break;
     }
   });

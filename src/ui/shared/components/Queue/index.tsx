@@ -8,13 +8,13 @@ import { useQueue } from './useQueue';
 interface QueueProps {
   startAt?: 'top' | 'next';
   count?: number;
-  documentContainer?: HTMLElement;
+  documentContainer?: Document;
 }
 
 export const Queue = ({
   startAt = 'top',
   count,
-  documentContainer
+  documentContainer = document
 }: QueueProps) => {
   const { handlePlayQueueTrack, musicServiceName, queueItems } = useQueue(
     startAt,
@@ -24,10 +24,11 @@ export const Queue = ({
   return (
     <div>
       <QueueList>
-        {queueItems.map(({ track, isPlaying, ...queueItem }, index) => (
+        {queueItems.map(({ track, isPlaying }, index) => (
           <div>
             <TrackListItem
               active={isPlaying}
+              documentContainer={documentContainer}
               imageAlt={`Album cover for ${track?.albumName}`}
               imageIconOverlay={isPlaying ? 'playing' : 'play'}
               imageUrl={track?.albumCoverUrl ?? ''}
@@ -38,7 +39,7 @@ export const Queue = ({
               primaryText={track?.name ?? 'Unknown Track'}
               rightNode={
                 <ListItemMenu
-                  portalContainer={documentContainer}
+                  portalContainer={documentContainer.body}
                   menuItems={[
                     {
                       icon: 'musicNote',

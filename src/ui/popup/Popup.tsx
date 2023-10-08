@@ -13,19 +13,13 @@ import { sendMessage } from '~util/sendMessage';
 
 import AppRoutes from './PopupRoutes';
 
-interface PopupProps {
-  queueCollapsible: boolean;
-}
-
-const Popup = ({ queueCollapsible }: PopupProps) => {
+const Popup = () => {
   const navigate = useNavigate();
   const tabs = useAppSelector((state) => state.musicServiceTabs);
   const settings = useAppSelector((state) => state.settings);
   const { musicServiceTab: selectedTab } = useMusicServiceTab();
 
   useEffect(() => {
-    chrome.runtime.connect({ name: POPUP_PORT });
-
     // Then request the current tabs to be updated in the store
     sendMessage({
       name: TabsMessage.UPDATE_TAB
@@ -60,7 +54,7 @@ const Popup = ({ queueCollapsible }: PopupProps) => {
     }
   }, [tabs.length, selectedTab]);
 
-  return <AppRoutes queueCollapsible={queueCollapsible} />;
+  return <AppRoutes />;
 };
 
 export default Popup;

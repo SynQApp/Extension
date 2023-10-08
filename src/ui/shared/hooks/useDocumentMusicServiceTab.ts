@@ -5,7 +5,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import { useAppSelector } from '~store';
 import type { MusicServiceTab } from '~types';
 
-export const useSidebarMusicServiceTab = () => {
+export const useDocumentMusicServiceTab = () => {
   const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
   const [tabId, setTabId] = useState<number | undefined>(undefined);
   const [musicServiceTab, setMusicServiceTab] = useState<

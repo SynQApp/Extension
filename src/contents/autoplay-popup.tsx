@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
 import { store } from '~store';
-import { ContextProvidersWrapper } from '~ui/autoplay/ContextProvidersWrapper';
+import { DocumentContextProvidersWrapper } from '~ui/shared/contexts/DocumentContextProvidersWrapper';
 
 import AutoplayPopup from '../ui/autoplay/AutoplayPopup';
 
@@ -31,13 +31,13 @@ const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
   return (
     <Provider store={store}>
       <UiProvider>
-        <ContextProvidersWrapper>
+        <DocumentContextProvidersWrapper>
           <StyleSheetManager
             target={anchor?.element?.firstElementChild?.shadowRoot as any}
           >
             <AutoplayPopup />
           </StyleSheetManager>
-        </ContextProvidersWrapper>
+        </DocumentContextProvidersWrapper>
       </UiProvider>
     </Provider>
   );
