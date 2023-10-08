@@ -1,16 +1,13 @@
 import { Button, UiProvider } from '@synq/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import { StyleSheetManager, createGlobalStyle } from 'styled-components';
 
 import { store } from '~store';
 import { UiStateMessage } from '~types';
-import Popup from '~ui/popup/Popup';
-import { PopupSettingsProvider } from '~ui/popup/contexts/PopupSettingsContext';
-import { DocumentContextProvidersWrapper } from '~ui/shared/contexts/DocumentContextProvidersWrapper';
-import { MarqueeStylesProvider } from '~ui/shared/styles/MarqueeStylesProvider';
+import { PipToggleButton } from '~ui/pip/PipToggleButton';
+import { PipUi } from '~ui/pip/PipUi';
 import { sendMessage } from '~util/sendMessage';
 
 declare let window: {
@@ -32,29 +29,37 @@ export const config: PlasmoCSConfig = {
   all_frames: true
 };
 
-/**
- * Allows styled-components to inject styles into the Plasmo element.
- */
-export const getStyle: PlasmoGetStyle = () => {
-  const style = document.createElement('style');
-  style.id = 'synq-pip-style';
-  style.setAttribute('data-styled', '');
-  return style;
-};
-
 export const getRootContainer = () => {
   const container = document.createElement('div');
   container.setAttribute('id', 'synq-pip-container');
   container.style.position = 'fixed';
-  container.style.top = '0';
-  container.style.left = '0';
+  container.style.top = '120px';
+  container.style.right = '0';
   container.style.zIndex = '99';
 
   document.body.append(container);
+
+  const style = document.createElement('style');
+  style.innerHTML = `
+  #synq-pip-container > .plasmo-csui-container {
+    position: unset !important;
+  }
+  `;
+
+  document.head.append(style);
+
   return container;
 };
 
 const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    if (window?.documentPictureInPicture) {
+      setShowButton(true);
+    }
+  }, []);
+
   const handleButtonClick = async () => {
     const pipWindow = await window.documentPictureInPicture?.requestWindow({
       width: 350,
@@ -73,54 +78,22 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
       name: UiStateMessage.PIP_OPENED
     });
 
+    setShowButton(false);
+
     pipWindow.addEventListener('pagehide', () => {
       sendMessage({
         name: UiStateMessage.PIP_CLOSED
       });
+
+      setShowButton(true);
     });
   };
 
   return (
     <Provider store={store}>
       <UiProvider>
-        <Button onClick={handleButtonClick}>Open PiP</Button>
+        {showButton && <PipToggleButton onClick={handleButtonClick} />}
       </UiProvider>
-    </Provider>
-  );
-};
-
-interface TestSimpleChildProps {
-  pipDocument: Document;
-}
-
-const PipGlobalStyles = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-  }
-`;
-
-export const PipUi = ({ pipDocument }: TestSimpleChildProps) => {
-  return (
-    <Provider store={store}>
-      <MemoryRouter>
-        <StyleSheetManager target={pipDocument.head}>
-          <UiProvider>
-            <DocumentContextProvidersWrapper>
-              <PipGlobalStyles />
-              <MarqueeStylesProvider />
-              <PopupSettingsProvider
-                value={{
-                  queueCollapsible: false,
-                  document: pipDocument
-                }}
-              >
-                <Popup />
-              </PopupSettingsProvider>
-            </DocumentContextProvidersWrapper>
-          </UiProvider>
-        </StyleSheetManager>
-      </MemoryRouter>
     </Provider>
   );
 };
