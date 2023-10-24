@@ -1,5 +1,3 @@
-import { sendToBackground } from '@plasmohq/messaging';
-
 import 'https://sdk.scdn.co/spotify-player.js';
 
 import { createContext, useContext, useEffect, useState } from 'react';

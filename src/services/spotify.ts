@@ -6,7 +6,7 @@ export const getSpotifyApi = () => {
   if (!spotifyApi) {
     spotifyApi = SpotifyApi.withUserAuthorization(
       process.env.PLASMO_PUBLIC_SPOTIFY_CLIENT_ID!,
-      'http://localhost:3000/spotify/connector',
+      process.env.PLASMO_PUBLIC_SPOTIFY_LOGIN_REDIRECT_URI!,
       [
         'streaming',
         'user-read-email',
