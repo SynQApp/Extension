@@ -9,7 +9,7 @@ const handler: PlasmoMessaging.MessageHandler<PubSubMessage> = async (
   req,
   res
 ) => {
-  if (req.body.to) {
+  if (req.body?.to) {
     const hubMap = getHubMap();
     const port = hubMap.get(req.body.to);
 

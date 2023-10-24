@@ -124,22 +124,17 @@ export class SpotifyObserver extends MusicServiceObserver {
    * matches the UI's song info.
    */
   private async _handleTrackUpdated(): Promise<void> {
-    console.log('handleTrackUpdated');
     if (this.isPaused()) {
-      console.log('paused');
       super.handleTrackUpdated();
       return;
     }
 
-    console.log('updating current track');
     await this._updateCurrentTrack();
 
     setTimeout(async () => {
-      console.log('updating current track again');
       await this._updateCurrentTrack();
     }, 5000);
 
-    console.log('done updating current track');
     super.handleTrackUpdated();
   }
 

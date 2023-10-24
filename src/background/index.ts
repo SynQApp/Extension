@@ -1,4 +1,4 @@
-import { startHub } from '@plasmohq/messaging/pub-sub';
+import { getHubMap, startHub } from '@plasmohq/messaging/pub-sub';
 
 import { persistor, store } from '~store';
 import { clearMusicServiceTabs } from '~store/slices/musicServiceTabs';
@@ -22,8 +22,27 @@ chrome.runtime.onConnectExternal.addListener((port) => {
   });
 });
 
-chrome.runtime.onInstalled.addListener((installDetails) => {
-  console.log('Installed or updated');
+chrome.runtime.onConnect.addListener((port) => {
+  if (!port.sender?.tab?.id) {
+    return;
+  }
 
+  getHubMap().set(port.sender?.tab?.id, port);
+
+  registerHubMessageHandlers(port);
+
+  updateMusicServiceTabs();
+
+  port.onDisconnect.addListener(() => {
+    if (!port.sender?.tab?.id) {
+      return;
+    }
+
+    getHubMap().delete(port.sender.tab.id);
+    updateMusicServiceTabs();
+  });
+});
+
+chrome.runtime.onInstalled.addListener((installDetails) => {
   store.dispatch(clearMusicServiceTabs());
 });

@@ -23,6 +23,15 @@ import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
 const SelectPlatformScreen = () => {
   const theme = useTheme();
 
+  const handleSpotifyDesktopClick = () => {
+    chrome.windows.create({
+      type: 'popup',
+      url: 'tabs/spotify-connector.html',
+      height: 600,
+      width: 400
+    });
+  };
+
   return (
     <Layout hideButton>
       <Container>
@@ -35,9 +44,14 @@ const SelectPlatformScreen = () => {
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
             <MusicServiceButton
-              name="Spotify"
+              name="Spotify (Web)"
               urlMatch={SPOTIFY_URL_MATCH}
               url={SPOTIFY_URL}
+              logoSrc={SpotifyLogo}
+            />
+            <MusicServiceButton
+              name="Spotify (Desktop)"
+              onClick={handleSpotifyDesktopClick}
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
