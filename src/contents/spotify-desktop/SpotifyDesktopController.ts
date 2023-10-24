@@ -183,8 +183,6 @@ export class SpotifyDesktopController implements MusicController {
       nativePlayerState = await this._player.getCurrentState();
     }
 
-    console.log({ nativePlayerState });
-
     const volume = await this._player.getVolume();
 
     if (!nativePlayerState) {

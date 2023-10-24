@@ -17,14 +17,11 @@ const SYNQ_PLAYER_NAME = 'SynQ Player';
 const MAX_RETRIES = 20;
 
 interface SpotifyPlayerContextValue {
-  deviceId: string;
+  deviceId?: string;
   player?: Spotify.Player;
 }
 
-const SpotifyPlayerContext = createContext<SpotifyPlayerContextValue>({
-  deviceId: '',
-  player: {} as Spotify.Player
-});
+const SpotifyPlayerContext = createContext<SpotifyPlayerContextValue>({});
 
 interface SpotifyPlayerProviderProps {
   children: React.ReactNode;

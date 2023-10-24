@@ -50,61 +50,6 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
     let counterInterval: number | null = null;
 
     this._player.addListener('player_state_changed', async (state) => {
-      // const track: Track = {
-      //   name: state.track_window.current_track.name,
-      //   albumName: state.track_window.current_track.album.name,
-      //   artistName: state.track_window.current_track.artists[0].name,
-      //   id: state.track_window.current_track.id!,
-      //   albumCoverUrl: state.track_window.current_track.album.images[0].url,
-      //   duration: Math.round(
-      //     state.track_window.current_track.duration_ms / 1000
-      //   )
-      // };
-
-      // this._dispatch(
-      //   updateMusicServiceTabCurrentTrack({
-      //     tabId: tab.id!,
-      //     currentTrack: track ?? undefined
-      //   })
-      // );
-
-      // const playerState: PlayerState = {
-      //   currentTime: Math.round(state.position / 1000),
-      //   isPlaying: !state.paused,
-      //   repeatMode: REPEAT_MAP[state.repeat_mode],
-      //   volume: 50,
-      //   queue: []
-      // };
-
-      // this._dispatch(
-      //   updateMusicServiceTabPlayerState({
-      //     tabId: tab.id!,
-      //     playerState
-      //   })
-      // );
-
-      // if (counterInterval) {
-      //   counter = 0;
-      //   clearInterval(counterInterval);
-      // }
-
-      // counterInterval = window.setInterval(() => {
-      //   this._dispatch(
-      //     updateMusicServiceTabPlayerState({
-      //       tabId: tab.id!,
-      //       playerState: {
-      //         currentTime: Math.round(state.position / 1000) + counter++,
-      //         isPlaying: !state.paused,
-      //         repeatMode: REPEAT_MAP[state.repeat_mode],
-      //         volume: 50,
-      //         queue: []
-      //       }
-      //     })
-      //   );
-      // }, 1000);
-
-      console.log({ state });
-
       this._controller.clearPlayerStateCache();
 
       const currentTrack = await this._controller.getCurrentTrack();
