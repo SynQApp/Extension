@@ -26,6 +26,9 @@ dependencies:
   '@reduxjs/toolkit':
     specifier: ^1.9.5
     version: 1.9.7(react-redux@8.1.3)(react@18.2.0)
+  '@spotify/web-api-ts-sdk':
+    specifier: ^1.1.2
+    version: 1.1.2
   '@synq/eslint-config':
     specifier: ^1.0.16
     version: 1.1.0(eslint@8.51.0)(typescript@5.0.4)
@@ -39,8 +42,8 @@ dependencies:
     specifier: 13.1.1
     version: 13.1.1(react-dom@18.2.0)(react@18.2.0)
   '@synq/ui':
-    specifier: 0.0.5
-    version: 0.0.5(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.8)
+    specifier: 0.0.6
+    version: 0.0.6(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.8)
   i:
     specifier: ^0.3.7
     version: 0.3.7
@@ -106,6 +109,9 @@ devDependencies:
   '@types/redux-persist-webextension-storage':
     specifier: ^1.0.0
     version: 1.0.1
+  '@types/spotify-web-playback-sdk':
+    specifier: ^0.1.17
+    version: 0.1.17
   '@types/styled-components':
     specifier: ^5.1.26
     version: 5.1.28
@@ -4596,8 +4602,8 @@ packages:
       - react-native
     dev: false
 
-  /@synq/ui@0.0.5(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.8):
-    resolution: {integrity: sha512-mbSDUvWeOOEsIP7OIApxWsHeLw8hTslLnuUU4lVgxo7xFlDbMNcivFiaLSGh3mcjMXLOamZU1h3uliomB4T1yw==}
+  /@synq/ui@0.0.6(react-dom@18.2.0)(react@18.2.0)(styled-components@6.0.8):
+    resolution: {integrity: sha512-1oUZvREndC3GHCRMjBwjo3FzynnwGCDu1JJynBAXHS0B31/lvJzVbL5eNnh2Ds3OXvp5vuTt3ys9TjMdkI2sHA==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -4731,6 +4737,10 @@ packages:
   /@types/semver@7.5.3:
     resolution: {integrity: sha512-OxepLK9EuNEIPxWNME+C6WwbRAOOI2o2BaQEGzz5Lu2e4Z5eDnEo+/aVEDMIXywoJitJ7xWd641wrGLZdtwRyw==}
     dev: false
+
+  /@types/spotify-web-playback-sdk@0.1.17:
+    resolution: {integrity: sha512-mS/IA1kk56zkP5g5Ys2DsE34JSTJiBhy2GPVdO31N7HABQSdAm4tvl4iv6Wq8xG8QwJs7fgrbyZf1PVCZQSGAQ==}
+    dev: true
 
   /@types/styled-components@5.1.28:
     resolution: {integrity: sha512-nu0VKNybkjvUqJAXWtRqKd7j3iRUl8GbYSTvZNuIBJcw/HUp1Y4QUXNLlj7gcnRV/t784JnHAlvRnSnE3nPbJA==}

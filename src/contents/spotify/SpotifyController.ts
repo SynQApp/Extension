@@ -389,36 +389,21 @@ export class SpotifyController implements MusicController {
   }
 
   public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
-    // If current track is the same as the one we want to play, just restart it
-    if (this._currentTrack?.id === id && duplicateIndex === 0) {
-      await this.seekTo(0);
-      return;
-    }
-
-    const alreadyOnQueuePage = window.location.pathname === QUEUE_PATH;
-
-    if (!alreadyOnQueuePage) {
-      this._clickQueueButton();
-    }
-
     const queue = await this.getQueue(true);
-    const trackIndexes = findIndexes(queue, (item) => item.track?.id === id);
+    const trackIds = queue.map((item) => item.track?.id);
+
+    const trackIndexes = findIndexes(trackIds, (trackId) => trackId === id);
+
     const trackIndex = trackIndexes[duplicateIndex];
 
-    const trackRows = await waitForElement(
-      `div[data-testid="tracklist-row"]`,
-      10000,
-      true
-    );
+    await this._fetchSpotify(SpotifyEndpoints.PLAY, 'PUT', {
+      uris: queue.map((item) => `spotify:track:${item.track?.id}`),
+      offset: {
+        position: trackIndex
+      }
+    });
 
-    const trackRow = trackRows[trackIndex] as HTMLDivElement;
-    const trackButton = trackRow.querySelector('button');
-
-    trackButton?.click();
-
-    if (!alreadyOnQueuePage) {
-      this._clickQueueButton();
-    }
+    this._cachedQueue = undefined;
 
     return;
   }
@@ -440,14 +425,6 @@ export class SpotifyController implements MusicController {
       : 0;
 
     return volume;
-  }
-
-  private _clickQueueButton() {
-    const queueButton = document.querySelector(
-      'button[aria-label="Queue"]'
-    ) as HTMLButtonElement;
-
-    queueButton.click();
   }
 
   private _itemToSongInfo(item: NativeSpotifyTrack): Track {

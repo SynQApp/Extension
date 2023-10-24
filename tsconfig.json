@@ -5,7 +5,8 @@
   "compilerOptions": {
     "paths": {
       "~*": ["./src/*"],
-      "@synq/react-beautiful-dnd": ["./src/types/ReactBeautifulDnd.d.ts"]
+      "@synq/react-beautiful-dnd": ["./src/types/ReactBeautifulDnd.d.ts"],
+      "spotify-web-playback-sdk": ["@types/spotify-web-playback-sdk"]
     },
     "baseUrl": ".",
     "strict": true

@@ -3,18 +3,28 @@ import styled from 'styled-components';
 
 interface MusicServiceButtonProps {
   name: string;
-  urlMatch: string;
-  url: string;
+  urlMatch?: string;
+  url?: string;
+  onClick?: () => void;
   logoSrc: string;
 }
 
 const MusicServiceButton = ({
   name,
   url,
+  onClick,
   urlMatch,
   logoSrc
 }: MusicServiceButtonProps) => {
   const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+
+    if (!url || !urlMatch) {
+      return;
+    }
+
     chrome.tabs.query({ url: urlMatch }, (tabs) => {
       if (tabs.length) {
         chrome.tabs.update(tabs[0].id, { active: true });

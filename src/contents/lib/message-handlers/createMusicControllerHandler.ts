@@ -1,7 +1,8 @@
-import type { MusicController } from '~lib/music-controllers/MusicController';
 import { setSearchLoading, setSearchResults } from '~store/slices/search';
 import { MusicControllerMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
+
+import type { MusicController } from '../MusicController';
 
 /**
  * Register a controller handler that handles events from other components
