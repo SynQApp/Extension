@@ -23,6 +23,7 @@ const SpotifyPlayerContext = createContext<SpotifyPlayerContextValue>({});
 
 interface SpotifyPlayerProviderProps {
   children: React.ReactNode;
+  extensionId: string;
 }
 
 let spotfiyPlayerReady = false;
@@ -31,8 +32,11 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   spotfiyPlayerReady = true;
 };
 
+let setupRan = false;
+
 export const SpotifyPlayerProvider = ({
-  children
+  children,
+  extensionId
 }: SpotifyPlayerProviderProps) => {
   const [player, setPlayer] = useState<Spotify.Player>();
   const [deviceId, setDeviceId] = useState<string>('');
@@ -62,7 +66,7 @@ export const SpotifyPlayerProvider = ({
 
         clearInterval(interval);
 
-        const player = new window.Spotify.Player({
+        const newPlayer = new window.Spotify.Player({
           name: SYNQ_PLAYER_NAME,
           getOAuthToken: (cb: any) => {
             cb(authResponse.accessToken.access_token);
@@ -70,17 +74,17 @@ export const SpotifyPlayerProvider = ({
           volume: 0.5
         });
 
-        player.on('ready', async ({ device_id }: any) => {
+        newPlayer.on('ready', async ({ device_id }: any) => {
           await spotifyApi.player.transferPlayback([device_id]);
           setDeviceId(device_id);
           console.info('Ready with Device ID', device_id);
         });
 
-        const hub = connectToReduxHub(chrome.runtime.id);
+        const hub = connectToReduxHub(extensionId);
 
-        const controller = new SpotifyDesktopController(player, spotifyApi);
+        const controller = new SpotifyDesktopController(newPlayer, spotifyApi);
         const observer = new SpotifyDesktopObserver(
-          player,
+          newPlayer,
           controller,
           hub,
           dispatch
@@ -92,19 +96,24 @@ export const SpotifyPlayerProvider = ({
 
         observer.observe();
 
-        await player.connect();
+        await newPlayer.connect();
 
-        setPlayer(player);
+        console.log('Setting player');
+        setPlayer(newPlayer);
       }, 500);
     };
 
     setup();
-  }, []);
+
+    setupRan = true;
+  }, [setPlayer]);
 
   const value: SpotifyPlayerContextValue = {
     deviceId,
     player
   };
+
+  console.log({ value });
 
   return (
     <SpotifyPlayerContext.Provider value={value}>

@@ -25,6 +25,10 @@ let hubPort: chrome.runtime.Port;
 const listeners: Listener[] = [];
 
 export const connectToReduxHub = (extensionId: string): ReduxHub => {
+  if (!extensionId?.length) {
+    throw new Error('Extension ID is required to connect to Redux Hub');
+  }
+
   // The background service worker continually disconnects,
   // and we need to reconnect whenever it does, which this recursive
   // function does.

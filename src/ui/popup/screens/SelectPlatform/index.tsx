@@ -26,7 +26,7 @@ const SelectPlatformScreen = () => {
   const handleSpotifyDesktopClick = () => {
     chrome.windows.create({
       type: 'popup',
-      url: 'tabs/spotify-connector.html',
+      url: process.env.PLASMO_PUBLIC_SPOTIFY_CONNECTOR_URI!,
       height: 600,
       width: 400
     });
