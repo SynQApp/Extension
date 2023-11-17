@@ -3,10 +3,10 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const MarqueeStylesProvider = createGlobalStyle`
-  .marquee-container {
-    overflow-x: hidden !important;
-    display: flex !important;
-    flex-direction: row !important;
+  .rfm-marquee-container {
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: row;
     position: relative;
     width: var(--width);
     transform: var(--transform);
@@ -20,23 +20,25 @@ export const MarqueeStylesProvider = createGlobalStyle`
     }
   }
 
-  .overlay {
+  .rfm-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
 
     @mixin gradient {
-      background: linear-gradient(to right, var(--gradient-color));
+      background: linear-gradient(to right, var(--gradient-color), transparent);
     }
 
     &::before,
     &::after {
       @include gradient;
-      content: '';
+      content: "";
       height: 100%;
       position: absolute;
       width: var(--gradient-width);
       z-index: 2;
+      pointer-events: none;
+      touch-action: none;
     }
 
     &::after {
@@ -51,7 +53,7 @@ export const MarqueeStylesProvider = createGlobalStyle`
     }
   }
 
-  .marquee {
+  .rfm-marquee {
     flex: 0 0 auto;
     min-width: var(--min-width);
     z-index: 1;
@@ -73,14 +75,15 @@ export const MarqueeStylesProvider = createGlobalStyle`
     }
   }
 
-  .initial-child-container {
+  .rfm-initial-child-container {
     flex: 0 0 auto;
     display: flex;
     min-width: auto;
     flex-direction: row;
+    align-items: center;
   }
 
-  .child {
+  .rfm-child {
     transform: var(--transform);
   }
 `;
