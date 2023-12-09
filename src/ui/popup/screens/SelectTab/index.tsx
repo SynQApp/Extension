@@ -31,23 +31,20 @@ const SelectTabScreen = () => {
   return (
     <Layout>
       <Container>
-        <HeaderText type="subtitle" size="lg">
-          Select Tab
-        </HeaderText>
         {tabGroups.map(([musicService, tabs]) => (
           <>
-            <TabListHeaderText type="body" size="sm">
+            <TabListHeaderText type="subtitle" size="sm">
               {getMusicServiceName(musicService as MusicService)}
             </TabListHeaderText>
             <TabList>
               {tabs.map((tab) => (
                 <TabListItem
                   key={tab.tabId}
-                  primaryText={tab.preview?.name ?? '<No Music Playing>'}
-                  secondaryText={tab.preview?.artistName}
+                  primaryText={tab.currentTrack?.name ?? '<No Music Playing>'}
+                  secondaryText={tab.currentTrack?.artistName ?? ''}
                   onClick={() => setMusicServiceTab(tab)}
-                  imageUrl={tab.preview?.albumCoverUrl ?? ''}
-                  imageAlt={`Album art for ${tab.preview?.name}`}
+                  imageUrl={tab.currentTrack?.albumCoverUrl ?? ''}
+                  imageAlt={`Album art for ${tab.currentTrack?.name}`}
                 />
               ))}
             </TabList>
@@ -75,7 +72,7 @@ const HeaderText = styled(Text)`
 const TabListHeaderText = styled(Text)`
   margin: ${token('spacing.xs')} ${token('spacing.lg')} 0;
   font-weight: ${token('typography.fontWeights.medium')};
-  color: ${token('colors.onBackgroundMedium')};
+  /* color: ${token('colors.onBackgroundMedium')}; */
 `;
 
 const TabList = styled(List)`

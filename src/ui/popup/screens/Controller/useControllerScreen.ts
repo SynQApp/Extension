@@ -10,7 +10,6 @@ const useControllerScreen = () => {
   const navigate = useNavigate();
   const autoplayReady = useAppSelector((state) => state.autoplayReady);
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = musicServiceTab?.playerState;
 
   const [showQueue, setShowQueue] = useState(false);
 
@@ -32,13 +31,7 @@ const useControllerScreen = () => {
     );
   }, [musicServiceTab?.tabId]);
 
-  const queueCount = useMemo(
-    () => playerState?.queue?.length ?? 0,
-    [playerState]
-  );
-
   return {
-    queueCount,
     showQueue,
     setShowQueue
   };

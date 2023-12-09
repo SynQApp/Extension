@@ -4,7 +4,7 @@ import type { MusicServiceTab } from '~types';
 
 interface MusicServiceTabContextValue {
   musicServiceTab?: MusicServiceTab;
-  setMusicServiceTab?: (tab: MusicServiceTab) => void;
+  setMusicServiceTab: (tab: MusicServiceTab) => void;
 }
 
 const MusicServiceTabContext = createContext<MusicServiceTabContextValue>({

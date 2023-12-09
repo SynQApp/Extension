@@ -14,7 +14,7 @@ const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
   const { queueCollapsible, document } = usePopupSettings();
-  const { queueCount, showQueue, setShowQueue } = useControllerScreen();
+  const { showQueue, setShowQueue } = useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
     setShowQueue(!showQueue);
@@ -38,9 +38,6 @@ const ControllerScreen = () => {
       </PlayerSection>
       <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
         <Scrollable height="100%">
-          <QueueHeader type="display" size="lg">
-            Queue ({queueCount})
-          </QueueHeader>
           <Queue documentContainer={document} />
         </Scrollable>
       </QueueSection>
