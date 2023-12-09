@@ -1,9 +1,10 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { type MusicService } from '@synq/music-service-clients';
 
-import { MusicService, type Settings } from '~types';
+import { type Settings } from '~types';
 
 const initialState: Settings = {
-  preferredMusicService: MusicService.APPLE_MUSIC,
+  preferredMusicService: 'APPLEMUSIC',
   miniPlayerKeyControlsEnabled: true,
   musicServiceKeyControlsEnabled: true,
   notificationsEnabled: true,

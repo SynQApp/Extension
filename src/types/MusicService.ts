@@ -1,6 +1,0 @@
-export enum MusicService {
-  YOUTUBE_MUSIC = 'YOUTUBE_MUSIC',
-  SPOTIFY = 'SPOTIFY',
-  APPLE_MUSIC = 'APPLE_MUSIC',
-  AMAZON_MUSIC = 'AMAZON_MUSIC'
-}

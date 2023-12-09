@@ -1,3 +1,5 @@
+import type { MusicService } from '@synq/music-service-clients';
+
 import { MusicServiceObserver } from '~contents/lib/MusicServiceObserver';
 import { store } from '~store';
 import {
@@ -5,11 +7,7 @@ import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
-import {
-  MusicService,
-  type MusicServiceTab,
-  type ValueOrPromise
-} from '~types';
+import { type MusicServiceTab, type ValueOrPromise } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
 import type { SpotifyDesktopController } from './SpotifyDesktopController';
@@ -40,7 +38,7 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
 
     const musicServiceTab: MusicServiceTab = {
       tabId: tab.id!,
-      musicService: MusicService.SPOTIFY,
+      musicService: 'SPOTIFY',
       currentTrack: null
     };
 
@@ -68,7 +66,7 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
         this._dispatch(
           updateMusicServiceTab({
             tabId: tab.id!,
-            musicService: MusicService.SPOTIFY,
+            musicService: 'SPOTIFY',
             currentTrack,
             playerState
           })

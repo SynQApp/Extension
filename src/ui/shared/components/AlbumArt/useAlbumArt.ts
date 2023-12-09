@@ -1,18 +1,19 @@
+import type { MusicService } from '@synq/music-service-clients';
+
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
-import { MusicService } from '~types/MusicService';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
-  MusicService.AMAZON_MUSIC,
-  MusicService.SPOTIFY,
-  MusicService.YOUTUBE_MUSIC
+  // 'AMAZONMUSIC',
+  'SPOTIFY',
+  'YOUTUBEMUSIC'
 ]);
 
 const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
-  MusicService.AMAZON_MUSIC,
-  MusicService.YOUTUBE_MUSIC
+  // 'AMAZONMUSIC',
+  'YOUTUBEMUSIC'
 ]);
 
 export const useAlbumArt = () => {

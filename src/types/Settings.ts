@@ -1,4 +1,4 @@
-import type { MusicService } from './MusicService';
+import type { MusicService } from '@synq/music-service-clients';
 
 export interface Settings {
   preferredMusicService: MusicService;

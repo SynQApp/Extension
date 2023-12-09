@@ -1,3 +1,5 @@
+import type { MusicService } from '@synq/music-service-clients';
+import { getLink } from '@synq/music-service-clients';
 import { useMemo } from 'react';
 
 import { MusicControllerMessage } from '~types';
@@ -60,8 +62,27 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
   };
 
+  const handleVisitTrackOnMusicService = (
+    musicService?: MusicService,
+    trackId?: string
+  ) => {
+    if (!musicService || !trackId) {
+      return;
+    }
+
+    const link = getLink({
+      musicService,
+      type: 'TRACK',
+      id: trackId
+    });
+
+    window.open(link, '_blank');
+  };
+
   return {
     handlePlayQueueTrack,
+    handleVisitTrackOnMusicService,
+    musicService: musicServiceTab?.musicService,
     musicServiceName,
     queueItems: queue
   };

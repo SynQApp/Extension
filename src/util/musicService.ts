@@ -1,10 +1,10 @@
-import { MusicService } from '~types';
+import type { MusicService } from '@synq/music-service-clients';
 
 const URL_MUSIC_SERVICE_MAP: Record<string, MusicService> = {
-  apple: MusicService.APPLE_MUSIC,
-  spotify: MusicService.SPOTIFY,
-  youtube: MusicService.YOUTUBE_MUSIC,
-  amazon: MusicService.AMAZON_MUSIC
+  apple: 'APPLEMUSIC',
+  spotify: 'SPOTIFY',
+  youtube: 'YOUTUBEMUSIC'
+  // amazon: MusicService.AMAZON_MUSIC
 };
 
 export const getMusicServiceFromUrl = (url: string): MusicService | null => {
@@ -21,10 +21,10 @@ export const getMusicServiceFromUrl = (url: string): MusicService | null => {
 };
 
 const MUSIC_SERVICE_NAME_MAP: Record<MusicService, string> = {
-  [MusicService.APPLE_MUSIC]: 'Apple Music',
-  [MusicService.SPOTIFY]: 'Spotify',
-  [MusicService.YOUTUBE_MUSIC]: 'YouTube Music',
-  [MusicService.AMAZON_MUSIC]: 'Amazon Music'
+  APPLEMUSIC: 'Apple Music',
+  SPOTIFY: 'Spotify',
+  YOUTUBEMUSIC: 'YouTube Music'
+  // [MusicService.AMAZON_MUSIC]: 'Amazon Music'
 };
 
 export const getMusicServiceName = (musicService: MusicService): string => {
