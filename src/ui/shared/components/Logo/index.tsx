@@ -10,7 +10,7 @@ const TextSizeMap: Record<LogoSize, TextProps['size']> = {
 };
 
 const ImageSizeMap: Record<LogoSize, number> = {
-  controller: 50,
+  controller: 35,
   page: 60
 };
 

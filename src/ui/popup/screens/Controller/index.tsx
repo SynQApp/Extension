@@ -21,7 +21,7 @@ const ControllerScreen = () => {
   };
 
   return (
-    <Layout>
+    <Layout hideButton>
       <PlayerSection>
         <div>
           <Player />

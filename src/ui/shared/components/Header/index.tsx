@@ -41,7 +41,7 @@ const Header = ({ actionButton }: HeaderProps) => {
 
 const HeaderStyled = styled.header`
   background: ${token('colors.background')};
-  height: 50px;
+  height: 40px;
   padding: ${token('spacing.xs')} ${token('spacing.sm')} 0;
 `;
 
