@@ -16,10 +16,15 @@ export const Queue = ({
   count,
   documentContainer = document
 }: QueueProps) => {
-  const { handlePlayQueueTrack, musicServiceName, queueItems } = useQueue(
-    startAt,
-    count
-  );
+  const {
+    handlePlayQueueTrack,
+    handleVisitTrackOnMusicService,
+    musicService,
+    musicServiceName,
+    queueItems
+  } = useQueue(startAt, count);
+
+  console.log({ musicService, musicServiceName });
 
   return (
     <div>
@@ -45,7 +50,9 @@ export const Queue = ({
                       icon: 'musicNote',
                       text: musicServiceName,
                       // TODO: Implement music service click handler
-                      onClick: () => console.info(musicServiceName)
+                      onClick: () => {
+                        handleVisitTrackOnMusicService(musicService, track?.id);
+                      }
                     },
                     {
                       icon: 'share',

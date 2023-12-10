@@ -26,8 +26,8 @@ const MusicServiceButton = ({
     }
 
     chrome.tabs.query({ url: urlMatch }, (tabs) => {
-      if (tabs.length) {
-        chrome.tabs.update(tabs[0].id, { active: true });
+      if (tabs?.length) {
+        chrome.tabs.update(tabs[0]?.id!, { active: true });
       } else {
         chrome.tabs.create({ url });
       }

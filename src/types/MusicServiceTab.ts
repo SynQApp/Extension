@@ -1,4 +1,5 @@
-import type { MusicService } from './MusicService';
+import type { MusicService } from '@synq/music-service-clients';
+
 import type { PlayerState } from './PlayerState';
 import type { Track } from './Track';
 

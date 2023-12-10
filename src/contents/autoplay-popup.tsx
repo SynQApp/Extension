@@ -27,14 +27,16 @@ export const getStyle: PlasmoGetStyle = () => {
   return style;
 };
 
+export const getShadowHostId = () => 'synq-autoplay-popup';
+
 const UiEntry = ({ anchor }: PlasmoCSUIProps) => {
+  const shadowRoot = document.getElementById(getShadowHostId())?.shadowRoot;
+
   return (
     <Provider store={store}>
       <UiProvider>
         <DocumentContextProvidersWrapper>
-          <StyleSheetManager
-            target={anchor?.element?.firstElementChild?.shadowRoot as any}
-          >
+          <StyleSheetManager target={shadowRoot as any}>
             <AutoplayPopup />
           </StyleSheetManager>
         </DocumentContextProvidersWrapper>
