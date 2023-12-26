@@ -1,4 +1,8 @@
-import { Button, Stack, Text, UiProvider, token } from '@synq/ui';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Flex, Image, Stack, Text, UiProvider, token } from '@synq/ui';
+import SynQLogo from 'data-base64:~assets/images/icon-filled.svg';
+import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createGlobalStyle, styled, useTheme } from 'styled-components';
@@ -7,6 +11,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 
 import { UiStateMessage } from '~types';
 import { PipUi } from '~ui/pip/PipUi';
+import Logo from '~ui/shared/components/Logo';
 import { sendMessage } from '~util/sendMessage';
 
 import { useSpotifyPlayer } from './SpotifyPlayerContext';
@@ -23,11 +28,11 @@ declare let window: {
 export const SpotifyConnector = () => {
   const theme = useTheme();
   const { player, deviceId } = useSpotifyPlayer();
-  const [showButton, setShowButton] = useState(true);
+  const [showPipButton, setShowPipButton] = useState(true);
 
   useEffect(() => {
     if (window?.documentPictureInPicture) {
-      setShowButton(true);
+      setShowPipButton(true);
     }
   }, []);
 
@@ -59,14 +64,14 @@ export const SpotifyConnector = () => {
       name: 'MINIMIZE_WINDOW'
     });
 
-    setShowButton(false);
+    setShowPipButton(false);
 
     pipWindow.addEventListener('pagehide', () => {
       sendMessage({
         name: UiStateMessage.PIP_CLOSED
       });
 
-      setShowButton(true);
+      setShowPipButton(true);
     });
   };
 
@@ -75,20 +80,38 @@ export const SpotifyConnector = () => {
   return (
     <UiProvider>
       <GlobalStyle theme={theme} />
-      <Container justify="center" direction="column" spacing="xl">
-        <Text type="display" size="4xl">
-          Spotify Connector
-        </Text>
-        <Text type="body" size="lg">
-          Connected: {player ? 'Yes' : 'No'}
-        </Text>
-        <Button onClick={handleMinimize}>Minimize</Button>
-        {showButton && (
-          <Button onClick={handlePip}>Open in Picture in Picture</Button>
-        )}
-        <Text type="body" size="sm">
+      <Container justify="center" direction="column" spacing="md">
+        <LogoContainer align="center">
+          <Logo size="controller" />
+          {showPipButton && (
+            <span>
+              <Button onClick={handlePip} size="small" rounded>
+                Pop Out
+              </Button>
+            </span>
+          )}
+        </LogoContainer>
+        <Stack align="center" justify="center" spacing="lg">
+          <Image src={SynQLogo} alt="SynQ Logo" height="70px" width="70px" />
+          <FontAwesomeIcon
+            icon={faArrowRight}
+            height="30px"
+            width="30px"
+            color="white"
+          />
+          <Image
+            src={SpotifyLogo}
+            alt="Spotify Logo"
+            height="60px"
+            width="60px"
+          />
+        </Stack>
+        <StatusText type="subtitle" size="md" weight="regular">
+          {player ? 'Connected!' : 'Connecting...'}
+        </StatusText>
+        <NoteText type="body" size="xs">
           Note: Keep this window open to stay connected to Spotify.
-        </Text>
+        </NoteText>
       </Container>
     </UiProvider>
   );
@@ -104,4 +127,26 @@ const GlobalStyle = createGlobalStyle`
 
 const Container = styled(Stack)`
   background: ${token('colors.background')};
+  width: 100vw;
+  height: 100vh;
+`;
+
+const LogoContainer = styled(Flex)`
+  padding: 0 ${token('spacing.md')};
+`;
+
+const StatusText = styled(Text)`
+  color: ${token('colors.onBackground')};
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-align: center;
+  display: block;
+`;
+
+const NoteText = styled(Text)`
+  color: ${token('colors.onBackgroundLow')};
+  margin: 0;
+  padding: 0 ${token('spacing.md')} ${token('spacing.md')};
+  text-align: center;
+  display: block;
 `;

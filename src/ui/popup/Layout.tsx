@@ -49,7 +49,7 @@ const Container = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  height: calc(100% - 50px);
+  height: calc(100% - 40px);
 `;
 
 export default Layout;

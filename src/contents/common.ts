@@ -16,8 +16,8 @@ export const config: PlasmoCSConfig = {
     '*://open.spotify.com/*',
     '*://music.youtube.com/*',
     '*://music.amazon.com/*',
-    '*://*.synqapp.io/spotify/connector',
-    'http://localhost:3000/spotify/connector'
+    '*://*.synqapp.io/spotify/connector*',
+    'http://localhost:3000/spotify/connector*'
   ],
   run_at: 'document_start'
 };

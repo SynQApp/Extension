@@ -27,7 +27,7 @@ const SelectPlatformScreen = () => {
     chrome.windows.create({
       type: 'popup',
       url: process.env.PLASMO_PUBLIC_SPOTIFY_CONNECTOR_URI!,
-      height: 600,
+      height: 275,
       width: 400
     });
   };
