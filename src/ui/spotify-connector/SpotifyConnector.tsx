@@ -36,12 +36,6 @@ export const SpotifyConnector = () => {
     }
   }, []);
 
-  const handleMinimize = () => {
-    sendToBackground({
-      name: 'MINIMIZE_WINDOW'
-    });
-  };
-
   const handlePip = async () => {
     const pipWindow = await window.documentPictureInPicture?.requestWindow({
       width: 350,
@@ -74,8 +68,6 @@ export const SpotifyConnector = () => {
       setShowPipButton(true);
     });
   };
-
-  console.log({ player, deviceId });
 
   return (
     <UiProvider>

@@ -98,7 +98,6 @@ export const SpotifyPlayerProvider = ({
 
         await newPlayer.connect();
 
-        console.log('Setting player');
         setPlayer(newPlayer);
       }, 500);
     };
@@ -112,8 +111,6 @@ export const SpotifyPlayerProvider = ({
     deviceId,
     player
   };
-
-  console.log({ value });
 
   return (
     <SpotifyPlayerContext.Provider value={value}>

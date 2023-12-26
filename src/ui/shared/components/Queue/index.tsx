@@ -24,8 +24,6 @@ export const Queue = ({
     queueItems
   } = useQueue(startAt, count);
 
-  console.log({ musicService, musicServiceName });
-
   return (
     <div>
       <QueueList>
