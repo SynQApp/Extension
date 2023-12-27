@@ -3,8 +3,9 @@ import { styled } from 'styled-components';
 
 import { KeyControlsSection } from './KeyControlsSection';
 import { NotificationsSection } from './NotificationsSection';
+import { PopOutSection } from './PopOutSection';
 import { PreferredMusicServiceSection } from './PreferredMusicServiceSection';
-import { SynqLinksSection } from './SynqLinksSection';
+import { PreferredServiceLinksSection } from './PreferredServiceLinksSection';
 
 export const OptionsContent = () => {
   return (
@@ -13,9 +14,10 @@ export const OptionsContent = () => {
         Settings
       </Title>
       <PreferredMusicServiceSection />
+      <PreferredServiceLinksSection />
       <KeyControlsSection />
       <NotificationsSection />
-      <SynqLinksSection />
+      <PopOutSection />
     </Container>
   );
 };

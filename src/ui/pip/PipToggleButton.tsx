@@ -2,17 +2,23 @@ import { Image, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { styled } from 'styled-components';
 
+import { useAppSelector } from '~store';
+
 interface PipToggleButtonProps {
   onClick: () => void;
 }
 
 export const PipToggleButton = ({ onClick }: PipToggleButtonProps) => {
+  const settings = useAppSelector((state) => state.settings);
+
   return (
-    <ToggleButton onClick={onClick}>
-      <ToggleButtonContent>
-        <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
-      </ToggleButtonContent>
-    </ToggleButton>
+    settings.popOutButtonEnabled && (
+      <ToggleButton onClick={onClick}>
+        <ToggleButtonContent>
+          <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
+        </ToggleButtonContent>
+      </ToggleButton>
+    )
   );
 };
 

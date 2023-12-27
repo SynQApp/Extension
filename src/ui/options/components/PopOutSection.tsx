@@ -1,24 +1,24 @@
 import { Switch } from '@synq/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
-import { setSynqLinkPopupsEnabled } from '~store/slices/settings';
+import { setPopOutButtonEnabled } from '~store/slices/settings';
 
 import { OptionsSection } from './OptionsSection';
 
-export const SynqLinksSection = () => {
+export const PopOutSection = () => {
   const synqLinkPopupsEnabled = useAppSelector(
-    (state) => state.settings.synqLinkPopupsEnabled
+    (state) => state.settings.popOutButtonEnabled
   );
   const dispatch = useAppDispatch();
 
   const handleChange = (value: boolean) => {
-    dispatch(setSynqLinkPopupsEnabled(value));
+    dispatch(setPopOutButtonEnabled(value));
   };
 
   return (
-    <OptionsSection title="SynQ Links">
+    <OptionsSection title="Pop Out Mini Player">
       <Switch checked={synqLinkPopupsEnabled} onChange={handleChange}>
-        Show a popup to open a SynQ link when not on your preferred service
+        Show pop out button on music services
       </Switch>
     </OptionsSection>
   );

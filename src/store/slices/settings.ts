@@ -4,10 +4,11 @@ import { type MusicService } from '@synq/music-service-clients';
 import { type Settings } from '~types';
 
 const initialState: Settings = {
-  preferredMusicService: 'APPLEMUSIC',
   miniPlayerKeyControlsEnabled: true,
   musicServiceKeyControlsEnabled: true,
   notificationsEnabled: true,
+  popOutButtonEnabled: true,
+  preferredMusicService: 'APPLEMUSIC',
   synqLinkPopupsEnabled: true
 };
 
@@ -33,6 +34,9 @@ const sessionSlice = createSlice({
     setNotificationsEnabled: (state, action: PayloadAction<boolean>) => {
       state.notificationsEnabled = action.payload;
     },
+    setPopOutButtonEnabled: (state, action: PayloadAction<boolean>) => {
+      state.popOutButtonEnabled = action.payload;
+    },
     setSynqLinkPopupsEnabled: (state, action: PayloadAction<boolean>) => {
       state.synqLinkPopupsEnabled = action.payload;
     },
@@ -46,6 +50,7 @@ export const {
   setMiniPlayerKeyControlsEnabled,
   setMusicServiceKeyControlsEnabled,
   setNotificationsEnabled,
+  setPopOutButtonEnabled,
   setPreferredMusicService,
   setSynqLinkPopupsEnabled,
   setSettings
