@@ -27,7 +27,8 @@ declare let window: {
 
 export const SpotifyConnector = () => {
   const theme = useTheme();
-  const { player, deviceId } = useSpotifyPlayer();
+  const [enabled, setEnabled] = useState(false);
+  const { player } = useSpotifyPlayer();
   const [showPipButton, setShowPipButton] = useState(true);
 
   useEffect(() => {
@@ -69,58 +70,81 @@ export const SpotifyConnector = () => {
     });
   };
 
+  const handleEnable = () => {
+    setEnabled(true);
+  };
+
   return (
     <UiProvider>
-      <GlobalStyle theme={theme} />
-      <Container justify="center" direction="column" spacing="md">
-        <LogoContainer align="center">
-          <Logo size="controller" />
-          {showPipButton && (
-            <span>
-              <Button onClick={handlePip} size="small" rounded>
-                Pop Out
-              </Button>
-            </span>
+      <Container>
+        <Content justify="center" direction="column" spacing="md">
+          <LogoContainer align="center">
+            <Logo size="controller" />
+            {showPipButton && enabled && player && (
+              <span>
+                <Button
+                  variant="secondary"
+                  onClick={handlePip}
+                  size="small"
+                  rounded
+                >
+                  Pop Out
+                </Button>
+              </span>
+            )}
+          </LogoContainer>
+          {enabled ? (
+            <>
+              <Stack align="center" justify="center" spacing="lg">
+                <Image
+                  src={SynQLogo}
+                  alt="SynQ Logo"
+                  height="70px"
+                  width="70px"
+                />
+                <FontAwesomeIcon
+                  icon={faArrowRight}
+                  height="30px"
+                  width="30px"
+                  color="white"
+                />
+                <Image
+                  src={SpotifyLogo}
+                  alt="Spotify Logo"
+                  height="60px"
+                  width="60px"
+                />
+              </Stack>
+              <StatusText type="subtitle" size="md" weight="regular">
+                {player ? 'Connected!' : 'Connecting...'}
+              </StatusText>
+            </>
+          ) : (
+            <EnableButton onClick={handleEnable} size="small" rounded>
+              Start Listening
+            </EnableButton>
           )}
-        </LogoContainer>
-        <Stack align="center" justify="center" spacing="lg">
-          <Image src={SynQLogo} alt="SynQ Logo" height="70px" width="70px" />
-          <FontAwesomeIcon
-            icon={faArrowRight}
-            height="30px"
-            width="30px"
-            color="white"
-          />
-          <Image
-            src={SpotifyLogo}
-            alt="Spotify Logo"
-            height="60px"
-            width="60px"
-          />
-        </Stack>
-        <StatusText type="subtitle" size="md" weight="regular">
-          {player ? 'Connected!' : 'Connecting...'}
-        </StatusText>
-        <NoteText type="body" size="xs">
-          Note: Keep this window open to stay connected to Spotify.
-        </NoteText>
+
+          <NoteText type="body" size="xs">
+            Note: Keep this window open to stay connected to Spotify.
+          </NoteText>
+        </Content>
       </Container>
     </UiProvider>
   );
 };
 
-const GlobalStyle = createGlobalStyle`
-  body {
-    background: ${token('colors.background')};
-    margin: 0;
-    padding: 0;
-  }
+const Container = styled.div`
+  background: ${token('colors.background')};
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
 `;
 
-const Container = styled(Stack)`
+const Content = styled(Stack)`
   background: ${token('colors.background')};
   width: 100vw;
-  height: 100vh;
 `;
 
 const LogoContainer = styled(Flex)`
@@ -138,7 +162,14 @@ const StatusText = styled(Text)`
 const NoteText = styled(Text)`
   color: ${token('colors.onBackgroundLow')};
   margin: 0;
+  margin-top: ${token('spacing.md')};
   padding: 0 ${token('spacing.md')} ${token('spacing.md')};
   text-align: center;
   display: block;
+`;
+
+const EnableButton = styled(Button)`
+  display: block;
+  margin: 40px auto;
+  width: 200px;
 `;

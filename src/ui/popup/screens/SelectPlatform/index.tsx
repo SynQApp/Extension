@@ -50,7 +50,7 @@ const SelectPlatformScreen = () => {
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
-              name="Spotify (Desktop)"
+              name="Spotify (Remote)"
               onClick={handleSpotifyDesktopClick}
               logoSrc={SpotifyLogo}
             />
