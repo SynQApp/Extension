@@ -17,6 +17,7 @@ const MAX_RETRIES = 20;
 interface SpotifyPlayerContextValue {
   deviceId?: string;
   player?: Spotify.Player;
+  error?: string;
 }
 
 const SpotifyPlayerContext = createContext<SpotifyPlayerContextValue>({});
@@ -32,14 +33,13 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   spotfiyPlayerReady = true;
 };
 
-let setupRan = false;
-
 export const SpotifyPlayerProvider = ({
   children,
   extensionId
 }: SpotifyPlayerProviderProps) => {
   const [player, setPlayer] = useState<Spotify.Player>();
   const [deviceId, setDeviceId] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -80,6 +80,34 @@ export const SpotifyPlayerProvider = ({
           console.info('Ready with Device ID', device_id);
         });
 
+        newPlayer.on('account_error', (e: any) => {
+          console.error('Spotify Account Error', e);
+          setError(
+            'There was an error with your Spotify account. Note: You must have a Spotify Premium account to use the remote version of Spotify with SynQ.'
+          );
+        });
+
+        newPlayer.on('initialization_error', (e: any) => {
+          console.error('Spotify Initialization Error', e);
+          setError(
+            'There was an error initializing Spotify playback. Please try again.'
+          );
+        });
+
+        newPlayer.on('authentication_error', (e: any) => {
+          console.error('Spotify Authentication Error', e);
+          setError(
+            'There was an error authenticating with Spotify. Please try again.'
+          );
+        });
+
+        newPlayer.on('playback_error', (e: any) => {
+          console.error('Spotify Playback Error', e);
+          setError(
+            'There was an error with Spotify playback. Please try again.'
+          );
+        });
+
         const hub = connectToReduxHub(extensionId);
 
         const controller = new SpotifyDesktopController(newPlayer, spotifyApi);
@@ -103,13 +131,12 @@ export const SpotifyPlayerProvider = ({
     };
 
     setup();
-
-    setupRan = true;
   }, [setPlayer]);
 
   const value: SpotifyPlayerContextValue = {
     deviceId,
-    player
+    player,
+    error
   };
 
   return (

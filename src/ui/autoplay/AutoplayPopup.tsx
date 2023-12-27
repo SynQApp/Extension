@@ -48,7 +48,7 @@ const AutoplayPopup = () => {
     <>
       <PopupOverlay onClick={handleOverlayClick} />
       <Modal align="center" direction="column" justify="center">
-        <DescriptionText type="subtitle" size="md">
+        <DescriptionText type="subtitle" size="lg" weight="semibold">
           Click the button below to enable SynQ to control{' '}
           {getMusicServiceNameFromUrl(window.location.href)}.
         </DescriptionText>
@@ -72,7 +72,7 @@ const Modal = styled(Flex)`
   border-radius: ${token('radii.lg')};
   height: 150px;
   left: calc(50% - 200px);
-  padding: ${token('spacing.lg')};
+  padding: ${token('spacing.sm')};
   position: fixed;
   top: calc(50% - 75px);
   width: 400px;

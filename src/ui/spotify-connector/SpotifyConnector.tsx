@@ -28,7 +28,7 @@ declare let window: {
 export const SpotifyConnector = () => {
   const theme = useTheme();
   const [enabled, setEnabled] = useState(false);
-  const { player } = useSpotifyPlayer();
+  const { player, error } = useSpotifyPlayer();
   const [showPipButton, setShowPipButton] = useState(true);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const SpotifyConnector = () => {
         <Content justify="center" direction="column" spacing="md">
           <LogoContainer align="center">
             <Logo size="controller" />
-            {showPipButton && enabled && player && (
+            {showPipButton && enabled && player && !error && (
               <span>
                 <Button
                   variant="secondary"
@@ -93,7 +93,11 @@ export const SpotifyConnector = () => {
               </span>
             )}
           </LogoContainer>
-          {enabled ? (
+          {error ? (
+            <StatusText type="body" size="sm" weight="regular">
+              {error}
+            </StatusText>
+          ) : enabled ? (
             <>
               <Stack align="center" justify="center" spacing="lg">
                 <Image
@@ -154,7 +158,7 @@ const LogoContainer = styled(Flex)`
 const StatusText = styled(Text)`
   color: ${token('colors.onBackground')};
   letter-spacing: 0.5px;
-  margin: 0;
+  margin: 0 ${token('spacing.md')};
   text-align: center;
   display: block;
 `;

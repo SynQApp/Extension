@@ -11,15 +11,13 @@ interface PipToggleButtonProps {
 export const PipToggleButton = ({ onClick }: PipToggleButtonProps) => {
   const settings = useAppSelector((state) => state.settings);
 
-  return (
-    settings.popOutButtonEnabled && (
-      <ToggleButton onClick={onClick}>
-        <ToggleButtonContent>
-          <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
-        </ToggleButtonContent>
-      </ToggleButton>
-    )
-  );
+  return settings.popOutButtonEnabled ? (
+    <ToggleButton onClick={onClick}>
+      <ToggleButtonContent>
+        <ToggleButtonImage src={SynQIcon} alt="SynQ Icon" />
+      </ToggleButtonContent>
+    </ToggleButton>
+  ) : null;
 };
 
 export const ToggleButton = styled.button`

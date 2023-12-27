@@ -4,7 +4,9 @@ const URL_MUSIC_SERVICE_MAP: Record<string, MusicService> = {
   apple: 'APPLEMUSIC',
   spotify: 'SPOTIFY',
   youtube: 'YOUTUBEMUSIC',
-  amazon: 'AMAZONMUSIC'
+  amazon: 'AMAZONMUSIC',
+  // Spotify connector hosted on synqapp.io/spotify/connector
+  synqapp: 'SPOTIFY'
 };
 
 export const getMusicServiceFromUrl = (url: string): MusicService | null => {
