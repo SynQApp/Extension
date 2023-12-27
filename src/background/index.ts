@@ -1,8 +1,7 @@
 import { getHubMap, startHub } from '@plasmohq/messaging/pub-sub';
 
-import { persistor, store } from '~store';
+import { store } from '~store';
 import { clearMusicServiceTabs } from '~store/slices/musicServiceTabs';
-import { setSettings } from '~store/slices/settings';
 
 import { popupListener } from './popupListener';
 import { registerHubMessageHandlers } from './registerHubMessageHandlers';

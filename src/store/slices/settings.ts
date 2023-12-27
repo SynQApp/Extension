@@ -8,7 +8,7 @@ const initialState: Settings = {
   musicServiceKeyControlsEnabled: true,
   notificationsEnabled: true,
   popOutButtonEnabled: true,
-  preferredMusicService: 'APPLEMUSIC',
+  preferredMusicService: 'SPOTIFY',
   synqLinkPopupsEnabled: true
 };
 

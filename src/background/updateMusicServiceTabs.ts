@@ -7,7 +7,10 @@ import { TabsMessage } from '~types/TabsMessage';
 export const updateMusicServiceTabs = () => {
   store.dispatch(clearMusicServiceTabs());
 
-  broadcast({
-    payload: { name: TabsMessage.UPDATE_TAB }
-  });
+  // Prevent race condition where the tab updates before the store is cleared
+  setTimeout(() => {
+    broadcast({
+      payload: { name: TabsMessage.UPDATE_TAB }
+    });
+  }, 250);
 };
