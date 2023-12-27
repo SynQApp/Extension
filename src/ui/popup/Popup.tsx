@@ -1,34 +1,28 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// import { POPUP_PORT } from '~constants/port';
 import {
   addKeyControlsListener,
   removeKeyControlsListener
 } from '~shared/keyControlsListener';
 import { useAppSelector } from '~store';
-// import { TabsMessage } from '~types/TabsMessage';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 
-// import { sendMessage } from '~util/sendMessage';
-
 import AppRoutes from './PopupRoutes';
+import { usePopupSettings } from './contexts/PopupSettingsContext';
 
 const Popup = () => {
   const navigate = useNavigate();
   const tabs = useAppSelector((state) => state.musicServiceTabs);
   const settings = useAppSelector((state) => state.settings);
+  const popupSettings = usePopupSettings();
   const { musicServiceTab: selectedTab } = useMusicServiceTab();
 
-  // useEffect(() => {
-  //   // Then request the current tabs to be updated in the store
-  //   sendMessage({
-  //     name: TabsMessage.UPDATE_TAB
-  //   });
-  // }, []);
-
   useEffect(() => {
-    if (!settings?.miniPlayerKeyControlsEnabled) {
+    if (
+      !settings?.miniPlayerKeyControlsEnabled ||
+      !popupSettings?.keyControls
+    ) {
       return;
     }
 

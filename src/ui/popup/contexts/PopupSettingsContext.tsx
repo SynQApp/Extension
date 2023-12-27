@@ -3,11 +3,13 @@ import React, { createContext, useContext } from 'react';
 export interface PopupSettingsContextValue {
   queueCollapsible: boolean;
   document: Document;
+  keyControls: boolean;
 }
 
 const DEFAULT_POPUP_SETTINGS: PopupSettingsContextValue = {
   queueCollapsible: true,
-  document: document
+  document: document,
+  keyControls: true
 };
 
 const PopupSettingsContext = createContext<PopupSettingsContextValue>(

@@ -25,7 +25,8 @@ export const PipUi = ({ pipDocument }: PipUiProps) => {
               <PopupSettingsProvider
                 value={{
                   queueCollapsible: false,
-                  document: pipDocument
+                  document: pipDocument,
+                  keyControls: false
                 }}
               >
                 <Popup />
