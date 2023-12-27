@@ -73,7 +73,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     const link = getLink({
       musicService,
       type: 'TRACK',
-      id: trackId
+      trackId: trackId
     });
 
     window.open(link, '_blank');

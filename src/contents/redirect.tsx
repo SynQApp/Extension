@@ -38,9 +38,9 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
       return;
     }
 
-    const { musicService, id, type } = parsedLink;
+    const { musicService, trackId, type } = parsedLink;
 
-    if (!musicService || !id || type !== 'TRACK') {
+    if (!musicService || !trackId || type !== 'TRACK') {
       return;
     }
 

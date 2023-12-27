@@ -24,10 +24,10 @@ export const PreferredMusicServiceSection = () => {
     <OptionsSection title="Preferred music service">
       <RadioGroup value={preferredMusicService} onChange={handleChange}>
         <Stack direction="column" spacing="xs">
-          <Radio value={MUSIC_SERVICE.APPLEMUSIC}>Apple Music</Radio>
           <Radio value={MUSIC_SERVICE.SPOTIFY}>Spotify</Radio>
+          <Radio value={MUSIC_SERVICE.APPLEMUSIC}>Apple Music</Radio>
+          <Radio value={MUSIC_SERVICE.AMAZONMUSIC}>Amazon Music</Radio>
           <Radio value={MUSIC_SERVICE.YOUTUBEMUSIC}>YouTube Music</Radio>
-          {/* <Radio value={MusicService.AMAZON_MUSIC}>Amazon Music</Radio> */}
         </Stack>
       </RadioGroup>
     </OptionsSection>

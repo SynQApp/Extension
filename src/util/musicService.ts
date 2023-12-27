@@ -3,8 +3,8 @@ import type { MusicService } from '@synq/music-service-clients';
 const URL_MUSIC_SERVICE_MAP: Record<string, MusicService> = {
   apple: 'APPLEMUSIC',
   spotify: 'SPOTIFY',
-  youtube: 'YOUTUBEMUSIC'
-  // amazon: MusicService.AMAZON_MUSIC
+  youtube: 'YOUTUBEMUSIC',
+  amazon: 'AMAZONMUSIC'
 };
 
 export const getMusicServiceFromUrl = (url: string): MusicService | null => {
@@ -23,8 +23,9 @@ export const getMusicServiceFromUrl = (url: string): MusicService | null => {
 const MUSIC_SERVICE_NAME_MAP: Record<MusicService, string> = {
   APPLEMUSIC: 'Apple Music',
   SPOTIFY: 'Spotify',
-  YOUTUBEMUSIC: 'YouTube Music'
-  // [MusicService.AMAZON_MUSIC]: 'Amazon Music'
+  YOUTUBEMUSIC: 'YouTube Music',
+  AMAZONMUSIC: 'Amazon Music',
+  DEEZER: 'Deezer'
 };
 
 export const getMusicServiceName = (musicService: MusicService): string => {
