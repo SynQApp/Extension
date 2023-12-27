@@ -40,7 +40,7 @@ const SelectTabScreen = () => {
               {tabs.map((tab) => (
                 <TabListItem
                   key={tab.tabId}
-                  primaryText={tab.currentTrack?.name ?? '<No Music Playing>'}
+                  primaryText={tab.currentTrack?.name ?? 'No Music Playing'}
                   secondaryText={tab.currentTrack?.artistName ?? ''}
                   onClick={() => setMusicServiceTab(tab)}
                   imageUrl={tab.currentTrack?.albumCoverUrl ?? ''}
