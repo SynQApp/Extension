@@ -1,13 +1,10 @@
 import { useMemo } from 'react';
 
-import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendMessage } from '~util/sendMessage';
 
 export const useTrackSeeker = () => {
-  // const playerState = useAppSelector((state) => state.playerState);
-  // const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicServiceTab } = useMusicServiceTab();
   const playerState = musicServiceTab?.playerState;
   const currentTrack = musicServiceTab?.currentTrack;

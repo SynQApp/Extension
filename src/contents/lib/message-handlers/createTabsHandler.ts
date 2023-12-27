@@ -31,7 +31,8 @@ const handleUpdateTab = async (
   controller: MusicController,
   hub: ReduxHub
 ): Promise<void> => {
-  const track = await controller.getCurrentTrack();
+  const currentTrack = await controller.getCurrentTrack();
+  const playerState = await controller.getPlayerState();
   const tab = await hub.asyncPostMessage<chrome.tabs.Tab>({
     name: 'GET_SELF_TAB'
   });
@@ -49,7 +50,8 @@ const handleUpdateTab = async (
   const musicServiceTab: MusicServiceTab = {
     tabId: tab.id!,
     musicService,
-    currentTrack: track
+    currentTrack,
+    playerState
   };
 
   hub.dispatch(updateMusicServiceTab(musicServiceTab));

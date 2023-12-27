@@ -6,7 +6,7 @@ import type { Track } from './Track';
 export interface MusicServiceTab {
   musicService: MusicService;
   tabId: number;
-  playerState?: PlayerState;
+  playerState?: PlayerState | null;
   currentTrack?: Track | null;
   queue?: Track[];
   pictureInPicture?: boolean;
