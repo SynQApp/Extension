@@ -47,11 +47,20 @@ export const handler: HubMessageHandler<Track> = async (
   try {
     imageUrl = await imageUrlToDataUrl(track.albumCoverUrl);
 
-    chrome.notifications.create({
-      ...baseNotification,
-      type: 'image',
-      imageUrl
-    });
+    console.log({ imageUrl });
+
+    chrome.notifications.create(
+      {
+        ...baseNotification,
+        type: 'basic',
+        iconUrl: imageUrl
+      },
+      (notificationId) => {
+        if (!notificationId) {
+          chrome.notifications.create(baseNotification);
+        }
+      }
+    );
   } catch (error) {
     console.error(error);
     chrome.notifications.create(baseNotification);

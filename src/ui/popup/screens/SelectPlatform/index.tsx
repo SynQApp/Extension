@@ -44,14 +44,14 @@ const SelectPlatformScreen = () => {
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
             <MusicServiceButton
-              name="Spotify (Web)"
-              urlMatch={SPOTIFY_URL_MATCH}
-              url={SPOTIFY_URL}
+              name="Spotify"
+              onClick={handleSpotifyDesktopClick}
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
-              name="Spotify (Remote)"
-              onClick={handleSpotifyDesktopClick}
+              name="Spotify (Web)"
+              urlMatch={SPOTIFY_URL_MATCH}
+              url={SPOTIFY_URL}
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
