@@ -72,7 +72,11 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
     pipWindow.document.body.append(container);
 
     const pipRoot = createRoot(container);
-    pipRoot.render(<PipUi pipDocument={pipWindow.document} />);
+    pipRoot.render(
+      <UiProvider>
+        <PipUi pipDocument={pipWindow.document} />
+      </UiProvider>
+    );
 
     sendMessage({
       name: UiStateMessage.PIP_OPENED
