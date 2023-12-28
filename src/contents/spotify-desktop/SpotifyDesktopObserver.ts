@@ -44,7 +44,6 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
 
     this._dispatch(updateMusicServiceTab(musicServiceTab));
 
-    let counter = 0;
     let counterInterval: number | null = null;
 
     this._player.addListener('player_state_changed', async (state) => {
@@ -74,7 +73,6 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
       }
 
       if (counterInterval) {
-        counter = 0;
         clearInterval(counterInterval);
       }
 
@@ -91,6 +89,32 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
         }
       }, 1000);
     });
+
+    let previousVolume: number | null = null;
+
+    setInterval(async () => {
+      const volume = await this._player.getVolume();
+
+      if (volume !== previousVolume) {
+        const playerState = await this._controller.getPlayerState(false);
+
+        if (!playerState) {
+          return;
+        }
+
+        previousVolume = volume;
+
+        this._dispatch(
+          updateMusicServiceTabPlayerState({
+            tabId: tab.id!,
+            playerState: {
+              ...playerState,
+              volume: volume * 100
+            }
+          })
+        );
+      }
+    }, 50);
   }
 
   public unobserve(): ValueOrPromise<void> {
