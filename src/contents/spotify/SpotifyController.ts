@@ -1,3 +1,5 @@
+import { getLink } from '@synq/music-service-clients';
+
 import { SpotifyEndpoints } from '~constants/spotify';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track } from '~types';
@@ -324,7 +326,15 @@ export class SpotifyController implements MusicController {
         currentTrack.type = 'song';
       }
 
+      const id = trackResponse.item.id;
+      const link = getLink({
+        musicService: 'SPOTIFY',
+        trackId: id,
+        type: 'TRACK'
+      });
+
       currentTrack.id = trackResponse.item.id;
+      currentTrack.link = link;
 
       const isInLibraryParams = new URLSearchParams({
         ids: currentTrack.id
@@ -458,13 +468,20 @@ export class SpotifyController implements MusicController {
       };
     }
 
+    const link = getLink({
+      musicService: 'SPOTIFY',
+      trackId: item.id,
+      type: 'TRACK'
+    });
+
     return {
-      id: item.id,
-      name: item.name,
+      albumCoverUrl: item.album?.images[0].url,
       albumName: item.album?.name,
       artistName: item.artists.map((artist) => artist.name).join(' & '),
-      albumCoverUrl: item.album?.images[0].url,
       duration: Math.round(item.duration_ms / 1000),
+      id: item.id,
+      link,
+      name: item.name,
       type: 'song'
     };
   }

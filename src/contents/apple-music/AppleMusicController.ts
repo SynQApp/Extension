@@ -1,3 +1,5 @@
+import { getLink } from '@synq/music-service-clients';
+
 import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
@@ -187,9 +189,14 @@ export class AppleMusicController implements MusicController {
       albumCoverUrl: track.artwork.url.replace('{w}x{h}bb', '100x100'),
       albumName: track.albumName,
       artistName: track.artistName,
-      name: track.name,
+      duration: Math.round(track.durationInMillis / 1000),
       id: track.playParams.id,
-      duration: Math.round(track.durationInMillis / 1000)
+      link: getLink({
+        musicService: 'APPLEMUSIC',
+        trackId: track.playParams.id,
+        type: 'TRACK'
+      }),
+      name: track.name
     };
   }
 

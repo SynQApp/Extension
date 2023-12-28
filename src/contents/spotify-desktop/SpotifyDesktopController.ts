@@ -1,4 +1,5 @@
 import type { Track as NativeTrack, SpotifyApi } from '@spotify/web-api-ts-sdk';
+import { getLink } from '@synq/music-service-clients';
 
 import type { MusicController } from '~contents/lib/MusicController';
 import {
@@ -298,13 +299,26 @@ export class SpotifyDesktopController implements MusicController {
 
     const songTrack = item as NativeSpotifySongTrack;
 
+    // The Spotify player can return different shapes of the same object,
+    // so a podcast may not have a .show property, but will have an episode type.
+    // We don't currently support podcast links, so we'll just hide them for now.
+    const link =
+      item.type !== 'episode'
+        ? getLink({
+            musicService: 'SPOTIFY',
+            type: 'TRACK',
+            trackId: songTrack.id
+          })
+        : undefined;
+
     return {
-      id: songTrack.id!,
-      name: songTrack.name,
+      albumCoverUrl: songTrack.album?.images?.[0].url,
       albumName: songTrack.album?.name,
       artistName: songTrack.artists?.map((artist) => artist.name).join(' & '),
-      albumCoverUrl: songTrack.album?.images?.[0].url,
-      duration: Math.round(songTrack.duration_ms / 1000)
+      duration: Math.round(songTrack.duration_ms / 1000),
+      id: songTrack.id!,
+      link,
+      name: songTrack.name
     };
   }
 }

@@ -1,3 +1,4 @@
+import type { MusicService } from '@synq/music-service-clients';
 import { List, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
@@ -41,25 +42,26 @@ export const Queue = ({
               }
               primaryText={track?.name ?? 'Unknown Track'}
               rightNode={
-                <ListItemMenu
-                  portalContainer={documentContainer.body}
-                  menuItems={[
-                    {
-                      icon: 'musicNote',
-                      text: musicServiceName,
-                      // TODO: Implement music service click handler
-                      onClick: () => {
-                        handleVisitTrackOnMusicService(musicService, track?.id);
+                track?.link && (
+                  <ListItemMenu
+                    portalContainer={documentContainer.body}
+                    menuItems={[
+                      {
+                        icon: 'musicNote',
+                        text: `View on ${musicServiceName}`,
+                        onClick: () => {
+                          handleVisitTrackOnMusicService(track?.link);
+                        }
                       }
-                    },
-                    {
-                      icon: 'share',
-                      text: 'Share',
-                      // TODO: Implement share click handler
-                      onClick: () => console.info('Share')
-                    }
-                  ]}
-                />
+                      // {
+                      //   icon: 'share',
+                      //   text: 'Share',
+                      //   // TODO: Implement share click handler
+                      //   onClick: () => console.info('Share')
+                      // }
+                    ]}
+                  />
+                )
               }
               secondaryText={`${track?.artistName}${
                 track?.albumName && ` • ${track?.albumName}`

@@ -1,3 +1,5 @@
+import { getLink } from '@synq/music-service-clients';
+
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type {
@@ -184,8 +186,6 @@ export class YouTubeMusicController implements MusicController {
     songInfo.isLiked = isLiked;
     songInfo.isDisliked = isDisliked;
 
-    console.log('songInfo', songInfo);
-
     return songInfo;
   }
 
@@ -268,14 +268,20 @@ export class YouTubeMusicController implements MusicController {
     );
     const albumCoverUrl =
       this._selectAlbumCoverUrl(rendererData.thumbnail.thumbnails) ?? '';
+    const link = getLink({
+      musicService: 'YOUTUBEMUSIC',
+      type: 'TRACK',
+      trackId
+    });
 
     return {
+      albumCoverUrl,
+      albumName: album,
+      artistName: artist,
       duration: lengthTextToSeconds(rendererData.lengthText.runs[0].text),
       id: trackId,
-      name: trackName,
-      artistName: artist,
-      albumName: album,
-      albumCoverUrl
+      link,
+      name: trackName
     };
   }
 

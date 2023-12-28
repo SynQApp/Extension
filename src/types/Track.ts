@@ -1,11 +1,12 @@
 export interface Track {
-  id: string;
-  name: string;
-  artistName: string;
-  albumName?: string;
   albumCoverUrl?: string;
-  isLiked?: boolean;
-  isDisliked?: boolean;
+  albumName?: string;
+  artistName: string;
   duration: number;
+  id: string;
+  isDisliked?: boolean;
+  isLiked?: boolean;
+  link?: string;
+  name: string;
   type?: 'song' | 'podcast';
 }

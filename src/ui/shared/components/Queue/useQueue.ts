@@ -62,19 +62,10 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
   };
 
-  const handleVisitTrackOnMusicService = (
-    musicService?: MusicService,
-    trackId?: string
-  ) => {
-    if (!musicService || !trackId) {
+  const handleVisitTrackOnMusicService = (link?: string) => {
+    if (!link) {
       return;
     }
-
-    const link = getLink({
-      musicService,
-      type: 'TRACK',
-      trackId: trackId
-    });
 
     window.open(link, '_blank');
   };
