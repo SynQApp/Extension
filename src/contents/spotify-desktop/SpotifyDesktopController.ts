@@ -9,6 +9,10 @@ import {
   type Track,
   type ValueOrPromise
 } from '~types';
+import type {
+  NativeSpotifyPodcastTrack,
+  NativeSpotifySongTrack
+} from '~types/Spotify';
 import { findIndexes } from '~util/findIndexes';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
@@ -252,7 +256,12 @@ export class SpotifyDesktopController implements MusicController {
     const trackIndex = trackIndexes[duplicateIndex];
 
     const deviceId = this._player._options.id;
-    const trackUris = trackIds.map((trackId) => `spotify:track:${trackId}`);
+    const trackUris = queue.map(
+      (item) =>
+        `spotify:${item.track?.type === 'podcast' ? 'episode' : 'track'}:${
+          item.track?.id
+        }`
+    );
 
     await this._spotifyApi.player.startResumePlayback(
       deviceId,
@@ -270,14 +279,32 @@ export class SpotifyDesktopController implements MusicController {
     this._cachedPlayerState = null;
   }
 
-  private _itemToSongInfo(item: NativeTrack | Spotify.Track): Track {
+  private _itemToSongInfo(
+    item: NativeTrack | NativeSpotifyPodcastTrack | Spotify.Track
+  ): Track {
+    if ((item as NativeSpotifyPodcastTrack).show) {
+      const podcastTrack = item as NativeSpotifyPodcastTrack;
+
+      return {
+        id: podcastTrack.id,
+        name: podcastTrack.name,
+        albumName: podcastTrack.show.name,
+        artistName: podcastTrack.show.publisher,
+        albumCoverUrl: podcastTrack.images[0].url,
+        duration: Math.round(podcastTrack.duration_ms / 1000),
+        type: 'podcast'
+      };
+    }
+
+    const songTrack = item as NativeSpotifySongTrack;
+
     return {
-      id: item.id!,
-      name: item.name,
-      albumName: item.album?.name,
-      artistName: item.artists.map((artist) => artist.name).join(' & '),
-      albumCoverUrl: item.album.images[0].url,
-      duration: Math.round(item.duration_ms / 1000)
+      id: songTrack.id!,
+      name: songTrack.name,
+      albumName: songTrack.album?.name,
+      artistName: songTrack.artists?.map((artist) => artist.name).join(' & '),
+      albumCoverUrl: songTrack.album?.images?.[0].url,
+      duration: Math.round(songTrack.duration_ms / 1000)
     };
   }
 }
