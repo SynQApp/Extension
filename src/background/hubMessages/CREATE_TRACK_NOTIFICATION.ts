@@ -15,7 +15,7 @@ const isCurrentTab = async (tabId: number) => {
 };
 
 const createMessage = (track: Track) => {
-  return `${track.artistName} \u2022 ${track.albumName}`;
+  return `${track.artistName}${track.albumName && `\u2022 ${track.albumName}`}`;
 };
 
 export const handler: HubMessageHandler<Track> = async (
@@ -45,22 +45,17 @@ export const handler: HubMessageHandler<Track> = async (
   let imageUrl = undefined;
 
   try {
-    imageUrl = await imageUrlToDataUrl(track.albumCoverUrl);
+    if (track.albumCoverUrl) {
+      imageUrl = await imageUrlToDataUrl(track.albumCoverUrl);
 
-    console.log({ imageUrl });
-
-    chrome.notifications.create(
-      {
+      chrome.notifications.create({
         ...baseNotification,
         type: 'basic',
         iconUrl: imageUrl
-      },
-      (notificationId) => {
-        if (!notificationId) {
-          chrome.notifications.create(baseNotification);
-        }
-      }
-    );
+      });
+    } else {
+      chrome.notifications.create(baseNotification);
+    }
   } catch (error) {
     console.error(error);
     chrome.notifications.create(baseNotification);

@@ -184,6 +184,8 @@ export class YouTubeMusicController implements MusicController {
     songInfo.isLiked = isLiked;
     songInfo.isDisliked = isDisliked;
 
+    console.log('songInfo', songInfo);
+
     return songInfo;
   }
 
@@ -215,6 +217,11 @@ export class YouTubeMusicController implements MusicController {
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {
+    if (longBylineRuns.length === 1) {
+      const artist = longBylineRuns[0].text;
+      return { artist, album: '' };
+    }
+
     // The last two runs are a separator and the year, album comes before that
     const album = longBylineRuns[longBylineRuns.length - 3].text;
 

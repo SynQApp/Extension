@@ -61,7 +61,9 @@ export const Queue = ({
                   ]}
                 />
               }
-              secondaryText={`${track?.artistName} • ${track?.albumName}`}
+              secondaryText={`${track?.artistName}${
+                track?.albumName && ` • ${track?.albumName}`
+              }`}
             />
           </div>
         ))}
