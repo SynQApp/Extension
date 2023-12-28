@@ -52,10 +52,12 @@ export class AmazonMusicController implements MusicController {
   private _unmuteVolume = 50;
 
   public play(): void {
-    this.getStore()?.dispatch({
-      type: 'PlaybackInterface.v1_0.ResumeMediaMethod',
-      payload: {}
-    });
+    const playButtonContainer = document.querySelector(
+      'music-button[icon-name="play"]'
+    );
+    const playButton = playButtonContainer?.shadowRoot?.querySelector('button');
+
+    playButton?.click();
   }
 
   public playPause(): void {
@@ -67,23 +69,32 @@ export class AmazonMusicController implements MusicController {
   }
 
   public pause(): void {
-    this.getStore()?.dispatch({
-      type: 'PlaybackInterface.v1_0.PauseMediaMethod'
-    });
+    const pauseButtonContainer = document.querySelector(
+      'music-button[icon-name="pause"]'
+    );
+    const pauseButton =
+      pauseButtonContainer?.shadowRoot?.querySelector('button');
+
+    pauseButton?.click();
   }
 
   public next(): void {
-    this.getStore()?.dispatch({
-      type: 'PlaybackInterface.v1_0.PlayNextMediaMethod',
-      payload: {}
-    });
+    const nextButtonContainer = document.querySelector(
+      'music-button[icon-name="next"]'
+    );
+    const nextButton = nextButtonContainer?.shadowRoot?.querySelector('button');
+
+    nextButton?.click();
   }
 
   public previous(): void {
-    this.getStore()?.dispatch({
-      type: 'PlaybackInterface.v1_0.PlayPreviousMediaMethod',
-      payload: {}
-    });
+    const previousButtonContainer = document.querySelector(
+      'music-button[icon-name="previous"]'
+    );
+    const previousButton =
+      previousButtonContainer?.shadowRoot?.querySelector('button');
+
+    previousButton?.click();
   }
 
   public toggleRepeatMode(): void {
@@ -311,6 +322,11 @@ export class AmazonMusicController implements MusicController {
 
   private async _fetchQueue(): Promise<NativeAmazonMusicQueueItem[]> {
     const appState = this.getStore()?.getState();
+
+    // If no active queue (especially for podcasts), return empty array
+    if (!appState?.Media?.onActiveQueuesDataRequired?.length) {
+      return [];
+    }
 
     this.getStore()?.dispatch(
       this._createLoadQueueAction(appState.Media?.mediaId)
