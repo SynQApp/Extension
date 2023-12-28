@@ -5,7 +5,7 @@ import SynQLogo from 'data-base64:~assets/images/icon-filled.svg';
 import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createGlobalStyle, styled, useTheme } from 'styled-components';
+import { styled } from 'styled-components';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
@@ -26,7 +26,6 @@ declare let window: {
 };
 
 export const SpotifyConnector = () => {
-  const theme = useTheme();
   const [enabled, setEnabled] = useState(false);
   const { player, error } = useSpotifyPlayer();
   const [showPipButton, setShowPipButton] = useState(true);
@@ -49,7 +48,11 @@ export const SpotifyConnector = () => {
     pipWindow.document.body.append(container);
 
     const pipRoot = createRoot(container);
-    pipRoot.render(<PipUi pipDocument={pipWindow.document} />);
+    pipRoot.render(
+      <UiProvider>
+        <PipUi pipDocument={pipWindow.document} />
+      </UiProvider>
+    );
 
     sendMessage({
       name: UiStateMessage.PIP_OPENED

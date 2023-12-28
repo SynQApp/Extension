@@ -1,7 +1,6 @@
 import type { Track as NativeTrack, SpotifyApi } from '@spotify/web-api-ts-sdk';
 
 import type { MusicController } from '~contents/lib/MusicController';
-import { SpotifyController } from '~contents/spotify/SpotifyController';
 import {
   type NotReadyReason,
   type PlayerState,
