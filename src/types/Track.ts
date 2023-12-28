@@ -7,4 +7,5 @@ export interface Track {
   isLiked?: boolean;
   isDisliked?: boolean;
   duration: number;
+  type?: 'song' | 'podcast';
 }

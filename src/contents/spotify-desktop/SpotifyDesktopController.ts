@@ -274,7 +274,7 @@ export class SpotifyDesktopController implements MusicController {
     return {
       id: item.id!,
       name: item.name,
-      albumName: item.album.name,
+      albumName: item.album?.name,
       artistName: item.artists.map((artist) => artist.name).join(' & '),
       albumCoverUrl: item.album.images[0].url,
       duration: Math.round(item.duration_ms / 1000)

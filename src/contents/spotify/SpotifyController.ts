@@ -5,7 +5,6 @@ import type { NativeSpotifyTrack } from '~types/Spotify';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
-import { waitForElement } from '~util/waitForElement';
 
 import type { MusicController } from '../lib/MusicController';
 
@@ -20,8 +19,6 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
   'Enable repeat one': RepeatMode.REPEAT_ALL,
   'Disable repeat': RepeatMode.REPEAT_ONE
 };
-
-const QUEUE_PATH = '/queue';
 
 const QUEUE_CACHE_TIME = 30000;
 
@@ -260,9 +257,15 @@ export class SpotifyController implements MusicController {
       ) as HTMLElement
     )?.innerText;
 
-    const artistNameElements = Array.from(
+    let artistNameElements = Array.from(
       document.querySelectorAll('a[data-testid="context-item-info-artist"]')
     ) as HTMLElement[];
+
+    if (!artistNameElements.length) {
+      artistNameElements = Array.from(
+        document.querySelectorAll('a[data-testid="context-item-info-show"]')
+      ) as HTMLElement[];
+    }
 
     const artistName = artistNameElements
       ?.map((element: HTMLElement) => element.innerText)
@@ -301,14 +304,24 @@ export class SpotifyController implements MusicController {
     ) {
       this._currentTrackLoading = true;
 
+      const query = new URLSearchParams({
+        additional_types: 'track,episode'
+      });
+
       const trackResponse = await this._fetchSpotify<{
         item: NativeSpotifyTrack;
-      }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
+      }>(`${SpotifyEndpoints.CURRENTLY_PLAYING}?${query.toString()}`, 'GET');
 
       this._currentTrackLoading = false;
 
       if (!trackResponse?.item) {
         return null;
+      }
+
+      if (trackResponse.item.type === 'episode') {
+        currentTrack.type = 'podcast';
+      } else {
+        currentTrack.type = 'song';
       }
 
       currentTrack.id = trackResponse.item.id;
@@ -397,7 +410,12 @@ export class SpotifyController implements MusicController {
     const trackIndex = trackIndexes[duplicateIndex];
 
     await this._fetchSpotify(SpotifyEndpoints.PLAY, 'PUT', {
-      uris: queue.map((item) => `spotify:track:${item.track?.id}`),
+      uris: queue.map(
+        (item) =>
+          `spotify:${item.track?.type === 'podcast' ? 'episode' : 'track'}:${
+            item.track?.id
+          }`
+      ),
       offset: {
         position: trackIndex
       }
@@ -428,13 +446,26 @@ export class SpotifyController implements MusicController {
   }
 
   private _itemToSongInfo(item: NativeSpotifyTrack): Track {
+    if (item.type === 'episode') {
+      return {
+        id: item.id,
+        name: item.name,
+        albumName: item.show.name,
+        artistName: item.show.publisher,
+        albumCoverUrl: item.images[0].url,
+        duration: Math.round(item.duration_ms / 1000),
+        type: 'podcast'
+      };
+    }
+
     return {
       id: item.id,
       name: item.name,
-      albumName: item.album.name,
+      albumName: item.album?.name,
       artistName: item.artists.map((artist) => artist.name).join(' & '),
-      albumCoverUrl: item.album.images[0].url,
-      duration: Math.round(item.duration_ms / 1000)
+      albumCoverUrl: item.album?.images[0].url,
+      duration: Math.round(item.duration_ms / 1000),
+      type: 'song'
     };
   }
 
