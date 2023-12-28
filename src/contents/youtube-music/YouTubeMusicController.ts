@@ -4,7 +4,6 @@ import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type {
   NativeYouTubeMusicMoviePlayer,
-  NativeYouTubeMusicNavigationRequest,
   NativeYouTubeMusicQueueItem,
   NativeYouTubeMusicQueueItemRendererData,
   NativeYouTubeMusicThumbnail,

@@ -1,6 +1,5 @@
 import { getLink } from '@synq/music-service-clients';
 
-import { SEARCH_LIMIT } from '~constants/search';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';

@@ -11,11 +11,16 @@ export const EnableAutoplayScreen = () => {
 
   const handleEnableClick = () => {
     // Switch to selected tab
+    if (!musicServiceTab?.tabId) {
+      return;
+    }
+
     chrome.tabs.update(musicServiceTab?.tabId, { active: true });
   };
 
   const musicServiceName = useMemo(
-    () => getMusicServiceName(musicServiceTab.musicService),
+    () =>
+      musicServiceTab ? getMusicServiceName(musicServiceTab.musicService) : '',
     [musicServiceTab]
   );
 

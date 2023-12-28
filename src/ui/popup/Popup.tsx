@@ -41,7 +41,11 @@ const Popup = () => {
 
   useEffect(() => {
     if (selectedTab) {
-      navigate('/');
+      if (!selectedTab.autoPlayReady) {
+        navigate('/enable-autoplay');
+      } else {
+        navigate('/');
+      }
     } else if (!tabs || tabs.length === 0) {
       navigate('/select-platform');
     } else if (tabs.length > 1) {

@@ -1,7 +1,7 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 import { updateMusicServiceTab } from '~store/slices/musicServiceTabs';
-import type { MusicServiceTab } from '~types';
+import { type MusicServiceTab, NotReadyReason } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { getMusicServiceFromUrl } from '~util/musicService';
@@ -47,11 +47,15 @@ const handleUpdateTab = async (
     return;
   }
 
+  const controllerReady = await controller.isReady();
+  const autoPlayReady = controllerReady !== NotReadyReason.AUTOPLAY_NOT_READY;
+
   const musicServiceTab: MusicServiceTab = {
     tabId: tab.id!,
     musicService,
     currentTrack,
-    playerState
+    playerState,
+    autoPlayReady
   };
 
   hub.dispatch(updateMusicServiceTab(musicServiceTab));

@@ -1,7 +1,8 @@
-import type { MusicController } from '~lib/music-controllers/MusicController';
-import { setAutoplayReady } from '~store/slices/autoplayReady';
+import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTabs';
 import { AutoplayMessage, NotReadyReason } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
+
+import type { MusicController } from '../MusicController';
 
 export const createAutoplayReadyHandler = (
   controller: MusicController,
@@ -10,11 +11,20 @@ export const createAutoplayReadyHandler = (
   hub.addListener(async (message) => {
     switch (message?.name) {
       case AutoplayMessage.CHECK_AUTOPLAY_READY: {
+        const tab = await hub.asyncPostMessage<chrome.tabs.Tab>({
+          name: 'GET_SELF_TAB'
+        });
+
         const controllerReady = await controller.isReady();
         const autoPlayReady =
           controllerReady !== NotReadyReason.AUTOPLAY_NOT_READY;
 
-        hub.dispatch(setAutoplayReady(autoPlayReady));
+        hub.dispatch(
+          updateMusicServiceTabAutoPlayReady({
+            tabId: tab.id!,
+            autoPlayReady
+          })
+        );
 
         break;
       }

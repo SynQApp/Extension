@@ -2,8 +2,8 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
-import { useAppDispatch, useAppSelector } from '~store';
-import { setAutoplayReady } from '~store/slices/autoplayReady';
+import { useAppDispatch } from '~store';
+import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTabs';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
@@ -12,23 +12,42 @@ import { sendMessage } from '~util/sendMessage';
 let firstRender = true;
 
 const AutoplayPopup = () => {
-  const autoplayReady = useAppSelector((state) => state.autoplayReady);
   const [showPopup, setShowPopup] = useState(false);
   const dispatch = useAppDispatch();
   const { musicServiceTab } = useMusicServiceTab();
 
+  console.log({ musicServiceTab, showPopup });
+
   useEffect(() => {
     if (firstRender) {
-      dispatch(setAutoplayReady(true));
+      if (!musicServiceTab?.tabId) {
+        return;
+      }
+
+      dispatch(
+        updateMusicServiceTabAutoPlayReady({
+          tabId: musicServiceTab.tabId,
+          autoPlayReady: true
+        })
+      );
       firstRender = false;
       return;
     }
 
-    setShowPopup(!autoplayReady);
-  }, [autoplayReady]);
+    setShowPopup(!musicServiceTab?.autoPlayReady);
+  }, [musicServiceTab]);
 
   const handleEnableClick = () => {
-    dispatch(setAutoplayReady(true));
+    if (!musicServiceTab?.tabId) {
+      return;
+    }
+
+    dispatch(
+      updateMusicServiceTabAutoPlayReady({
+        tabId: musicServiceTab?.tabId,
+        autoPlayReady: true
+      })
+    );
 
     sendMessage(
       {
@@ -48,7 +67,7 @@ const AutoplayPopup = () => {
     <>
       <PopupOverlay onClick={handleOverlayClick} />
       <Modal align="center" direction="column" justify="center">
-        <DescriptionText type="subtitle" size="lg" weight="semibold">
+        <DescriptionText type="subtitle" size="md" weight="semibold">
           Click the button below to enable SynQ to control{' '}
           {getMusicServiceNameFromUrl(window.location.href)}.
         </DescriptionText>
@@ -72,10 +91,10 @@ const Modal = styled(Flex)`
   border-radius: ${token('radii.lg')};
   height: 150px;
   left: calc(50% - 200px);
-  padding: ${token('spacing.sm')};
+  padding: ${token('spacing.sm')} ${token('spacing.md')};
   position: fixed;
   top: calc(50% - 75px);
-  width: 400px;
+  width: 325px;
   z-index: 101;
 `;
 
