@@ -16,8 +16,6 @@ const AutoplayPopup = () => {
   const dispatch = useAppDispatch();
   const { musicServiceTab } = useMusicServiceTab();
 
-  console.log({ musicServiceTab, showPopup });
-
   useEffect(() => {
     if (firstRender) {
       if (!musicServiceTab?.tabId) {

@@ -1,7 +1,7 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 const handler: PlasmoMessaging.MessageHandler<undefined> = async (req, res) => {
-  const tab = req.sender.tab;
+  const tab = req.sender?.tab;
   res.send(tab);
 };
 

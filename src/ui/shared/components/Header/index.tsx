@@ -1,6 +1,6 @@
 import { Button, Flex, token } from '@synq/ui';
 import { Icon } from '@synq/ui';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
