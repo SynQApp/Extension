@@ -47,15 +47,12 @@ const handleUpdateTab = async (
     return;
   }
 
-  const controllerReady = await controller.isReady();
-  const autoPlayReady = controllerReady !== NotReadyReason.AUTOPLAY_NOT_READY;
-
   const musicServiceTab: MusicServiceTab = {
     tabId: tab.id!,
     musicService,
     currentTrack,
     playerState,
-    autoPlayReady
+    autoPlayReady: true
   };
 
   hub.dispatch(updateMusicServiceTab(musicServiceTab));
