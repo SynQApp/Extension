@@ -2,7 +2,7 @@
   "name": "synq-extension",
   "displayName": "SynQ",
   "version": "4.0.0",
-  "description": "The browser extension for the SynQ app.",
+  "description": "Mini player and music link converter for Spotify, Apple Music, YouTube Music, and Amazon Music.",
   "author": "SynQ, LLC",
   "scripts": {
     "dev": "plasmo dev",

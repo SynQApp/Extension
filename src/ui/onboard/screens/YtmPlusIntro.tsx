@@ -26,7 +26,7 @@ export const YtmPlusIntro = ({ goToNextSlide }: YtmPlusIntroProps) => {
             </TitleText>
             <DescriptionText type="subtitle" size="lg" weight="regular">
               From the developers of YTM+, SynQ upgrades your YTM+ experience
-              with all new features and a fresh look.
+              with all-new features and a fresh look.
             </DescriptionText>
           </Stack>
           <ContinueButton size="large" rounded onClick={goToNextSlide}>
