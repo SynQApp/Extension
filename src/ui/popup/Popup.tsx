@@ -55,7 +55,7 @@ const Popup = () => {
     } else if (tabs.length > 1) {
       navigate('/select-tab');
     }
-  }, [tabs.length, selectedTab]);
+  }, [tabs.length, selectedTab, permissionsAccepted]);
 
   return <AppRoutes />;
 };
