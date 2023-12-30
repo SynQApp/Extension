@@ -7,7 +7,7 @@ import { OptionsSection } from './OptionsSection';
 
 export const PreferredServiceLinksSection = () => {
   const synqLinkPopupsEnabled = useAppSelector(
-    (state) => state.settings.synqLinkPopupsEnabled
+    (state) => state.settings.redirectsEnabled
   );
   const dispatch = useAppDispatch();
 

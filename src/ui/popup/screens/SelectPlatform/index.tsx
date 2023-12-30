@@ -44,30 +44,30 @@ const SelectPlatformScreen = () => {
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
             <MusicServiceButton
-              name="Spotify"
+              name="Continue with Spotify"
               onClick={handleSpotifyDesktopClick}
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
-              name="Spotify (Web)"
+              name="Continue with Spotify (Web)"
               urlMatch={SPOTIFY_URL_MATCH}
               url={SPOTIFY_URL}
               logoSrc={SpotifyLogo}
             />
             <MusicServiceButton
-              name="Apple Music"
+              name="Continue with Apple Music"
               urlMatch={APPLE_MUSIC_URL_MATCH}
               url={APPLE_MUSIC_URL}
               logoSrc={AppleLogo}
             />
             <MusicServiceButton
-              name="Amazon Music"
+              name="Continue with Amazon Music"
               urlMatch={AMAZON_MUSIC_URL_MATCH}
               url={AMAZON_MUSIC_URL}
               logoSrc={AmazonLogo}
             />
             <MusicServiceButton
-              name="YouTube Music"
+              name="Continue with YouTube Music"
               urlMatch={YOUTUBE_MUSIC_URL_MATCH}
               url={YOUTUBE_MUSIC_URL}
               logoSrc={YoutubeLogo}

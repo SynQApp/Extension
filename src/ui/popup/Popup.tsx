@@ -7,6 +7,7 @@ import {
 } from '~shared/keyControlsListener';
 import { useAppSelector } from '~store';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { usePermissionsCheck } from '~ui/shared/hooks/usePermissionsCheck';
 
 import AppRoutes from './PopupRoutes';
 import { usePopupSettings } from './contexts/PopupSettingsContext';
@@ -17,6 +18,7 @@ const Popup = () => {
   const settings = useAppSelector((state) => state.settings);
   const popupSettings = usePopupSettings();
   const { musicServiceTab: selectedTab } = useMusicServiceTab();
+  const permissionsAccepted = usePermissionsCheck();
 
   useEffect(() => {
     if (
@@ -40,7 +42,9 @@ const Popup = () => {
   }, [settings]);
 
   useEffect(() => {
-    if (selectedTab) {
+    if (permissionsAccepted === false) {
+      navigate('/accept-permissions');
+    } else if (selectedTab) {
       if (!selectedTab.autoPlayReady) {
         navigate('/enable-autoplay');
       } else {

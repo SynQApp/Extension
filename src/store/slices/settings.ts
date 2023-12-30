@@ -9,7 +9,7 @@ const initialState: Settings = {
   notificationsEnabled: true,
   popOutButtonEnabled: true,
   preferredMusicService: 'SPOTIFY',
-  synqLinkPopupsEnabled: true
+  redirectsEnabled: true
 };
 
 const sessionSlice = createSlice({
@@ -38,10 +38,10 @@ const sessionSlice = createSlice({
       state.popOutButtonEnabled = action.payload;
     },
     setSynqLinkPopupsEnabled: (state, action: PayloadAction<boolean>) => {
-      state.synqLinkPopupsEnabled = action.payload;
+      state.redirectsEnabled = action.payload;
     },
     setSettings: (state, action: PayloadAction<Settings>) => {
-      return action.payload;
+      Object.assign(state, action.payload);
     }
   }
 });

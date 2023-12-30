@@ -1,5 +1,4 @@
-import { Image, Text, token } from '@synq/ui';
-import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
+import { token } from '@synq/ui';
 import styled from 'styled-components';
 
 import Logo from '~ui/shared/components/Logo';

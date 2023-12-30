@@ -1,5 +1,5 @@
 import { Button, Image, Text, token } from '@synq/ui';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface MusicServiceButtonProps {
   name: string;
@@ -7,6 +7,7 @@ interface MusicServiceButtonProps {
   url?: string;
   onClick?: () => void;
   logoSrc: string;
+  selected?: boolean;
 }
 
 const MusicServiceButton = ({
@@ -14,7 +15,8 @@ const MusicServiceButton = ({
   url,
   onClick,
   urlMatch,
-  logoSrc
+  logoSrc,
+  selected
 }: MusicServiceButtonProps) => {
   const handleClick = () => {
     if (onClick) {
@@ -35,7 +37,12 @@ const MusicServiceButton = ({
   };
 
   return (
-    <StyledButton onClick={handleClick} size="large" variant="secondary">
+    <StyledButton
+      onClick={handleClick}
+      size="large"
+      variant="secondary"
+      $selected={selected}
+    >
       <Image
         src={logoSrc}
         alt={`Logo for ${name}`}
@@ -44,13 +51,17 @@ const MusicServiceButton = ({
         radius="full"
       />{' '}
       <ButtonText type="subtitle" size="sm">
-        Continue with {name}
+        {name}
       </ButtonText>
     </StyledButton>
   );
 };
 
-const StyledButton = styled(Button)`
+interface StyledButtonProps {
+  $selected?: boolean;
+}
+
+const StyledButton = styled(Button)<StyledButtonProps>`
   border: 1px solid transparent;
   border-radius: ${token('radii.xl')};
   background: ${token('colors.surface01')};
@@ -66,6 +77,12 @@ const StyledButton = styled(Button)`
   &:hover {
     border: 1px solid ${token('colors.borderHigh')};
   }
+
+  ${({ $selected }) =>
+    $selected &&
+    css`
+      border: 1px solid ${token('colors.borderHigh')};
+    `}
 `;
 
 const ButtonText = styled(Text)`

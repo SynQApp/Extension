@@ -6,5 +6,5 @@ export interface Settings {
   notificationsEnabled: boolean;
   popOutButtonEnabled: boolean;
   preferredMusicService: MusicService;
-  synqLinkPopupsEnabled: boolean;
+  redirectsEnabled: boolean;
 }
