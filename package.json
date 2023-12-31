@@ -80,7 +80,6 @@
     ],
     "optional_permissions": [
       "tabs",
-      "activeTab",
       "notifications"
     ],
     "externally_connectable": {

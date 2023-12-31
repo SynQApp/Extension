@@ -126,7 +126,12 @@ export const Complete = () => {
                   problem! SynQ will offer to{' '}
                   <HighlightedText>
                     open it in {musicServiceName} for you.
-                  </HighlightedText>
+                  </HighlightedText>{' '}
+                  Currently supported on{' '}
+                  <HighlightedText>Spotify</HighlightedText>,{' '}
+                  <HighlightedText>Apple Music</HighlightedText>,{' '}
+                  <HighlightedText>Amazon Music</HighlightedText>, and{' '}
+                  <HighlightedText>YouTube Music</HighlightedText>.
                 </ExplainerDescriptionText>
                 <span>
                   <Button

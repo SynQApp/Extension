@@ -5,14 +5,21 @@ import type { Settings } from '~types';
 
 const MIN_SYNQ_VERSION = '4.0.0';
 const OPTIONS_KEY = 'options';
+const LAST_FM_SESSION_KEY = 'lastfm-info';
 
 const getPreviousOptions = async () => {
-  return (await chrome.storage.sync.get(OPTIONS_KEY)).options;
+  return (await chrome.storage.sync.get(OPTIONS_KEY))[OPTIONS_KEY];
+};
+
+const getPreviousLastFmSession = async () => {
+  return (await chrome.storage.sync.get(LAST_FM_SESSION_KEY))[
+    LAST_FM_SESSION_KEY
+  ];
 };
 
 const transferSettings = async () => {
-  const settings = store.getState().settings;
   const previousOptions = await getPreviousOptions();
+  const settings = store.getState().settings;
 
   const notificationsEnabled = previousOptions.notifications;
   const miniPlayerKeyControlsEnabled = previousOptions.miniKeyControl;
@@ -31,9 +38,22 @@ const transferSettings = async () => {
   store.dispatch(setSettings(newSettings));
 };
 
-const openOnboardingPage = (update: boolean) => {
-  const url =
-    chrome.runtime.getURL(`tabs/onboard.html`) + (update ? '?update=true' : '');
+const openOnboardingPage = async (update: boolean) => {
+  const queryParams = new URLSearchParams();
+
+  if (update) {
+    queryParams.set('update', 'true');
+
+    const lastFmSession = await getPreviousLastFmSession();
+
+    if (lastFmSession?.key) {
+      queryParams.set('lastfm', 'true');
+    }
+  }
+
+  const url = `${chrome.runtime.getURL(
+    `tabs/onboard.html`
+  )}?${queryParams.toString()}`;
   chrome.tabs.create({ url });
 };
 
@@ -49,7 +69,7 @@ export const createInstallHandler = () => {
         installDetails.previousVersion < MIN_SYNQ_VERSION
       ) {
         await transferSettings();
-        openOnboardingPage(true);
+        await openOnboardingPage(true);
       }
     }
   });

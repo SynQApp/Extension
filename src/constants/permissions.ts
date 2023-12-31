@@ -1,2 +1,2 @@
-export const PERMISSIONS = ['tabs', 'activeTab', 'notifications'];
+export const PERMISSIONS = ['tabs', 'notifications'];
 export const HOSTS = ['https://*/*', '*://*/*', '<all_urls>'];
