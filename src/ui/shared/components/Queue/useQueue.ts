@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
 import { sendMessage } from '~util/sendMessage';
@@ -60,6 +61,10 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
       },
       musicServiceTab?.tabId
     );
+
+    sendAnalytic({
+      name: 'play_queue_track'
+    });
   };
 
   const handleVisitTrackOnMusicService = (link?: string) => {
@@ -68,6 +73,10 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     }
 
     window.open(link, '_blank');
+
+    sendAnalytic({
+      name: 'visit_music_service_link'
+    });
   };
 
   return {

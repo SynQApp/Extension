@@ -1,5 +1,6 @@
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 export const useVolumeButton = () => {
@@ -13,6 +14,9 @@ export const useVolumeButton = () => {
       },
       musicServiceTab?.tabId
     );
+    sendAnalytic({
+      name: 'toggle_mute'
+    });
   };
 
   return {

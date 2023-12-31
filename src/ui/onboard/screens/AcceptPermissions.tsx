@@ -2,6 +2,7 @@ import { Button, Flex, Stack, Text, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
 import { HOSTS, PERMISSIONS } from '~constants/permissions';
+import { sendAnalytic } from '~util/analytics';
 
 import { Screen } from '../components/Screen';
 
@@ -29,6 +30,10 @@ export const AcceptPermissions = ({
         }
       }
     );
+
+    sendAnalytic({
+      name: 'accept_permissions'
+    });
   };
 
   return (

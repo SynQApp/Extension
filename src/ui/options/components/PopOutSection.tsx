@@ -2,6 +2,7 @@ import { Switch } from '@synq/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPopOutButtonEnabled } from '~store/slices/settings';
+import { sendAnalytic } from '~util/analytics';
 
 import { OptionsSection } from './OptionsSection';
 
@@ -13,6 +14,10 @@ export const PopOutSection = () => {
 
   const handleChange = (value: boolean) => {
     dispatch(setPopOutButtonEnabled(value));
+    sendAnalytic({
+      name: 'pop_out_button_enabled',
+      params: { value }
+    });
   };
 
   return (

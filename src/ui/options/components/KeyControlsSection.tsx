@@ -5,6 +5,7 @@ import {
   setMiniPlayerKeyControlsEnabled,
   setMusicServiceKeyControlsEnabled
 } from '~store/slices/settings';
+import { sendAnalytic } from '~util/analytics';
 
 import { OptionsSection } from './OptionsSection';
 
@@ -19,10 +20,18 @@ export const KeyControlsSection = () => {
 
   const handleMiniPlayerControlsChange = (value: boolean) => {
     dispatch(setMiniPlayerKeyControlsEnabled(value));
+    sendAnalytic({
+      name: 'mini_player_key_controls_enabled',
+      params: { value }
+    });
   };
 
   const handleMusicServiceControlsChange = (value: boolean) => {
     dispatch(setMusicServiceKeyControlsEnabled(value));
+    sendAnalytic({
+      name: 'music_service_key_controls_enabled',
+      params: { value }
+    });
   };
 
   return (

@@ -1,6 +1,7 @@
 import { store } from '~store';
 import type { Track } from '~types';
 import type { HubMessageHandler } from '~types/HubMessageHandler';
+import { sendAnalytic, sendEvent } from '~util/analytics';
 import { imageUrlToDataUrl } from '~util/imageUrlToDataUrl';
 
 const ICON_PATH = 'assets/icon.png';
@@ -15,7 +16,9 @@ const isCurrentTab = async (tabId: number) => {
 };
 
 const createMessage = (track: Track) => {
-  return `${track.artistName}${track.albumName && `\u2022 ${track.albumName}`}`;
+  return `${track.artistName}${
+    track.albumName && ` \u2022 ${track.albumName}`
+  }`;
 };
 
 export const handler: HubMessageHandler<Track> = async (
@@ -23,6 +26,10 @@ export const handler: HubMessageHandler<Track> = async (
   sender,
   sendResponse
 ) => {
+  await sendEvent({
+    name: 'track_played'
+  });
+
   const state = store.getState();
 
   if (!state.settings.notificationsEnabled) {

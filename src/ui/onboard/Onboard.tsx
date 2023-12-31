@@ -8,6 +8,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useRef } from 'react';
 
 import Logo from '~ui/shared/components/Logo';
+import { useAnalytic } from '~ui/shared/hooks/useAnalytic';
 
 import { NextArrow } from './components/NextArrow';
 import { PreviousArrow } from './components/PreviousArrow';
@@ -17,6 +18,9 @@ import { SelectPreferredService } from './screens/SelectPreferredService';
 import { YtmPlusIntro } from './screens/YtmPlusIntro';
 
 export const Onboard = () => {
+  useAnalytic({
+    name: 'onboarding_screen'
+  });
   const url = new URL(window.location.href);
   const isUpdate = url.searchParams.get('update') === 'true';
 

@@ -2,6 +2,7 @@ import { Switch } from '@synq/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import { setSynqLinkPopupsEnabled } from '~store/slices/settings';
+import { sendAnalytic } from '~util/analytics';
 
 import { OptionsSection } from './OptionsSection';
 
@@ -13,6 +14,10 @@ export const PreferredServiceLinksSection = () => {
 
   const handleChange = (value: boolean) => {
     dispatch(setSynqLinkPopupsEnabled(value));
+    sendAnalytic({
+      name: 'preferred_service_links_changed',
+      params: { value }
+    });
   };
 
   return (

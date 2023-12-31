@@ -6,6 +6,7 @@ import { useAppDispatch } from '~store';
 import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTabs';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
 import { sendMessage } from '~util/sendMessage';
 
@@ -53,6 +54,10 @@ const AutoplayPopup = () => {
       },
       musicServiceTab?.tabId
     );
+
+    sendAnalytic({
+      name: 'autoplay_enabled'
+    });
   };
 
   const handleOverlayClick = () => {

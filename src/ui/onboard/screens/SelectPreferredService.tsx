@@ -9,6 +9,7 @@ import { styled } from 'styled-components';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
+import { sendAnalytic } from '~util/analytics';
 
 import { Screen } from '../components/Screen';
 
@@ -30,6 +31,13 @@ export const SelectPreferredService = ({
     }
 
     dispatch(setPreferredMusicService(value as MusicService));
+
+    sendAnalytic({
+      name: 'onboarding_select_service',
+      params: {
+        service: value
+      }
+    });
   };
 
   return (

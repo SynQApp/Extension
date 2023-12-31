@@ -1,10 +1,12 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { parseLink } from '@synq/music-service-clients';
 import { Button, Flex, Icon, Image, Stack, Text, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
 import { useAppSelector } from '~store';
+import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceName } from '~util/musicService';
 
 interface RedirectPopupProps {
@@ -29,6 +31,21 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
     const synqUrl = `${
       process.env.PLASMO_PUBLIC_SYNQ_WEBSITE
     }/redirect?${params.toString()}`;
+
+    const parsedLink = parseLink(window.location.href);
+
+    if (parsedLink) {
+      const { musicService, trackId } = parsedLink;
+
+      sendAnalytic({
+        name: 'redirect_popup_clicked',
+        params: {
+          musicService,
+          preferredMusicService: settings.preferredMusicService,
+          type: `${musicService}_${settings.preferredMusicService}`
+        }
+      });
+    }
 
     window.location.href = synqUrl;
   };

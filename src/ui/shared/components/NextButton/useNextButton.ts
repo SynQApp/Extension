@@ -1,5 +1,6 @@
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 export const useNextButton = () => {
@@ -12,6 +13,9 @@ export const useNextButton = () => {
       },
       musicServiceTab?.tabId
     );
+    sendAnalytic({
+      name: 'next'
+    });
   };
 
   return {

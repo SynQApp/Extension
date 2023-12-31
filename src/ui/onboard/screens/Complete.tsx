@@ -10,6 +10,7 @@ import {
   YOUTUBE_MUSIC_URL
 } from '~constants/urls';
 import { useAppSelector } from '~store';
+import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceName } from '~util/musicService';
 
 import { Screen } from '../components/Screen';
@@ -40,6 +41,10 @@ export const Complete = () => {
         window.open(AMAZON_MUSIC_URL);
         break;
     }
+
+    sendAnalytic({
+      name: 'onboarding_popup_example'
+    });
   };
 
   const handleRedirectExampleClick = () => {
@@ -51,6 +56,10 @@ export const Complete = () => {
         window.open(EXAMPLE_SPOTIFY_LINK);
         break;
     }
+
+    sendAnalytic({
+      name: 'onboarding_redirect_example'
+    });
   };
 
   const handleGoToSettings = () => {

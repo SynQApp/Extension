@@ -12,6 +12,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import { UiStateMessage } from '~types';
 import { PipUi } from '~ui/pip/PipUi';
 import Logo from '~ui/shared/components/Logo';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 import { useSpotifyPlayer } from './SpotifyPlayerContext';
@@ -37,6 +38,10 @@ export const SpotifyConnector = () => {
   }, []);
 
   const handlePip = async () => {
+    sendAnalytic({
+      name: 'pip_opened'
+    });
+
     const pipWindow = await window.documentPictureInPicture?.requestWindow({
       width: 350,
       height: 350
@@ -70,6 +75,8 @@ export const SpotifyConnector = () => {
       });
 
       setShowPipButton(true);
+
+      sendAnalytic({ name: 'pip_closed' });
     });
   };
 

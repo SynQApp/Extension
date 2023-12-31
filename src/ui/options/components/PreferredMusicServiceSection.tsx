@@ -3,6 +3,7 @@ import { Radio, RadioGroup, Stack } from '@synq/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
+import { sendAnalytic } from '~util/analytics';
 
 import { OptionsSection } from './OptionsSection';
 
@@ -18,6 +19,11 @@ export const PreferredMusicServiceSection = () => {
     }
 
     dispatch(setPreferredMusicService(value as MusicService));
+
+    sendAnalytic({
+      name: 'preferred_music_service_changed',
+      params: { value }
+    });
   };
 
   return (

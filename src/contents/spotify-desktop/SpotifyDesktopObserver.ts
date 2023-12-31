@@ -39,7 +39,8 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
     const musicServiceTab: MusicServiceTab = {
       tabId: tab.id!,
       musicService: 'SPOTIFY',
-      currentTrack: null
+      currentTrack: null,
+      autoPlayReady: true
     };
 
     this._dispatch(updateMusicServiceTab(musicServiceTab));
@@ -59,6 +60,8 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
             currentTrack
           })
         );
+
+        super.handleTrackUpdated();
       }
 
       if (playerState) {
@@ -67,7 +70,8 @@ export class SpotifyDesktopObserver extends MusicServiceObserver {
             tabId: tab.id!,
             musicService: 'SPOTIFY',
             currentTrack,
-            playerState
+            playerState,
+            autoPlayReady: true
           })
         );
       }

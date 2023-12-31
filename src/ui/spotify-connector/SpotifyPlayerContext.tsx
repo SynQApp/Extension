@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
 import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
+import { createNotificationObserverHandler } from '~contents/lib/observer-handlers/notificationObserverHandler';
 import { SpotifyDesktopController } from '~contents/spotify-desktop/SpotifyDesktopController';
 import { SpotifyDesktopObserver } from '~contents/spotify-desktop/SpotifyDesktopObserver';
 import { getSpotifyApi } from '~services/spotify';
@@ -123,6 +124,7 @@ export const SpotifyPlayerProvider = ({
         createTabsHandler(controller, observer, hub);
 
         observer.observe();
+        observer.subscribe(createNotificationObserverHandler(hub));
 
         await newPlayer.connect();
 

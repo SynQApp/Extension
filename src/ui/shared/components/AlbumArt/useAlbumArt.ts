@@ -1,8 +1,8 @@
 import type { MusicService } from '@synq/music-service-clients';
 
-import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
@@ -17,7 +17,6 @@ const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
 ]);
 
 export const useAlbumArt = () => {
-  // const currentTrack = useAppSelector((state) => state.currentTrack);
   const { musicServiceTab } = useMusicServiceTab();
   const currentTrack = musicServiceTab?.currentTrack;
 
@@ -31,6 +30,9 @@ export const useAlbumArt = () => {
           },
           musicServiceTab?.tabId
         );
+        sendAnalytic({
+          name: 'toggle_like'
+        });
       }
     : undefined;
 
@@ -44,6 +46,9 @@ export const useAlbumArt = () => {
           },
           musicServiceTab?.tabId
         );
+        sendAnalytic({
+          name: 'toggle_dislike'
+        });
       }
     : undefined;
 

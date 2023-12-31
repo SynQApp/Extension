@@ -1,10 +1,10 @@
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 export const useVolumeSlider = () => {
-  // const playerState = useAppSelector((state) => state.playerState);
   const { musicServiceTab } = useMusicServiceTab();
   const playerState = musicServiceTab?.playerState;
 
@@ -19,6 +19,13 @@ export const useVolumeSlider = () => {
         }
       },
       musicServiceTab?.tabId
+    );
+
+    sendAnalytic(
+      {
+        name: 'set_volume'
+      },
+      1000
     );
   };
 

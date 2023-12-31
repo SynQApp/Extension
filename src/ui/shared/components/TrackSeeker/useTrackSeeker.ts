@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 export const useTrackSeeker = () => {
@@ -28,6 +29,13 @@ export const useTrackSeeker = () => {
         }
       },
       musicServiceTab?.tabId
+    );
+
+    sendAnalytic(
+      {
+        name: 'seek_to'
+      },
+      1000
     );
   };
 

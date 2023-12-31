@@ -8,6 +8,7 @@ import { store } from '~store';
 import { UiStateMessage } from '~types';
 import { PipToggleButton } from '~ui/pip/PipToggleButton';
 import { PipUi } from '~ui/pip/PipUi';
+import { sendAnalytic } from '~util/analytics';
 import { sendMessage } from '~util/sendMessage';
 
 declare let window: {
@@ -84,12 +85,16 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
 
     setShowButton(false);
 
+    sendAnalytic({ name: 'pip_opened' });
+
     pipWindow.addEventListener('pagehide', () => {
       sendMessage({
         name: UiStateMessage.PIP_CLOSED
       });
 
       setShowButton(true);
+
+      sendAnalytic({ name: 'pip_closed' });
     });
   };
 
