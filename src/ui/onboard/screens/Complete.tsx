@@ -103,7 +103,7 @@ export const Complete = () => {
                   size="md"
                   weight="regular"
                 >
-                  Open <HighlightedText>{musicServiceName}</HighlightedText> and
+                  <HighlightedText>Open {musicServiceName}</HighlightedText> and
                   play something. Then{' '}
                   <HighlightedText>click the SynQ logo</HighlightedText> in your
                   extensions toolbar (standard mode) or on the right hand side
@@ -123,16 +123,16 @@ export const Complete = () => {
             <Stack spacing="lg" justify="center">
               <Stack direction="column" spacing="lg">
                 <ExplainerText type="subtitle" size="2xl" weight="semibold">
-                  Music Service Redirects
+                  Cross-Service Redirects
                 </ExplainerText>
                 <ExplainerDescriptionText
                   type="body"
                   size="md"
                   weight="regular"
                 >
-                  Receive a link to a song not on{' '}
-                  <HighlightedText>{musicServiceName}</HighlightedText>? No
-                  problem! SynQ will offer to{' '}
+                  Receive a link to a song{' '}
+                  <HighlightedText>not on {musicServiceName}</HighlightedText>?
+                  No problem! SynQ will offer to{' '}
                   <HighlightedText>
                     open it in {musicServiceName} for you.
                   </HighlightedText>{' '}
@@ -207,7 +207,7 @@ const HighlightedText = styled.span`
 `;
 
 const DemoSection = styled(Stack)`
-  border-bottom: 1px solid ${token('colors.borderMedium')};
+  border-bottom: 1px solid rgb(255, 255, 255, 0.15);
   width: 830px;
   margin: 0 auto;
   padding-bottom: ${token('spacing.3xl')};
@@ -221,6 +221,8 @@ const MiniPlayerImage = styled(Image)`
 const OpenInMusicServiceImage = styled(Image)`
   transform: rotate(1deg);
   box-shadow: 0 0 15px 1px #81818121;
+  object-fit: cover;
+  height: 100%;
 `;
 
 const ExplainerText = styled(Text)`
