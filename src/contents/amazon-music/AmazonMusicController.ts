@@ -50,6 +50,7 @@ interface AmazonQueueItem extends QueueItem {
  */
 export class AmazonMusicController implements MusicController {
   private _unmuteVolume = 50;
+  private _queueFetching = false;
 
   public play(): void {
     const playButtonContainer = document.querySelector(
@@ -253,8 +254,10 @@ export class AmazonMusicController implements MusicController {
 
     // Amazon Music loads the queue only after a user tries to access it. If the
     // queue is not loaded yet, we'll try to load it.
-    if (!queue || !queue.length) {
+    if (!queue && !this._queueFetching) {
+      this._queueFetching = true;
       queue = await this._fetchQueue();
+      this._queueFetching = false;
     }
 
     const queueItems =
@@ -345,7 +348,7 @@ export class AmazonMusicController implements MusicController {
         const appState = this.getStore()?.getState();
         const curQueue = appState.Media?.playQueue?.widgets?.[0]?.items;
 
-        if (curQueue && curQueue.length) {
+        if (curQueue) {
           clearInterval(interval);
           resolve(curQueue);
         }
