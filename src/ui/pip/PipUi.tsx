@@ -63,6 +63,7 @@ const Container = styled(Stack)`
   align-items: flex-start;
   justify-content: flex-start;
   height: 100vh;
+  overflow: hidden;
 
   & > * {
     flex: 0 0 auto;

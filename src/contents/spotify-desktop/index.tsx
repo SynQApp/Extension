@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
+import { SPOTIFY_ENABLED } from '~constants/features';
 import { store } from '~store';
 import { SpotifyConnector } from '~ui/spotify-connector/SpotifyConnector';
 import { SpotifyPlayerProvider } from '~ui/spotify-connector/SpotifyPlayerContext';
@@ -29,6 +30,10 @@ const SpotifyConnectorEntry = ({ anchor }: PlasmoCSUIProps) => {
   const [extensionId, setExtensionId] = useState<string | undefined>();
 
   useEffect(() => {
+    if (!SPOTIFY_ENABLED) {
+      return;
+    }
+
     window.addEventListener('SynQ:ExtensionId', (e) => {
       const extensionId = (e as CustomEvent).detail;
       setExtensionId(extensionId);

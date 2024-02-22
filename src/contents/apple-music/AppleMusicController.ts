@@ -139,6 +139,10 @@ export class AppleMusicController implements MusicController {
   }
 
   public getCurrentTrack(): Track | null {
+    if (!this.getPlayer()) {
+      return null;
+    }
+
     const nowPlayingItem = this.getPlayer().nowPlayingItem;
 
     if (!nowPlayingItem) {
@@ -149,6 +153,10 @@ export class AppleMusicController implements MusicController {
   }
 
   public getQueue(): QueueItem[] {
+    if (!this.getPlayer()) {
+      return [];
+    }
+
     const appleMusicQueueItems = this.getPlayer().queue._queueItems;
     const nowPlayingIndex = this.getPlayer().nowPlayingItemIndex;
 

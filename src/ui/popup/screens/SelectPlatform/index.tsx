@@ -7,6 +7,7 @@ import WaveGraphicLight from 'data-base64:~assets/images/wave-graphic-light.svg'
 import YoutubeLogo from 'data-base64:~assets/images/youtube-logo.svg';
 import styled, { useTheme } from 'styled-components';
 
+import { SPOTIFY_ENABLED } from '~constants/features';
 import {
   AMAZON_MUSIC_URL,
   AMAZON_MUSIC_URL_MATCH,
@@ -43,17 +44,21 @@ const SelectPlatformScreen = () => {
             Select your platform to start listening
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
-            <MusicServiceButton
-              name="Continue with Spotify"
-              onClick={handleSpotifyDesktopClick}
-              logoSrc={SpotifyLogo}
-            />
-            <MusicServiceButton
-              name="Continue with Spotify (Web)"
-              urlMatch={SPOTIFY_URL_MATCH}
-              url={SPOTIFY_URL}
-              logoSrc={SpotifyLogo}
-            />
+            {SPOTIFY_ENABLED && (
+              <>
+                <MusicServiceButton
+                  name="Continue with Spotify"
+                  onClick={handleSpotifyDesktopClick}
+                  logoSrc={SpotifyLogo}
+                />
+                <MusicServiceButton
+                  name="Continue with Spotify (Web)"
+                  urlMatch={SPOTIFY_URL_MATCH}
+                  url={SPOTIFY_URL}
+                  logoSrc={SpotifyLogo}
+                />
+              </>
+            )}
             <MusicServiceButton
               name="Continue with Apple Music"
               urlMatch={APPLE_MUSIC_URL_MATCH}

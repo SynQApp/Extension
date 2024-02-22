@@ -1,5 +1,6 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
+import { SPOTIFY_ENABLED } from '~constants/features';
 import { createAutoplayReadyHandler } from '~contents/lib/message-handlers/createAutoplayReadyHandler';
 import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
 import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
@@ -12,7 +13,8 @@ import { SpotifyController } from './SpotifyController';
 import { SpotifyObserver } from './SpotifyObserver';
 
 export const config: PlasmoCSConfig = {
-  matches: ['*://open.spotify.com/*'],
+  // Placeholder while Spotify is disabled
+  matches: ['*://*.synqapp.io/*'],
   all_frames: true,
   world: 'MAIN'
 };
@@ -35,6 +37,10 @@ const initialize = (extensionId: string) => {
 };
 
 onDocumentReady(() => {
+  if (!SPOTIFY_ENABLED) {
+    return;
+  }
+
   window.addEventListener('SynQ:ExtensionId', (e) => {
     const extensionId = (e as CustomEvent).detail;
     initialize(extensionId);

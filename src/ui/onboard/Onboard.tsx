@@ -51,8 +51,8 @@ export const Onboard = () => {
         </LogoContainer>
         <Slider {...settings} ref={sliderRef}>
           {isUpdate && <YtmPlusIntro goToNextSlide={goToNextSlide} />}
-          <SelectPreferredService goToNextSlide={goToNextSlide} />
           <AcceptPermissions goToNextSlide={goToNextSlide} />
+          <SelectPreferredService goToNextSlide={goToNextSlide} />
           <Complete />
         </Slider>
         <BackgroundGlow />

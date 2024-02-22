@@ -6,6 +6,7 @@ import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
 import YoutubeLogo from 'data-base64:~assets/images/youtube-logo.svg';
 import { styled } from 'styled-components';
 
+import { SPOTIFY_ENABLED } from '~constants/features';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
@@ -52,15 +53,17 @@ export const SelectPreferredService = ({
             service to get started.
           </DescriptionText>
           <MusicServiceButtons justify="center" direction="column">
-            <MusicServiceButton
-              name="Spotify"
-              logoSrc={SpotifyLogo}
-              onClick={() => {
-                handleChange(MUSIC_SERVICE.SPOTIFY);
-                goToNextSlide();
-              }}
-              selected={preferredMusicService === MUSIC_SERVICE.SPOTIFY}
-            />
+            {SPOTIFY_ENABLED && (
+              <MusicServiceButton
+                name="Spotify"
+                logoSrc={SpotifyLogo}
+                onClick={() => {
+                  handleChange(MUSIC_SERVICE.SPOTIFY);
+                  goToNextSlide();
+                }}
+                selected={preferredMusicService === MUSIC_SERVICE.SPOTIFY}
+              />
+            )}
             <MusicServiceButton
               name="Apple Music"
               logoSrc={AppleLogo}
