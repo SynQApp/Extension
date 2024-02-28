@@ -1,8 +1,8 @@
 {
   "name": "synq-extension",
-  "displayName": "SynQ: Mini Player and Cross-Service Music Sharing",
+  "displayName": "SynQ: Music Mini Player and Cross-Service Sharing",
   "version": "4.0.0",
-  "description": "Mini player with cross-service music sharing for Spotify, Apple Music, YouTube Music, and Amazon Music",
+  "description": "Mini player with cross-service music sharing for Apple Music, YouTube Music, and Amazon Music.",
   "author": "SynQ, LLC",
   "scripts": {
     "dev": "plasmo dev",
