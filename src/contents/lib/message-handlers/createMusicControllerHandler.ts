@@ -2,7 +2,7 @@ import { setSearchLoading, setSearchResults } from '~store/slices/search';
 import { MusicControllerMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicController } from '../MusicController';
+import type { MusicController } from '../../../services/MusicController';
 
 /**
  * Register a controller handler that handles events from other components

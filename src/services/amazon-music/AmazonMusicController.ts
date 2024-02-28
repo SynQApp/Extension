@@ -12,7 +12,7 @@ import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
 
-import type { MusicController } from '../lib/MusicController';
+import type { MusicController } from '../MusicController';
 
 declare let window: Window & {
   __REDUX_STORES__: (Store & { name: string })[];

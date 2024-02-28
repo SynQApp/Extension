@@ -6,9 +6,9 @@ import { createMusicControllerHandler } from '~contents/lib/message-handlers/cre
 import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
 import { createNotificationObserverHandler } from '~contents/lib/observer-handlers/notificationObserverHandler';
-import { SpotifyDesktopController } from '~contents/spotify-desktop/SpotifyDesktopController';
-import { SpotifyDesktopObserver } from '~contents/spotify-desktop/SpotifyDesktopObserver';
-import { getSpotifyApi } from '~services/spotify';
+import { SpotifyDesktopController } from '~services/spotify-desktop/SpotifyDesktopController';
+import { SpotifyDesktopObserver } from '~services/spotify-desktop/SpotifyDesktopObserver';
+import { getSpotifyApi } from '~services/spotify/spotify';
 import { useAppDispatch } from '~store';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 

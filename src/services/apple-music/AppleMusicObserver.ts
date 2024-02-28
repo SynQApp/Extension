@@ -7,7 +7,7 @@ import type { ReduxHub } from '~util/connectToReduxHub';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from '../lib/MusicServiceObserver';
+} from '../MusicServiceObserver';
 import type { AppleMusicController } from './AppleMusicController';
 
 const playbackStateChangedEvents = [

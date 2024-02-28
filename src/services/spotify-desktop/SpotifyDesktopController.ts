@@ -1,7 +1,7 @@
 import type { Track as NativeTrack, SpotifyApi } from '@spotify/web-api-ts-sdk';
 import { getLink } from '@synq/music-service-clients';
 
-import type { MusicController } from '~contents/lib/MusicController';
+import type { MusicController } from '~services/MusicController';
 import {
   type NotReadyReason,
   type PlayerState,

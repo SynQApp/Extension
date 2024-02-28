@@ -10,7 +10,7 @@ import { waitForElement } from '~util/waitForElement';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from '../lib/MusicServiceObserver';
+} from '../MusicServiceObserver';
 import type { SpotifyController } from './SpotifyController';
 
 export class SpotifyObserver extends MusicServiceObserver {

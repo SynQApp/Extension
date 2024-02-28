@@ -6,23 +6,23 @@ import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHand
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
-import { createNotificationObserverHandler } from '../lib/observer-handlers/notificationObserverHandler';
-import { YouTubeMusicController } from './YouTubeMusicController';
-import { YouTubeMusicObserver } from './YouTubeMusicObserver';
+import { AppleMusicController } from '../services/apple-music/AppleMusicController';
+import { AppleMusicObserver } from '../services/apple-music/AppleMusicObserver';
+import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
 
 export const config: PlasmoCSConfig = {
-  matches: ['*://music.youtube.com/*'],
+  matches: ['*://music.apple.com/*'],
   all_frames: true,
   world: 'MAIN'
 };
 
 const initialize = (extensionId: string) => {
-  console.info('SynQ: Initializing YouTube Music');
+  console.info('SynQ: Initializing Apple Music');
 
   const hub = connectToReduxHub(extensionId);
 
-  const controller = new YouTubeMusicController();
-  const observer = new YouTubeMusicObserver(controller, hub);
+  const controller = new AppleMusicController();
+  const observer = new AppleMusicObserver(controller, hub);
 
   createMusicControllerHandler(controller, hub);
   createObserverEmitterHandler(observer, hub);

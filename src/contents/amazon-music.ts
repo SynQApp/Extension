@@ -7,9 +7,9 @@ import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHand
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
-import { createNotificationObserverHandler } from '../lib/observer-handlers/notificationObserverHandler';
-import { AmazonMusicController } from './AmazonMusicController';
-import { AmazonMusicObserver } from './AmazonMusicObserver';
+import { AmazonMusicController } from '../services/amazon-music/AmazonMusicController';
+import { AmazonMusicObserver } from '../services/amazon-music/AmazonMusicObserver';
+import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
 
 export const config: PlasmoCSConfig = {
   matches: ['*://music.amazon.com/*'],

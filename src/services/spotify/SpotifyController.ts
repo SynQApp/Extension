@@ -8,7 +8,7 @@ import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from '../lib/MusicController';
+import type { MusicController } from '../MusicController';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,

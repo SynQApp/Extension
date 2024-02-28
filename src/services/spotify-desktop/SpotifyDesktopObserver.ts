@@ -1,6 +1,4 @@
-import type { MusicService } from '@synq/music-service-clients';
-
-import { MusicServiceObserver } from '~contents/lib/MusicServiceObserver';
+import { MusicServiceObserver } from '~services/MusicServiceObserver';
 import { store } from '~store';
 import {
   updateMusicServiceTab,

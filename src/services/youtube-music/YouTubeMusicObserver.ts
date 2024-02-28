@@ -7,7 +7,7 @@ import type { ReduxHub } from '~util/connectToReduxHub';
 import {
   MusicServiceObserver,
   type ObserverStateFilter
-} from '../lib/MusicServiceObserver';
+} from '../MusicServiceObserver';
 import type { YouTubeMusicController } from './YouTubeMusicController';
 
 export class YouTubeMusicObserver extends MusicServiceObserver {
