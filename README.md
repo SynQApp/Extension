@@ -34,9 +34,9 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 
 ## Remaining Work Before Open-Sourcing
 
-[ ] Implement each of the four starting services with browser-only logic.
-[ ] Centralize browser-based matching logic like it's done in TranslationService.
-[ ] Refactor into modular service classes. This includes merging Playback and Link controllers into one class or configuration, removing each of the content script entries - instead create on content script for all music services with \* matching and dynamically set each one up based on configurations.
-[ ] Clean up observer pattern as it's too coupled.
-[ ] Add SDK-like functions for controlling the mini player from observers and elsewhere.
-[ ] Create better separations in contexts.
+- [ ] Implement each of the four starting services with browser-only logic.
+- [ ] Centralize browser-based matching logic like it's done in TranslationService.
+- [ ] Refactor into modular service classes. This includes merging Playback and Link controllers into one class or configuration, removing each of the content script entries - instead create on content script for all music services with \* matching and dynamically set each one up based on configurations.
+- [ ] Clean up observer pattern as it's too coupled.
+- [ ] Add SDK-like functions for controlling the mini player from observers and elsewhere.
+- [ ] Create better separations in contexts.
