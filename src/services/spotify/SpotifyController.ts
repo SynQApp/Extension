@@ -8,7 +8,7 @@ import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from '../MusicController';
+import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,
@@ -24,7 +24,7 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
 
 const QUEUE_CACHE_TIME = 30000;
 
-export class SpotifyController implements MusicController {
+export class SpotifyController implements MusicServicePlaybackController {
   private _accessToken: string;
   private _cachedQueue:
     | {

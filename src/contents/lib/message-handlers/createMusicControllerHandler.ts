@@ -2,14 +2,14 @@ import { setSearchLoading, setSearchResults } from '~store/slices/search';
 import { MusicControllerMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicController } from '../../../services/MusicController';
+import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
 /**
  * Register a controller handler that handles events from other components
  * in the extension.
  */
 export const createMusicControllerHandler = (
-  controller: MusicController,
+  controller: MusicServicePlaybackController,
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {
@@ -64,18 +64,8 @@ export const createMusicControllerHandler = (
         break;
       }
 
-      case MusicControllerMessage.START_TRACK: {
-        await controller.startTrack(message.body.trackId, message.body.albumId);
-        break;
-      }
-
       case MusicControllerMessage.TOGGLE_REPEAT_MODE: {
         await controller.toggleRepeatMode();
-        break;
-      }
-
-      case MusicControllerMessage.PREPARE_FOR_SESSION: {
-        await controller.prepareForSession();
         break;
       }
 
@@ -89,15 +79,6 @@ export const createMusicControllerHandler = (
           message.body.trackId,
           message.body.duplicateIndex
         );
-        break;
-      }
-
-      case MusicControllerMessage.SEARCH_TRACKS: {
-        hub.dispatch(setSearchLoading(true));
-
-        const searchResults = await controller.searchTracks(message.body.query);
-
-        hub.dispatch(setSearchResults(searchResults));
         break;
       }
 

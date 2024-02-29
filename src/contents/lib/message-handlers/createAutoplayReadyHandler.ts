@@ -2,10 +2,10 @@ import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTa
 import { AutoplayMessage, NotReadyReason } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicController } from '../../../services/MusicController';
+import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
 export const createAutoplayReadyHandler = (
-  controller: MusicController,
+  controller: MusicServicePlaybackController,
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {

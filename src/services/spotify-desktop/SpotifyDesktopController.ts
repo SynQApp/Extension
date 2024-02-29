@@ -1,7 +1,7 @@
 import type { Track as NativeTrack, SpotifyApi } from '@spotify/web-api-ts-sdk';
 import { getLink } from '@synq/music-service-clients';
 
-import type { MusicController } from '~services/MusicController';
+import type { MusicServicePlaybackController } from '~services/MusicServicePlaybackController';
 import {
   type NotReadyReason,
   type PlayerState,
@@ -22,7 +22,9 @@ const REPEAT_MAP: Record<string, RepeatMode> = {
   2: RepeatMode.REPEAT_ONE
 };
 
-export class SpotifyDesktopController implements MusicController {
+export class SpotifyDesktopController
+  implements MusicServicePlaybackController
+{
   private _player: Spotify.Player;
   private _spotifyApi: SpotifyApi;
   private _muteVolume: number | null = null;

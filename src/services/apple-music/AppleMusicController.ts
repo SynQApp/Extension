@@ -6,7 +6,7 @@ import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from '../MusicController';
+import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
 
 declare let window: Window & {
   MusicKit: { getInstance: () => MusicKit };
@@ -23,7 +23,7 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  * already exposed on the window object. Then we can call methods on the instance to
  * control playback.
  */
-export class AppleMusicController implements MusicController {
+export class AppleMusicController implements MusicServicePlaybackController {
   private _unmuteVolume = 50;
 
   public play(): void {

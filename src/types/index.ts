@@ -1,6 +1,7 @@
 export * from './AutoplayMessage';
 export * from './ContentEvent';
 export * from './MusicControllerMessage';
+export * from './MusicLinkControllerMessage';
 export * from './MusicServiceTab';
 export * from './NotReadyReason';
 export * from './PlayerState';

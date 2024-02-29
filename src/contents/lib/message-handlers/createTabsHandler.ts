@@ -6,11 +6,11 @@ import { TabsMessage } from '~types/TabsMessage';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
-import type { MusicController } from '../../../services/MusicController';
 import type { MusicServiceObserver } from '../../../services/MusicServiceObserver';
+import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
 export const createTabsHandler = (
-  controller: MusicController,
+  controller: MusicServicePlaybackController,
   observer: MusicServiceObserver,
   hub: ReduxHub
 ) => {
@@ -28,7 +28,7 @@ export const createTabsHandler = (
 };
 
 const handleUpdateTab = async (
-  controller: MusicController,
+  controller: MusicServicePlaybackController,
   hub: ReduxHub
 ): Promise<void> => {
   const currentTrack = await controller.getCurrentTrack();

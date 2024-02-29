@@ -1,1 +1,1 @@
-export const SPOTIFY_ENABLED = false;
+export const SPOTIFY_ENABLED = true;

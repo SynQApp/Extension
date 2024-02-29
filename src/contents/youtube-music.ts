@@ -3,11 +3,13 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
 import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
+import { YouTubeMusicLinkController } from '~services/youtube-music/YouTubeMusicLinkController';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
-import { YouTubeMusicController } from '../services/youtube-music/YouTubeMusicController';
 import { YouTubeMusicObserver } from '../services/youtube-music/YouTubeMusicObserver';
+import { YouTubeMusicPlaybackController } from '../services/youtube-music/YouTubeMusicPlaybackController';
+import { createRedirectHandler } from './lib/message-handlers/createRedirectHandler';
 import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
 
 export const config: PlasmoCSConfig = {
@@ -21,12 +23,14 @@ const initialize = (extensionId: string) => {
 
   const hub = connectToReduxHub(extensionId);
 
-  const controller = new YouTubeMusicController();
-  const observer = new YouTubeMusicObserver(controller, hub);
+  const playbackController = new YouTubeMusicPlaybackController();
+  const linkController = new YouTubeMusicLinkController();
+  const observer = new YouTubeMusicObserver(playbackController, hub);
 
-  createMusicControllerHandler(controller, hub);
+  createMusicControllerHandler(playbackController, hub);
   createObserverEmitterHandler(observer, hub);
-  createTabsHandler(controller, observer, hub);
+  createTabsHandler(playbackController, observer, hub);
+  createRedirectHandler(linkController, hub);
 
   observer.observe();
   observer.subscribe(createNotificationObserverHandler(hub));

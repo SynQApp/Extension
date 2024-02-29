@@ -3,7 +3,7 @@ import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { Track, ValueOrPromise } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicController } from './MusicController';
+import type { MusicServicePlaybackController } from './MusicServicePlaybackController';
 
 export enum ObserverEvent {
   TRACK_UPDATED = 'TRACK_UPDATED',
@@ -21,7 +21,7 @@ export interface ObserverStateFilter {
 }
 
 export abstract class MusicServiceObserver {
-  protected _controller: MusicController;
+  protected _controller: MusicServicePlaybackController;
   protected _hub: ReduxHub;
 
   private _paused: boolean = true;
@@ -33,7 +33,7 @@ export abstract class MusicServiceObserver {
   private _currentTrack: Track | null = null;
   private _listeners: ObserverHandler[] = [];
 
-  constructor(controller: MusicController, hub: ReduxHub) {
+  constructor(controller: MusicServicePlaybackController, hub: ReduxHub) {
     this._controller = controller;
     this._hub = hub;
   }

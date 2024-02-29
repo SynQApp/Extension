@@ -27,6 +27,7 @@
     "@synq/prettier-config": "^1.0.6",
     "@synq/react-beautiful-dnd": "13.1.1",
     "@synq/ui": "0.0.6",
+    "fast-levenshtein": "^3.0.0",
     "i": "^0.3.7",
     "plasmo": "0.83.0",
     "pnpm": "^8.6.12",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@plasmohq/prettier-plugin-sort-imports": "3.6.4",
     "@types/chrome": "0.0.244",
+    "@types/fast-levenshtein": "^0.0.4",
     "@types/node": "18.15.12",
     "@types/react": "18.0.37",
     "@types/react-beautiful-dnd": "^13.1.4",

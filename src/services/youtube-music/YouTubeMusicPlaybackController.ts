@@ -14,7 +14,7 @@ import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicController } from '../MusicController';
+import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
 
 declare let window: Window & {
   yt: {
@@ -37,7 +37,9 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   'Repeat all': RepeatMode.REPEAT_ALL
 };
 
-export class YouTubeMusicController implements MusicController {
+export class YouTubeMusicPlaybackController
+  implements MusicServicePlaybackController
+{
   private _unmuteVolume: number = 50;
 
   constructor() {}

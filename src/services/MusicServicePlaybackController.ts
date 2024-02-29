@@ -6,7 +6,7 @@ import type {
   ValueOrPromise
 } from '~types';
 
-export interface MusicController {
+export interface MusicServicePlaybackController {
   /**
    * Play the current track.
    */

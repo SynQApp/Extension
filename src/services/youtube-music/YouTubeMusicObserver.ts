@@ -8,15 +8,15 @@ import {
   MusicServiceObserver,
   type ObserverStateFilter
 } from '../MusicServiceObserver';
-import type { YouTubeMusicController } from './YouTubeMusicController';
+import type { YouTubeMusicPlaybackController } from './YouTubeMusicPlaybackController';
 
 export class YouTubeMusicObserver extends MusicServiceObserver {
-  declare _controller: YouTubeMusicController;
+  declare _controller: YouTubeMusicPlaybackController;
   private _onStateChangeHandler!: () => void;
   private _onVideoDataChangeHandler!: () => void;
   private _mutationObservers: MutationObserver[] = [];
 
-  constructor(controller: YouTubeMusicController, hub: ReduxHub) {
+  constructor(controller: YouTubeMusicPlaybackController, hub: ReduxHub) {
     super(controller, hub);
 
     this._controller = controller;
