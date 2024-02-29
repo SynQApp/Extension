@@ -5,16 +5,17 @@ import { createAutoplayReadyHandler } from '~contents/lib/message-handlers/creat
 import { createMusicControllerHandler } from '~contents/lib/message-handlers/createMusicControllerHandler';
 import { createObserverEmitterHandler } from '~contents/lib/message-handlers/createObserverEmitterHandler';
 import { createTabsHandler } from '~contents/lib/message-handlers/createTabsHandler';
+import { SpotifyLinkController } from '~services/spotify/SpotifyLinkController';
 import { connectToReduxHub } from '~util/connectToReduxHub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 import { SpotifyController } from '../services/spotify/SpotifyController';
 import { SpotifyObserver } from '../services/spotify/SpotifyObserver';
+import { createRedirectHandler } from './lib/message-handlers/createRedirectHandler';
 import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
 
 export const config: PlasmoCSConfig = {
-  // Placeholder while Spotify is disabled
-  matches: ['*://*.synqapp.io/*'],
+  matches: ['*://open.spotify.com/*'],
   all_frames: true,
   world: 'MAIN'
 };
@@ -24,23 +25,21 @@ const initialize = (extensionId: string) => {
 
   const hub = connectToReduxHub(extensionId);
 
-  const controller = new SpotifyController();
-  const observer = new SpotifyObserver(controller, hub);
+  const playbackController = new SpotifyController();
+  const linkController = new SpotifyLinkController();
+  const observer = new SpotifyObserver(playbackController, hub);
 
-  createMusicControllerHandler(controller, hub);
+  createMusicControllerHandler(playbackController, hub);
   createObserverEmitterHandler(observer, hub);
-  createAutoplayReadyHandler(controller, hub);
-  createTabsHandler(controller, observer, hub);
+  createAutoplayReadyHandler(playbackController, hub);
+  createTabsHandler(playbackController, observer, hub);
+  createRedirectHandler(linkController, hub);
 
   observer.observe();
   observer.subscribe(createNotificationObserverHandler(hub));
 };
 
 onDocumentReady(() => {
-  if (!SPOTIFY_ENABLED) {
-    return;
-  }
-
   window.addEventListener('SynQ:ExtensionId', (e) => {
     const extensionId = (e as CustomEvent).detail;
     initialize(extensionId);

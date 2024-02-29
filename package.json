@@ -27,6 +27,7 @@
     "@synq/prettier-config": "^1.0.6",
     "@synq/react-beautiful-dnd": "13.1.1",
     "@synq/ui": "0.0.6",
+    "cheerio": "1.0.0-rc.12",
     "fast-levenshtein": "^3.0.0",
     "i": "^0.3.7",
     "plasmo": "0.83.0",

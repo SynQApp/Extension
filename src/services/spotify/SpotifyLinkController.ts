@@ -7,13 +7,31 @@ import type {
 } from '~services/MusicServiceLinkController';
 import type { NativeSpotifySongTrack } from '~types/Spotify';
 
+const SPOTIFY_LISTEN_ENDPOINT = 'https://open.spotify.com/track';
 const SPOTIFY_ACCESS_TOKEN_ENDPOINT =
   'https://open.spotify.com/get_access_token';
 const SPOTIFY_SEARCH_ENDPOINT = 'https://api.spotify.com/v1/search';
+const SPOTIFY_TRACK_ENDPOINT = 'https://api.spotify.com/v1/tracks';
 
 export class SpotifyLinkController implements MusicServiceLinkController {
   async getBasicTrackDetails(): Promise<GetBasicTrackDetailsResponse> {
-    throw new Error('Method not implemented.');
+    const url = new URL(window.location.href);
+    const pathParts = url.pathname.split('/');
+    const trackId = pathParts[pathParts.length - 1];
+
+    const track = await this._getTrack(trackId);
+
+    if (!track) {
+      return null;
+    }
+
+    return {
+      name: track.name,
+      artistName: track.artists[0].name,
+      albumName: track.album.name,
+      duration: track.duration_ms,
+      albumCoverUrl: track.album.images[0].url
+    };
   }
 
   async getLink(basicTrackDetails: GetLinkInput): Promise<string | null> {
@@ -26,7 +44,19 @@ export class SpotifyLinkController implements MusicServiceLinkController {
       return null;
     }
 
-    return `https://open.spotify.com/track/${track.id}`;
+    return `${SPOTIFY_LISTEN_ENDPOINT}/${track.id}`;
+  }
+
+  private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {
+    const token = await this._getAuthorizationToken();
+
+    const response = await fetch(`${SPOTIFY_TRACK_ENDPOINT}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => response.json());
+
+    return response;
   }
 
   private async _search(query: string): Promise<NativeSpotifySongTrack[]> {

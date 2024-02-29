@@ -1,6 +1,8 @@
+import { sendToBackground } from '@plasmohq/messaging';
+
 import type { MusicServiceLinkController } from '~services/MusicServiceLinkController';
-import { store } from '~store';
-import { MusicLinkControllerMessage } from '~types';
+import { persistor, store } from '~store';
+import { MusicLinkControllerMessage, type Settings } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
 /**
@@ -14,7 +16,7 @@ export const createRedirectHandler = (
   hub.addListener(async (message) => {
     switch (message?.name) {
       case MusicLinkControllerMessage.REDIRECT: {
-        await handleRedirect(controller);
+        await handleRedirect(controller, hub);
         break;
       }
     }
@@ -22,9 +24,13 @@ export const createRedirectHandler = (
 };
 
 const handleRedirect = async (
-  controller: MusicServiceLinkController
+  controller: MusicServiceLinkController,
+  hub: ReduxHub
 ): Promise<void> => {
-  const settings = store.getState().settings;
+  const settings = await hub.asyncPostMessage<Settings>({
+    name: 'GET_SETTINGS'
+  });
+
   const trackDetails = await controller.getBasicTrackDetails();
 
   if (!trackDetails) {

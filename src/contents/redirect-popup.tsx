@@ -12,7 +12,7 @@ import { sendAnalytic } from '~util/analytics';
 export const config: PlasmoCSConfig = {
   matches: [
     '*://music.apple.com/*',
-    // '*://open.spotify.com/*',
+    '*://open.spotify.com/*',
     '*://music.youtube.com/*',
     '*://music.amazon.com/*'
   ]

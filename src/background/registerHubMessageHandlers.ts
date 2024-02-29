@@ -1,6 +1,7 @@
 import createTrackNotificationMessageHandler from './hubMessages/CREATE_TRACK_NOTIFICATION';
 import dispatchMessageHandler from './hubMessages/DISPATCH';
 import getSelfTabMessageHandler from './hubMessages/GET_SELF_TAB';
+import getSettingsMessageHandler from './hubMessages/GET_SETTINGS';
 
 export const registerHubMessageHandlers = (port: chrome.runtime.Port) => {
   port.onMessage.addListener(async (message) => {
@@ -29,6 +30,10 @@ export const registerHubMessageHandlers = (port: chrome.runtime.Port) => {
           port.sender,
           sendResponse
         );
+        break;
+
+      case 'GET_SETTINGS':
+        await getSettingsMessageHandler(message, port.sender, sendResponse);
         break;
     }
   });

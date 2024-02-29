@@ -23,7 +23,9 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  * already exposed on the window object. Then we can call methods on the instance to
  * control playback.
  */
-export class AppleMusicController implements MusicServicePlaybackController {
+export class AppleMusicPlaybackController
+  implements MusicServicePlaybackController
+{
   private _unmuteVolume = 50;
 
   public play(): void {

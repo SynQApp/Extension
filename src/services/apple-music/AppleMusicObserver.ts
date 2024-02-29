@@ -8,7 +8,7 @@ import {
   MusicServiceObserver,
   type ObserverStateFilter
 } from '../MusicServiceObserver';
-import type { AppleMusicController } from './AppleMusicController';
+import type { AppleMusicPlaybackController } from './AppleMusicController';
 
 const playbackStateChangedEvents = [
   'playbackStateDidChange',
@@ -20,11 +20,11 @@ const playbackStateChangedEvents = [
 ];
 
 export class AppleMusicObserver extends MusicServiceObserver {
-  declare _controller: AppleMusicController;
+  declare _controller: AppleMusicPlaybackController;
   private _nowPlayingItemDidChangeHandler!: () => void;
   private _playbackStateChangeHandler!: () => void;
 
-  constructor(controller: AppleMusicController, hub: ReduxHub) {
+  constructor(controller: AppleMusicPlaybackController, hub: ReduxHub) {
     super(controller, hub);
   }
 

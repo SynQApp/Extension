@@ -3,6 +3,7 @@ import type { MusicService } from '@synq/music-service-clients';
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 import type { MusicServiceLinkController } from '~services/MusicServiceLinkController';
+import { AppleMusicLinkController } from '~services/apple-music/AppleMusicLinkController';
 import { SpotifyLinkController } from '~services/spotify/SpotifyLinkController';
 import { YouTubeMusicLinkController } from '~services/youtube-music/YouTubeMusicLinkController';
 
@@ -20,7 +21,7 @@ const LINK_CONTROLLERS_MAP: Record<
 > = {
   SPOTIFY: new SpotifyLinkController(),
   AMAZONMUSIC: null,
-  APPLEMUSIC: null,
+  APPLEMUSIC: new AppleMusicLinkController(),
   DEEZER: null,
   YOUTUBEMUSIC: new YouTubeMusicLinkController()
 };
