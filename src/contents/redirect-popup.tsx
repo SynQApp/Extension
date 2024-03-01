@@ -48,7 +48,10 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
     const state = store.getState();
     const settings = state.settings;
 
-    if (settings.preferredMusicService !== musicService) {
+    if (
+      settings.preferredMusicService !== musicService &&
+      settings.redirectsEnabled
+    ) {
       setShowPopup(true);
 
       sendAnalytic({
