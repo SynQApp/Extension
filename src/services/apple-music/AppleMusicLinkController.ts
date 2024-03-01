@@ -1,5 +1,4 @@
 import { load } from 'cheerio';
-import levenshtein from 'fast-levenshtein';
 
 import type {
   GetBasicTrackDetailsResponse,
@@ -7,7 +6,6 @@ import type {
   SearchInput,
   SearchResult
 } from '~services/MusicServiceLinkController';
-import type { ValueOrPromise } from '~types';
 import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 
 declare let window: Window & {

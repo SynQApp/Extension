@@ -1,4 +1,3 @@
-import levenshtein from 'fast-levenshtein';
 import type { Store } from 'redux';
 
 import type {
