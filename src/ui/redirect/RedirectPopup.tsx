@@ -5,6 +5,8 @@ import { Button, Flex, Image, Stack, Text, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
 import { useAppSelector } from '~store';
 import { MusicLinkControllerMessage } from '~types';
 import { sendAnalytic } from '~util/analytics';
@@ -25,8 +27,15 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
   );
 
   const handleOpenWithSynQ = async () => {
+    const tab = await sendToBackground({
+      name: 'GET_SELF_TAB'
+    });
+
     sendMessage({
-      name: MusicLinkControllerMessage.REDIRECT
+      name: MusicLinkControllerMessage.REDIRECT,
+      body: {
+        to: tab.id
+      }
     });
 
     const parsedLink = parseLink(window.location.href);

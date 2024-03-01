@@ -5,10 +5,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {
-  matches: [
-    'https://*.synqapp.io/redirectv2',
-    'https://website-git-local-redirect-synqapp.vercel.app/redirectv2*'
-  ],
+  matches: ['https://*.synqapp.io/redirect*'],
   all_frames: true
 };
 
