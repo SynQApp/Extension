@@ -47,7 +47,7 @@ const handler: PlasmoMessaging.MessageHandler<GetRedirectLinkRequest> = async (
   res
 ) => {
   if (!req.body) {
-    res.send(null);
+    res.send(undefined);
     return;
   }
 
@@ -70,7 +70,7 @@ const handler: PlasmoMessaging.MessageHandler<GetRedirectLinkRequest> = async (
 
     res.send(bestResult.link);
   } else {
-    res.send(null);
+    res.send(undefined);
   }
 };
 
