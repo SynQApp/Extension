@@ -22,8 +22,6 @@ export class YouTubeMusicLinkController implements MusicServiceLinkController {
   }
 
   async getBasicTrackDetails(): Promise<GetBasicTrackDetailsResponse> {
-    await waitForElement('.title.ytmusic-player-bar');
-
     const track = this._ytmMusicPlaybackController.getCurrentTrack();
 
     if (!track) {

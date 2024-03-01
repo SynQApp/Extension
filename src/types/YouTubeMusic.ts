@@ -53,7 +53,14 @@ export interface NativeYouTubeMusicQueueItemRendererData {
 export interface NativeYouTubeMusicMoviePlayer {
   addEventListener: (event: string, callback: () => void) => void;
   getCurrentTime: () => number;
+  getDuration: () => number;
   getPlayerState: () => number;
+  getVideoData: () => {
+    author: string;
+    title: string;
+    video_id: string;
+  };
+  getVideoUrl: () => string;
   getVolume: () => number;
   nextVideo: () => void;
   pauseVideo: () => void;

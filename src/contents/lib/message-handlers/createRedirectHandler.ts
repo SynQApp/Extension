@@ -54,6 +54,6 @@ const handleRedirect = async (
 
   const url = `${
     process.env.PLASMO_PUBLIC_SYNQ_WEBSITE
-  }/redirectv2?${params.toString()}`;
+  }/redirect?${params.toString()}`;
   window.location.href = url;
 };

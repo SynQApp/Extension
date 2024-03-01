@@ -110,14 +110,13 @@ export class YouTubeMusicPlaybackController
       volume = this.getPlayer().getVolume() + volume;
     }
 
-    volume = normalizeVolume(volume);
+    const volumeSlider = document.getElementById(
+      'volume-slider'
+    ) as HTMLElement;
+    volumeSlider?.setAttribute('value', volume.toString());
 
-    this.getPlayer().setVolume(volume);
-
-    this._ytmApp.store.dispatch({
-      type: 'SET_VOLUME',
-      payload: volume
-    });
+    const changeEvent = new Event('change');
+    volumeSlider?.dispatchEvent(changeEvent);
   }
 
   public seekTo(time: number): void {
@@ -150,25 +149,17 @@ export class YouTubeMusicPlaybackController
   }
 
   public getCurrentTrack(): Track | null {
-    const videoDetails = this._appState.player?.playerResponse?.videoDetails;
+    const additionalInfo = document
+      .querySelector('.byline.ytmusic-player-bar')
+      ?.textContent?.split('\u2022');
+    const albumName = additionalInfo?.[1]?.trim() ?? '';
+    const albumCoverUrl =
+      document.querySelector('#song-image img')?.getAttribute('src') ?? '';
 
-    if (!videoDetails) {
-      return null;
-    }
-
-    const trackId = videoDetails.videoId;
-
-    const queueItem = this._appState.queue.items.find((queueItem) => {
-      const rendererData = this._getQueueItemRendererData(queueItem);
-
-      return rendererData?.videoId === trackId;
-    });
-
-    if (!queueItem) {
-      return null;
-    }
-
-    const songInfo: Track = this._queueItemToSongInfo(queueItem);
+    const videoData = this.getPlayer().getVideoData();
+    const artistName = videoData.author;
+    const name = videoData.title;
+    const id = videoData.video_id;
 
     const isLiked =
       (
@@ -183,16 +174,34 @@ export class YouTubeMusicPlaybackController
           '.ytmusic-player-bar #button-shape-dislike'
         ) as HTMLElement
       )?.getAttribute('aria-pressed') === 'true';
+    const durationText = document
+      .getElementById('progress-bar')
+      ?.getAttribute('aria-valuemax');
+    const duration = durationText ? lengthTextToSeconds(durationText) : 0;
 
-    songInfo.isLiked = isLiked;
-    songInfo.isDisliked = isDisliked;
-
-    return songInfo;
+    return {
+      albumName,
+      albumCoverUrl,
+      artistName,
+      name,
+      isDisliked,
+      isLiked,
+      duration,
+      id
+    };
   }
 
   public getQueue(): QueueItem[] {
-    const ytQueueItems = this._appState.queue.items;
-    const currentSongIndex = this._appState.queue.selectedItemIndex;
+    const queue = document.getElementById('queue');
+
+    if (!queue) {
+      return [];
+    }
+
+    const state = (queue as unknown as YtmApp['store']).getState();
+
+    const ytQueueItems = state.queue.items;
+    const currentSongIndex = state.queue.selectedItemIndex;
 
     return ytQueueItems.map((item, index) => {
       const queueItem: QueueItem = {
@@ -209,12 +218,18 @@ export class YouTubeMusicPlaybackController
   }
 
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
-    const queue = this.getQueue();
+    const queueItems = this.getQueue();
 
-    const trackIndexes = findIndexes(queue, (item) => item.track?.id === id);
+    const trackIndexes = findIndexes(
+      queueItems,
+      (item) => item.track?.id === id
+    );
     const trackIndex = trackIndexes[duplicateIndex];
 
-    this._ytmApp.store.dispatch({ type: 'SET_INDEX', payload: trackIndex });
+    const queue = document.getElementById(
+      'queue'
+    ) as unknown as YtmApp['store'];
+    queue.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {
