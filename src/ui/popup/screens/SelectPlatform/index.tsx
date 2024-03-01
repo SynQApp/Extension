@@ -24,15 +24,6 @@ import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
 const SelectPlatformScreen = () => {
   const theme = useTheme();
 
-  const handleSpotifyDesktopClick = () => {
-    chrome.windows.create({
-      type: 'popup',
-      url: process.env.PLASMO_PUBLIC_SPOTIFY_CONNECTOR_URI!,
-      height: 275,
-      width: 400
-    });
-  };
-
   return (
     <Layout hideButton>
       <Container>
@@ -45,19 +36,12 @@ const SelectPlatformScreen = () => {
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
             {SPOTIFY_ENABLED && (
-              <>
-                <MusicServiceButton
-                  name="Continue with Spotify"
-                  onClick={handleSpotifyDesktopClick}
-                  logoSrc={SpotifyLogo}
-                />
-                <MusicServiceButton
-                  name="Continue with Spotify (Web)"
-                  urlMatch={SPOTIFY_URL_MATCH}
-                  url={SPOTIFY_URL}
-                  logoSrc={SpotifyLogo}
-                />
-              </>
+              <MusicServiceButton
+                name="Continue with Spotify"
+                urlMatch={SPOTIFY_URL_MATCH}
+                url={SPOTIFY_URL}
+                logoSrc={SpotifyLogo}
+              />
             )}
             <MusicServiceButton
               name="Continue with Apple Music"
