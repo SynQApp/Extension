@@ -120,34 +120,7 @@ export class YouTubeMusicPlaybackController
   }
 
   public seekTo(time: number): void {
-    const currentTime = this.getPlayer().getCurrentTime();
-    const percentage = time / currentTime;
-
-    var progressBarRect = (
-      document.getElementById('progress-bar') as HTMLElement
-    )?.getBoundingClientRect();
-    var y = progressBarRect?.y;
-    var x = progressBarRect?.width * percentage;
-
-    var clickEvent = document.createEvent('MouseEvents');
-    clickEvent.initMouseEvent(
-      'click',
-      true,
-      true,
-      window,
-      0,
-      0,
-      0,
-      x,
-      y,
-      false,
-      false,
-      false,
-      false,
-      0,
-      null
-    );
-    (document.elementFromPoint(x, y) as HTMLElement)?.dispatchEvent(clickEvent);
+    this.getPlayer().seekTo(time);
   }
 
   public getPlayerState(): PlayerState | null {
