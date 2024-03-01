@@ -2,8 +2,9 @@ import levenshtein from 'fast-levenshtein';
 
 import type {
   GetBasicTrackDetailsResponse,
-  GetLinkInput,
-  MusicServiceLinkController
+  MusicServiceLinkController,
+  SearchInput,
+  SearchResult
 } from '~services/MusicServiceLinkController';
 import type { Track } from '~types';
 import { waitForElement } from '~util/waitForElement';
@@ -34,22 +35,28 @@ export class YouTubeMusicLinkController implements MusicServiceLinkController {
     return track;
   }
 
-  async getLink(basicTrackDetails: GetLinkInput): Promise<string | null> {
+  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
     const htmlResponse = await this._getSearchPage(query);
     const trackOptions = this._extractTrackOptions(htmlResponse);
-    const track = this._selectTrack(
-      trackOptions,
-      basicTrackDetails.name,
-      basicTrackDetails.artistName
-    );
+    const searchResults = trackOptions
+      .map((track) => {
+        if (!track) {
+          return null;
+        }
 
-    if (!track) {
-      return null;
-    }
+        return {
+          link: `${WATCH_ENDPOINT}?v=${track.id}`,
+          name: track.name,
+          artistName: track.artistName,
+          duration: basicTrackDetails.duration,
+          albumName: basicTrackDetails.albumName
+        };
+      })
+      .filter((track) => track !== null) as SearchResult[];
 
-    return `${WATCH_ENDPOINT}?v=${track.id}`;
+    return searchResults;
   }
 
   private async _getSearchPage(query: string): Promise<string> {
@@ -90,43 +97,6 @@ export class YouTubeMusicLinkController implements MusicServiceLinkController {
     const topResultTrack = this._getTopResultTack(parsedMatch);
 
     return [firstTrack, topResultTrack];
-  }
-
-  private _selectTrack(
-    trackOptions: (PartialTrack | null)[],
-    name: string,
-    artistName: string
-  ): PartialTrack | null {
-    const nonNullTrackOptions = trackOptions.filter(
-      (track) => track !== null
-    ) as PartialTrack[];
-
-    if (nonNullTrackOptions.length === 0) {
-      return null;
-    }
-
-    const matchScores = nonNullTrackOptions.map((track) => {
-      const titleScore = levenshtein.get(
-        this._sanitizeTitle(name),
-        this._sanitizeTitle(track.name)
-      );
-      const artistScore = levenshtein.get(artistName, track.artistName);
-      return titleScore + artistScore;
-    });
-
-    const minScore = Math.min(...matchScores);
-
-    if (minScore > 5) {
-      return null;
-    }
-
-    const bestMatchIndex = matchScores.findIndex((score) => score === minScore);
-
-    return nonNullTrackOptions[bestMatchIndex];
-  }
-
-  private _sanitizeTitle(title: string): string {
-    return title.replace(/ *\([^)]*\) */g, '').replace(/ *\[[^)]*\] */g, '');
   }
 
   private _getTopResultTack(apiResult: any): PartialTrack | null {

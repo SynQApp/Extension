@@ -43,7 +43,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.0.3",
     "usehooks-ts": "^2.9.1",
-    "uuid": "^9.0.0",
+    "uuid": "^9.0.1",
     "waait": "^1.0.5"
   },
   "devDependencies": {
@@ -58,7 +58,7 @@
     "@types/redux-persist-webextension-storage": "^1.0.0",
     "@types/spotify-web-playback-sdk": "^0.1.17",
     "@types/styled-components": "^5.1.26",
-    "@types/uuid": "^9.0.2",
+    "@types/uuid": "^9.0.8",
     "prettier": "2.8.7",
     "react-beautiful-dnd": "^13.1.1",
     "react-hotkeys-hook": "^4.4.1",

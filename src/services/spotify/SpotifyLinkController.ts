@@ -2,8 +2,9 @@ import levenshtein from 'fast-levenshtein';
 
 import type {
   GetBasicTrackDetailsResponse,
-  GetLinkInput,
-  MusicServiceLinkController
+  MusicServiceLinkController,
+  SearchInput,
+  SearchResult
 } from '~services/MusicServiceLinkController';
 import type { NativeSpotifySongTrack } from '~types/Spotify';
 
@@ -34,17 +35,22 @@ export class SpotifyLinkController implements MusicServiceLinkController {
     };
   }
 
-  async getLink(basicTrackDetails: GetLinkInput): Promise<string | null> {
+  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
     const tracks = await this._search(query);
-    const track = this._selectTrack(tracks, basicTrackDetails);
 
-    if (!track) {
-      return null;
-    }
+    const searchResults = tracks.map((track) => {
+      return {
+        link: `${SPOTIFY_LISTEN_ENDPOINT}/${track.id}`,
+        name: track.name,
+        artistName: track.artists[0].name,
+        duration: basicTrackDetails.duration,
+        albumName: basicTrackDetails.albumName
+      };
+    });
 
-    return `${SPOTIFY_LISTEN_ENDPOINT}/${track.id}`;
+    return searchResults;
   }
 
   private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {
@@ -89,42 +95,5 @@ export class SpotifyLinkController implements MusicServiceLinkController {
     );
     const json = await response.json();
     return json.accessToken;
-  }
-
-  private _selectTrack(
-    tracks: NativeSpotifySongTrack[],
-    basicTrackDetails: GetLinkInput
-  ): NativeSpotifySongTrack | null {
-    const nonNullTrackOptions = tracks.filter((track) => track !== null);
-
-    if (nonNullTrackOptions.length === 0) {
-      return null;
-    }
-
-    const matchScores = nonNullTrackOptions.map((track) => {
-      const titleScore = levenshtein.get(
-        this._sanitizeTitle(basicTrackDetails.name),
-        this._sanitizeTitle(track.name)
-      );
-      const artistScore = levenshtein.get(
-        basicTrackDetails.artistName,
-        track.artists[0].name
-      );
-      return titleScore + artistScore;
-    });
-
-    const minScore = Math.min(...matchScores);
-
-    if (minScore > 5) {
-      return null;
-    }
-
-    const bestMatchIndex = matchScores.findIndex((score) => score === minScore);
-
-    return nonNullTrackOptions[bestMatchIndex];
-  }
-
-  private _sanitizeTitle(title: string): string {
-    return title.replace(/ *\([^)]*\) */g, '').replace(/ *\[[^)]*\] */g, '');
   }
 }

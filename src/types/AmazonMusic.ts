@@ -15,6 +15,7 @@ export interface Maestro {
 export interface AmznMusic {
   appConfig: {
     accessToken: string;
+    customerId: string;
     csrf: {
       token: string;
       ts: string;

@@ -5,8 +5,16 @@ export type GetBasicTrackDetailsResponse = Pick<
   'name' | 'artistName' | 'duration' | 'albumCoverUrl' | 'albumName'
 > | null;
 
-export type GetLinkInput = Partial<Pick<Track, 'duration' | 'albumName'>> &
+export type SearchInput = Partial<Pick<Track, 'duration' | 'albumName'>> &
   Pick<Track, 'name' | 'artistName'>;
+
+export interface SearchResult {
+  link: string;
+  name: string;
+  artistName: string;
+  duration?: number;
+  albumName?: string;
+}
 
 export interface MusicServiceLinkController {
   /**
@@ -17,5 +25,5 @@ export interface MusicServiceLinkController {
   /**
    * Get the link for the current track. Run in background service worker context.
    */
-  getLink(basicTrackDetails: GetLinkInput): ValueOrPromise<string | null>;
+  search(searchInput: SearchInput): ValueOrPromise<SearchResult[]>;
 }

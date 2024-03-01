@@ -9,6 +9,7 @@ import { onDocumentReady } from '~util/onDocumentReady';
 
 import { AmazonMusicController } from '../services/amazon-music/AmazonMusicController';
 import { AmazonMusicObserver } from '../services/amazon-music/AmazonMusicObserver';
+import { createRedirectHandler } from './lib/message-handlers/createRedirectHandler';
 import { createNotificationObserverHandler } from './lib/observer-handlers/notificationObserverHandler';
 
 export const config: PlasmoCSConfig = {
@@ -29,6 +30,7 @@ const initialize = (extensionId: string) => {
   createObserverEmitterHandler(observer, hub);
   createAutoplayReadyHandler(controller, hub);
   createTabsHandler(controller, observer, hub);
+  createRedirectHandler(controller, hub);
 
   observer.observe();
   observer.subscribe(createNotificationObserverHandler(hub));
