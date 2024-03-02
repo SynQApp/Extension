@@ -15,7 +15,9 @@ type Listener = (
  */
 export interface ReconnectingHub {
   addListener: (listener: Listener) => void;
-  postMessage: <T = unknown>(message: PlasmoMessaging.Request) => Promise<T>;
+  postMessage: <T = unknown>(
+    message: PlasmoMessaging.Request
+  ) => Promise<T | undefined>;
   port: chrome.runtime.Port;
 }
 
@@ -63,13 +65,14 @@ const createReconnectingHub = (): ReconnectingHub => {
 
         const listener = (response: any): void => {
           if (response.requestId === requestId) {
-            resolve(response.body);
             hubPort.onMessage.removeListener(listener);
+            resolve(response.body);
           }
 
           setTimeout(() => {
             hubPort.onMessage.removeListener(listener);
-          }, 1000);
+            resolve(undefined);
+          }, 5000);
         };
 
         hubPort.onMessage.addListener(listener);

@@ -41,8 +41,9 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 - [x] Create messaging utils that abstract the
 - [x] Add SDK-like functions for controlling the mini player from observers and elsewhere.
 - [x] Move all background message handlers into the background/messages directory
-- [ ] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
+- [x] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
 - [ ] Consolidate the CSUI components into one CSUI.
 - [ ] Create better separations in contexts.
 - [ ] Reorganize types to where they belong.
 - [ ] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.
+- [ ] Try consolidating the adapter content scripts

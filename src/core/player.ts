@@ -7,6 +7,8 @@ import { dispatchFromContent } from '~util/store';
 
 import { sendToBackground } from './messaging';
 
+let CURRENT_TRACK_ID: string | null = null;
+
 /**
  * Update the playback state of the music service tab. This should only be called from ContentObservers.
  * @param playbackState The new playback state
@@ -31,6 +33,8 @@ export const updatePlaybackState = async (
   );
 };
 
+let PREVENT_TRACK_NOTIFICATION = false;
+
 /**
  * Update the current track of the music service tab. This should only be called from ContentObservers.
  * @param currentTrack The new current track
@@ -53,4 +57,25 @@ export const updateCurrentTrack = async (
       currentTrack
     })
   );
+
+  if (
+    !currentTrack?.id ||
+    PREVENT_TRACK_NOTIFICATION ||
+    CURRENT_TRACK_ID === currentTrack?.id
+  ) {
+    return;
+  }
+
+  PREVENT_TRACK_NOTIFICATION = true;
+
+  setTimeout(() => {
+    PREVENT_TRACK_NOTIFICATION = false;
+  }, 2000);
+
+  await sendToBackground({
+    name: 'CREATE_TRACK_NOTIFICATION',
+    body: currentTrack
+  });
+
+  CURRENT_TRACK_ID = currentTrack?.id || null;
 };
