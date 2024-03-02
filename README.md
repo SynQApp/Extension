@@ -47,4 +47,5 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 - [x] Reorganize types to where they belong.
 - [x] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.
 - [x] Use adapter configurations throughout application.
-- [ ] Update Spotify and Amazon Music observers to properly show current track state in music player. If nothing has been played yet, then it should show nothing playing in the mini player.
+- [x] Update Spotify and Amazon Music observers to properly show current track state in music player. If nothing has been played yet, then it should show nothing playing in the mini player.
+- [x] Remove MusicServiceClients package and bring link logic into extension.
