@@ -1,5 +1,3 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
-
 import type { ContentController, ContentObserver } from '~core/adapter';
 import { sendToBackground } from '~core/messaging';
 import type { ReconnectingHub } from '~core/messaging/hub';

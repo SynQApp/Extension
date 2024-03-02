@@ -3,6 +3,7 @@ import MiniPlayerExample from 'data-base64:~assets/images/mini-player-example.pn
 import RedirectExample from 'data-base64:~assets/images/redirect-example.png';
 import { styled } from 'styled-components';
 
+import adapters from '~adapters';
 import {
   AMAZON_MUSIC_URL,
   APPLE_MUSIC_URL,
@@ -137,9 +138,18 @@ export const Complete = () => {
                     open it in {musicServiceName} for you.
                   </HighlightedText>{' '}
                   Currently supported on{' '}
-                  <HighlightedText>Apple Music</HighlightedText>,{' '}
-                  <HighlightedText>Amazon Music</HighlightedText>, and{' '}
-                  <HighlightedText>YouTube Music</HighlightedText>.
+                  {adapters.slice(0, adapters.length - 1).map((adapter) => (
+                    <>
+                      <HighlightedText key={adapter.id}>
+                        {adapter.displayName}
+                      </HighlightedText>
+                      {', '}
+                    </>
+                  ))}
+                  and{' '}
+                  <HighlightedText>
+                    {adapters[adapters.length - 1].displayName}
+                  </HighlightedText>
                 </ExplainerDescriptionText>
                 <span>
                   <Button
