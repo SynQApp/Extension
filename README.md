@@ -1,51 +1,63 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+<p align="center">
+  <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/SynQApp/Extension/blob/main/assets/icon.png?raw=true">
+  <img src="https://github.com/SynQApp/Extension/blob/main/assets/icon.png?raw=true" width="130" alt="Logo for SynQ">
+</picture>
+</p>
 
-## Getting Started
+<h1 align="center">
+  SynQ Browser Extension
+</h1>
 
-First, run the development server:
+<p align="center">
+  Your music companion for the web.
+</p>
 
-```bash
-pnpm dev
-# or
-npm run dev
-```
+<p align="center">
+  SynQ provides a mini player and link translations between all of our supported music services, including Spotify, Apple Music, YouTube Music, and Amazon Music!
+</p>
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+<div align="center">
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+[![PRs-Welcome][contribute-image]][contribute-url]
+[![Download][downloads-image]][npm-url]
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+</div>
 
-## Making production build
+## Table of contents
 
-Run the following:
+- <a href="#about">About</a>
+- <a href="#concepts">Concepts</a>
+- <a href="#getting-started">Getting Started</a>
+- <a href="#bugs">Bugs and Requests</a>
+- <a href="#contributors">Contributors</a>
 
-```bash
-pnpm build
-# or
-npm run build
-```
+<h2 id="about">About</h2>
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
+<h2 id="concepts">Concepts</h2>
 
-## Submit to the webstores
+<h2 id="getting-started">Getting Started</h2>
 
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+<h2 id="bugs">Bugs and Requests</h2>
 
-## Remaining Work Before Open-Sourcing
+Find a bug? Think of an awesome new feature? Your music service isn't supported yet? Please submit an issue here:
 
-- [x] Implement each of the four starting services with browser-only logic.
-- [x] Centralize browser-based matching logic like it's done in TranslationService.
-- [x] Refactor into modular service classes. This includes merging Playback and Link controllers into one class or configuration, removing each of the content script entries - instead create on content script for all music services with \* matching and dynamically set each one up based on configurations.
-- [x] Clean up observer pattern as it's too coupled.
-- [x] Create messaging utils that abstract the
-- [x] Add SDK-like functions for controlling the mini player from observers and elsewhere.
-- [x] Move all background message handlers into the background/messages directory
-- [x] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
-- [x] Try consolidating the adapter content scripts
-- [x] Create better separations in contexts.
-- [x] Reorganize types to where they belong.
-- [x] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.
-- [x] Use adapter configurations throughout application.
-- [x] Update Spotify and Amazon Music observers to properly show current track state in music player. If nothing has been played yet, then it should show nothing playing in the mini player.
-- [x] Remove MusicServiceClients package and bring link logic into extension.
+[Submit an Issue](https://github.com/SynQApp/Extension/issues)
+
+<h2 id="contributors">Contributors</h2>
+
+We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment.
+
+<a href="https://github.com/SynQApp/Extension/graphs/contributors">
+  <p align="center">
+    <img width="720" src="https://contrib.rocks/image?repo=SynQApp/Extension" alt="A table of avatars from the project's contributors" />
+  </p>
+</a>
+
+<p align="center">
+  Made with <a rel="noopener noreferrer" target="_blank" href="https://contrib.rocks">contrib.rocks</a>
+</p>
+
+[downloads-image]: https://img.shields.io/badge/download-40k_users-blue
+[contribute-url]: https://github.com/SynQApp/Extension/blob/main/CONTRIBUTING.md
+[contribute-image]: https://img.shields.io/badge/PRs-welcome-blue.svg
