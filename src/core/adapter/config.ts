@@ -1,3 +1,7 @@
+import type { MusicService } from '@synq/music-service-clients';
+
+import type { KeyControlsOptions } from '~core/keys';
+
 import type { BackgroundController, ContentController } from './controller';
 import type { Feature } from './feature';
 import type { ContentObserver } from './observer';
@@ -15,7 +19,7 @@ export interface MusicServiceAdapter {
   /**
    * The unique identifier of the music service.
    */
-  id: string;
+  id: MusicService;
   /**
    * The base URL of the music service. This is used when the user selects a
    * music service from the popup to open the music service in a new tab.
@@ -33,6 +37,12 @@ export interface MusicServiceAdapter {
    * The list of features that are not supported for the music service.
    */
   disabledFeatures: Feature[];
+  /**
+   * The key controls options to enable for the music service. Some music
+   * services already have their own key controls, so we need to disable them
+   * for SynQ to work properly.
+   */
+  enabledKeyControls: KeyControlsOptions;
   /**
    * A factory function to create the background controller for the music service.
    */

@@ -44,5 +44,6 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 - [x] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
 - [x] Try consolidating the adapter content scripts
 - [x] Create better separations in contexts.
-- [ ] Reorganize types to where they belong.
-- [ ] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.
+- [x] Reorganize types to where they belong.
+- [x] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.
+- [x] Use adapter configurations throughout application.

@@ -1,8 +1,1 @@
-export type Feature =
-  | 'dislike'
-  | 'inboundTranslate'
-  | 'like'
-  | 'outboundTranslate'
-  | 'displayQueue'
-  | 'playQueueItem'
-  | 'repeatMode';
+export type Feature = 'dislike' | 'like';

@@ -1,6 +1,7 @@
 import { MUSIC_SERVICE, type MusicService } from '@synq/music-service-clients';
 import { Radio, RadioGroup, Stack } from '@synq/ui';
 
+import adapters from '~adapters';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
 import { sendAnalytic } from '~util/analytics';
@@ -30,10 +31,11 @@ export const PreferredMusicServiceSection = () => {
     <OptionsSection title="Preferred music service">
       <RadioGroup value={preferredMusicService} onChange={handleChange}>
         <Stack direction="column" spacing="xs">
-          <Radio value={MUSIC_SERVICE.SPOTIFY}>Spotify</Radio>
-          <Radio value={MUSIC_SERVICE.APPLEMUSIC}>Apple Music</Radio>
-          <Radio value={MUSIC_SERVICE.AMAZONMUSIC}>Amazon Music</Radio>
-          <Radio value={MUSIC_SERVICE.YOUTUBEMUSIC}>YouTube Music</Radio>
+          {adapters.map((adapter) => (
+            <Radio key={adapter.id} value={adapter.id}>
+              {adapter.displayName}
+            </Radio>
+          ))}
         </Stack>
       </RadioGroup>
     </OptionsSection>

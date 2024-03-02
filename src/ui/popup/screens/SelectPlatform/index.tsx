@@ -1,22 +1,9 @@
 import { Image, Stack, Text, token } from '@synq/ui';
-import AmazonLogo from 'data-base64:~assets/images/amazon-logo.svg';
-import AppleLogo from 'data-base64:~assets/images/apple-logo.svg';
-import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
 import WaveGraphicDark from 'data-base64:~assets/images/wave-graphic-dark.svg';
 import WaveGraphicLight from 'data-base64:~assets/images/wave-graphic-light.svg';
-import YoutubeLogo from 'data-base64:~assets/images/youtube-logo.svg';
 import styled, { useTheme } from 'styled-components';
 
-import {
-  AMAZON_MUSIC_URL,
-  AMAZON_MUSIC_URL_MATCH,
-  APPLE_MUSIC_URL,
-  APPLE_MUSIC_URL_MATCH,
-  SPOTIFY_URL,
-  SPOTIFY_URL_MATCH,
-  YOUTUBE_MUSIC_URL,
-  YOUTUBE_MUSIC_URL_MATCH
-} from '~constants/urls';
+import adapters from '~adapters';
 import Layout from '~ui/popup/Layout';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
 
@@ -34,30 +21,15 @@ const SelectPlatformScreen = () => {
             Select your platform to start listening
           </Description>
           <MusicServiceButtons spacing="md" direction="column">
-            <MusicServiceButton
-              name="Continue with Spotify"
-              urlMatch={SPOTIFY_URL_MATCH}
-              url={SPOTIFY_URL}
-              logoSrc={SpotifyLogo}
-            />
-            <MusicServiceButton
-              name="Continue with Apple Music"
-              urlMatch={APPLE_MUSIC_URL_MATCH}
-              url={APPLE_MUSIC_URL}
-              logoSrc={AppleLogo}
-            />
-            <MusicServiceButton
-              name="Continue with Amazon Music"
-              urlMatch={AMAZON_MUSIC_URL_MATCH}
-              url={AMAZON_MUSIC_URL}
-              logoSrc={AmazonLogo}
-            />
-            <MusicServiceButton
-              name="Continue with YouTube Music"
-              urlMatch={YOUTUBE_MUSIC_URL_MATCH}
-              url={YOUTUBE_MUSIC_URL}
-              logoSrc={YoutubeLogo}
-            />
+            {adapters.map((adapter) => (
+              <MusicServiceButton
+                key={adapter.id}
+                name={`Continue with ${adapter.displayName}`}
+                urlMatch={adapter.urlMatches[0]}
+                url={adapter.baseUrl}
+                logoSrc={adapter.icon}
+              />
+            ))}
           </MusicServiceButtons>
         </div>
         <WaveGraphicImage

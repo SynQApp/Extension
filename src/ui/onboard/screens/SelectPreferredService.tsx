@@ -1,11 +1,8 @@
 import { MUSIC_SERVICE, type MusicService } from '@synq/music-service-clients';
 import { Flex, Stack, Text, token } from '@synq/ui';
-import AmazonLogo from 'data-base64:~assets/images/amazon-logo.svg';
-import AppleLogo from 'data-base64:~assets/images/apple-logo.svg';
-import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
-import YoutubeLogo from 'data-base64:~assets/images/youtube-logo.svg';
 import { styled } from 'styled-components';
 
+import adapters from '~adapters';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
@@ -40,6 +37,11 @@ export const SelectPreferredService = ({
     });
   };
 
+  const handleMusicServiceClick = (service: MusicService) => {
+    handleChange(service);
+    goToNextSlide();
+  };
+
   return (
     <Screen>
       <Container direction="column" justify="center">
@@ -52,42 +54,17 @@ export const SelectPreferredService = ({
             service to get started.
           </DescriptionText>
           <MusicServiceButtons justify="center" direction="column">
-            <MusicServiceButton
-              name="Spotify"
-              logoSrc={SpotifyLogo}
-              onClick={() => {
-                handleChange(MUSIC_SERVICE.SPOTIFY);
-                goToNextSlide();
-              }}
-              selected={preferredMusicService === MUSIC_SERVICE.SPOTIFY}
-            />
-            <MusicServiceButton
-              name="Apple Music"
-              logoSrc={AppleLogo}
-              onClick={() => {
-                handleChange(MUSIC_SERVICE.APPLEMUSIC);
-                goToNextSlide();
-              }}
-              selected={preferredMusicService === MUSIC_SERVICE.APPLEMUSIC}
-            />
-            <MusicServiceButton
-              name="Amazon Music"
-              logoSrc={AmazonLogo}
-              onClick={() => {
-                handleChange(MUSIC_SERVICE.AMAZONMUSIC);
-                goToNextSlide();
-              }}
-              selected={preferredMusicService === MUSIC_SERVICE.AMAZONMUSIC}
-            />
-            <MusicServiceButton
-              name="YouTube Music"
-              logoSrc={YoutubeLogo}
-              onClick={() => {
-                handleChange(MUSIC_SERVICE.YOUTUBEMUSIC);
-                goToNextSlide();
-              }}
-              selected={preferredMusicService === MUSIC_SERVICE.YOUTUBEMUSIC}
-            />
+            {adapters.map((adapter) => {
+              return (
+                <MusicServiceButton
+                  key={adapter.id}
+                  name={adapter.displayName}
+                  logoSrc={adapter.icon}
+                  onClick={() => handleMusicServiceClick(adapter.id)}
+                  selected={preferredMusicService === adapter.id}
+                />
+              );
+            })}
           </MusicServiceButtons>
         </Stack>
       </Container>

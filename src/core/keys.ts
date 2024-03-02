@@ -1,5 +1,9 @@
+import adapters from '~adapters';
 import { sendToContent } from '~core/messaging/sendToContent';
+import { persistor, store } from '~store';
 import { MusicControllerMessage } from '~types';
+
+import { matchAdapter } from './adapter/register';
 
 export interface KeyControlsOptions {
   playPause?: boolean;
@@ -10,6 +14,25 @@ export interface KeyControlsOptions {
 }
 
 let keyControlsListener: ((event: KeyboardEvent) => void) | undefined;
+
+export const enableKeyControls = () => {
+  persistor.subscribe(() => {
+    const state = store.getState();
+    const { musicServiceKeyControlsEnabled } = state.settings;
+
+    if (!musicServiceKeyControlsEnabled) {
+      removeKeyControlsListener();
+      return;
+    }
+
+    const adapter = matchAdapter(window.location.href, adapters);
+    const keyControlsOptions = adapter?.enabledKeyControls;
+
+    if (keyControlsOptions) {
+      addKeyControlsListener(keyControlsOptions);
+    }
+  });
+};
 
 export const addKeyControlsListener = (
   keyControlsOptions: KeyControlsOptions

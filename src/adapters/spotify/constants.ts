@@ -1,5 +1,3 @@
-import type { KeyControlsOptions } from '~core/keys';
-
 export const SpotifyEndpoints = {
   CURRENTLY_PLAYING: 'https://api.spotify.com/v1/me/player/currently-playing',
   GET_AUTH_TOKEN: 'https://open.spotify.com/get_access_token',
@@ -16,11 +14,4 @@ export const SpotifyEndpoints = {
   SET_REPEAT_MODE: 'https://api.spotify.com/v1/me/player/repeat',
   SET_VOLUME: 'https://api.spotify.com/v1/me/player/volume',
   TRACKS: 'https://api.spotify.com/v1/tracks'
-};
-
-export const SPOTIFY_KEY_CONTROLS: KeyControlsOptions = {
-  next: true,
-  previous: true,
-  volumeDown: true,
-  volumeUp: true
 };

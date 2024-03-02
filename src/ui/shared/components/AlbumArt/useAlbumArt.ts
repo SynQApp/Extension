@@ -1,20 +1,22 @@
 import type { MusicService } from '@synq/music-service-clients';
 
+import adapters from '~adapters';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 
-const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
-  // 'AMAZONMUSIC',
-  'SPOTIFY',
-  'YOUTUBEMUSIC'
-]);
+const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>(
+  adapters
+    .filter((adapter) => !adapter.disabledFeatures?.includes('like'))
+    .map((adapter) => adapter.id)
+);
 
-const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
-  // 'AMAZONMUSIC',
-  'YOUTUBEMUSIC'
-]);
+const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>(
+  adapters
+    .filter((adapter) => !adapter.disabledFeatures?.includes('dislike'))
+    .map((adapter) => adapter.id)
+);
 
 export const useAlbumArt = () => {
   const { musicServiceTab } = useMusicServiceTab();
