@@ -106,6 +106,7 @@ export class AmazonMusicObserver implements ContentObserver {
       if (state.PlaybackStates?.play?.state !== this._currentState.isPlaying) {
         this._currentState.isPlaying = state.PlaybackStates?.play?.state;
         await this._handlePlaybackUpdated();
+        await this._handleTrackUpdated();
       }
 
       if (maestro.getVolume() !== this._currentState.volume) {
@@ -116,6 +117,13 @@ export class AmazonMusicObserver implements ContentObserver {
   }
 
   private async _handleTrackUpdated(): Promise<void> {
+    const maestro = await this._controller.getMaestroInstance();
+
+    // If the audio player is not ready, we can't get the current track yet.
+    if (!maestro.getAudioPlayer().getAudioElement()) {
+      return;
+    }
+
     const currentTrack = this._controller.getCurrentTrack();
     await updateCurrentTrack(currentTrack);
   }

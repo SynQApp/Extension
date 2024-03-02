@@ -11,7 +11,7 @@ export class SpotifyObserver implements ContentObserver {
     await waitForElement('.player-controls');
 
     this._setupPlayerStateObserver();
-    await this._setupSongInfoObserver();
+    await this._setupTrackObserver();
   }
 
   private _setupPlayerStateObserver() {
@@ -62,16 +62,16 @@ export class SpotifyObserver implements ContentObserver {
     }
   }
 
-  private async _setupSongInfoObserver() {
-    const songInfoObserver = new MutationObserver(async () => {
+  private async _setupTrackObserver() {
+    const trackObserver = new MutationObserver(async () => {
       await this._handleTrackUpdated();
     });
 
     const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
     const nowPlayingWidget = await waitForElement(nowPlayingWidgetSelector);
     if (nowPlayingWidget) {
-      songInfoObserver.observe(nowPlayingWidget, {
-        attributeFilter: ['aria-label']
+      trackObserver.observe(nowPlayingWidget, {
+        childList: true
       });
     }
 
@@ -80,30 +80,37 @@ export class SpotifyObserver implements ContentObserver {
       addToLibraryButtonSelector
     );
     if (addToLibraryButton) {
-      songInfoObserver.observe(addToLibraryButton, {
+      trackObserver.observe(addToLibraryButton, {
         attributeFilter: ['aria-checked']
       });
     }
 
-    await this._handleTrackUpdated();
+    const playPauseButtonElement = document.querySelector(
+      'button[data-testid="control-button-playpause"]'
+    );
+    if (playPauseButtonElement) {
+      trackObserver.observe(playPauseButtonElement, {
+        attributeFilter: ['aria-label']
+      });
+    }
   }
 
   /**
    * The Spotify API can take more time than the mutation observer to update the current
-   * song info. This method will retry up to 5 times to get the current song info that
-   * matches the UI's song info.
+   * song info. This method will update the current track based only on the UI first and
+   * then update it again with the API data.
    */
   private async _handleTrackUpdated(): Promise<void> {
-    await this._updateCurrentTrack();
+    await this._updateCurrentTrack(true);
 
     setTimeout(async () => {
       await this._updateCurrentTrack();
     }, 5000);
   }
 
-  private async _updateCurrentTrack(): Promise<void> {
-    const currentTrack = await this._controller.getCurrentTrack();
-    updateCurrentTrack(currentTrack);
+  private async _updateCurrentTrack(partial?: boolean): Promise<void> {
+    const currentTrack = await this._controller.getCurrentTrack(partial);
+    await updateCurrentTrack(currentTrack);
   }
 
   private async _handlePlaybackUpdated(): Promise<void> {

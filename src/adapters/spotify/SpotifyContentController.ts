@@ -250,7 +250,7 @@ export class SpotifyContentController implements ContentController {
     };
   }
 
-  public async getCurrentTrack(): Promise<Track | null> {
+  public async getCurrentTrack(partial?: boolean): Promise<Track | null> {
     const name = (
       document.querySelector(
         'div[data-testid="context-item-info-title"]'
@@ -296,6 +296,10 @@ export class SpotifyContentController implements ContentController {
       albumCoverUrl: albumCoverUrl ?? '',
       duration
     };
+
+    if (partial) {
+      return currentTrack;
+    }
 
     if (
       !this._currentTrackLoading &&
