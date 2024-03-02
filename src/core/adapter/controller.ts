@@ -1,4 +1,4 @@
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 
 export type LinkTrack = Pick<
   Track,
@@ -75,7 +75,7 @@ export interface ContentController {
   /**
    * Get the current player state. Returns undefined if the player is not active.
    */
-  getPlayerState(): ValueOrPromise<PlayerState | null>;
+  getPlayerState(): ValueOrPromise<PlaybackState | null>;
 
   /**
    * Get the currently-playing song info.

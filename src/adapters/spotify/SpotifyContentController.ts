@@ -4,7 +4,7 @@ import { SpotifyEndpoints } from '~constants/spotify';
 import type { ContentController } from '~core/adapter';
 import type { LinkTrack } from '~core/adapter';
 import { RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track } from '~types';
+import type { PlaybackState, QueueItem, Track } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
@@ -202,7 +202,7 @@ export class SpotifyContentController implements ContentController {
     );
   }
 
-  public async getPlayerState(): Promise<PlayerState | null> {
+  public async getPlayerState(): Promise<PlaybackState | null> {
     const playbackProgressBarElement = document.querySelector(
       'div[data-testid="playback-progressbar"]'
     );

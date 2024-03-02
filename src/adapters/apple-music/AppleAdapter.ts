@@ -1,5 +1,4 @@
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
-import type { ReconnectingHub } from '~core/messaging/hub';
 
 import { AppleBackgroundController } from './AppleBackgroundController';
 import { AppleContentController } from './AppleContentController';
@@ -14,6 +13,6 @@ export const AppleAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new AppleBackgroundController(),
   contentController: () => new AppleContentController(),
-  observer: (contentController: ContentController, reduxHub: ReconnectingHub) =>
-    new AppleObserver(contentController as AppleContentController, reduxHub)
+  observer: (contentController: ContentController) =>
+    new AppleObserver(contentController as AppleContentController)
 };

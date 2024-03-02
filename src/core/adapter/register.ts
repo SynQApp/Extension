@@ -29,7 +29,7 @@ export const registerAdapter = (service: MusicServiceAdapter) => {
     window.hub = hub;
 
     const controller = service.contentController();
-    const observer = service.observer(controller, hub);
+    const observer = service.observer(controller);
 
     createMusicControllerHandler(controller, hub);
     createAutoplayReadyHandler(controller, hub);

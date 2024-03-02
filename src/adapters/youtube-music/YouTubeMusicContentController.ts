@@ -10,7 +10,7 @@ import type {
 } from '~adapters/youtube-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
 import { RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 
@@ -119,7 +119,7 @@ export class YouTubeMusicContentController implements ContentController {
     this.getPlayer().seekTo(time);
   }
 
-  public getPlayerState(): PlayerState | null {
+  public getPlayerState(): PlaybackState | null {
     if (this._ytmApp.playerUiState_ === 'INACTIVE') {
       return null;
     }

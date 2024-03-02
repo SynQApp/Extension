@@ -46,7 +46,7 @@ const handleUpdateTab = async (
     tabId: tab.id!,
     musicService,
     currentTrack,
-    playerState,
+    playbackState: playerState,
     autoPlayReady: true
   };
 

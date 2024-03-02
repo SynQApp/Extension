@@ -1,20 +1,11 @@
 import type { ContentObserver } from '~core/adapter';
-import { sendToBackground } from '~core/messaging';
-import type { ReconnectingHub } from '~core/messaging/hub';
-import {
-  updateMusicServiceTabCurrentTrack,
-  updateMusicServiceTabPlayerState
-} from '~store/slices/musicServiceTabs';
-import { dispatchFromContent } from '~util/store';
+import { updateCurrentTrack, updatePlaybackState } from '~core/player';
 import { waitForElement } from '~util/waitForElement';
 
 import type { SpotifyContentController } from './SpotifyContentController';
 
 export class SpotifyObserver implements ContentObserver {
-  constructor(
-    private _controller: SpotifyContentController,
-    private _hub: ReconnectingHub
-  ) {}
+  constructor(private _controller: SpotifyContentController) {}
 
   public async observe(): Promise<void> {
     await waitForElement('.player-controls');
@@ -112,31 +103,11 @@ export class SpotifyObserver implements ContentObserver {
 
   private async _updateCurrentTrack(): Promise<void> {
     const currentTrack = await this._controller.getCurrentTrack();
-
-    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
-      name: 'GET_SELF_TAB'
-    });
-
-    dispatchFromContent(
-      updateMusicServiceTabCurrentTrack({
-        tabId: tab.id!,
-        currentTrack: currentTrack ?? undefined
-      })
-    );
+    updateCurrentTrack(currentTrack);
   }
 
   private async _handlePlaybackUpdated(): Promise<void> {
     const playerState = await this._controller.getPlayerState();
-
-    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
-      name: 'GET_SELF_TAB'
-    });
-
-    dispatchFromContent(
-      updateMusicServiceTabPlayerState({
-        tabId: tab.id!,
-        playerState: playerState ?? undefined
-      })
-    );
+    await updatePlaybackState(playerState);
   }
 }

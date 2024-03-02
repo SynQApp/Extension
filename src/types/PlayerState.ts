@@ -1,6 +1,6 @@
 import type { QueueItem, RepeatMode } from '.';
 
-export interface PlayerState {
+export interface PlaybackState {
   isPlaying: boolean;
   currentTime: number;
   volume: number;

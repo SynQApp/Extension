@@ -6,7 +6,7 @@ import { sendAnalytic } from '~util/analytics';
 
 export const useVolumeSlider = () => {
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = musicServiceTab?.playerState;
+  const playerState = musicServiceTab?.playbackState;
 
   const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const volume = parseInt(e.target.value);

@@ -5,7 +5,7 @@ import { sendAnalytic } from '~util/analytics';
 
 export const usePlayPauseButton = () => {
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = musicServiceTab?.playerState;
+  const playerState = musicServiceTab?.playbackState;
 
   const handleClick = () => {
     sendToContent(

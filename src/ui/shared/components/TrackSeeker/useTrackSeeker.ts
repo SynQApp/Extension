@@ -7,7 +7,7 @@ import { sendAnalytic } from '~util/analytics';
 
 export const useTrackSeeker = () => {
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = musicServiceTab?.playerState;
+  const playerState = musicServiceTab?.playbackState;
   const currentTrack = musicServiceTab?.currentTrack;
 
   const percentage = useMemo(() => {

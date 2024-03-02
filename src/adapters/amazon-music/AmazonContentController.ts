@@ -7,7 +7,7 @@ import type {
 } from '~adapters/amazon-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
 import { RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
@@ -205,7 +205,7 @@ export class AmazonContentController implements ContentController {
     });
   }
 
-  public async getPlayerState(): Promise<PlayerState> {
+  public async getPlayerState(): Promise<PlaybackState> {
     const maestro = await this.getMaestroInstance();
 
     const appState = this.getStore()?.getState();

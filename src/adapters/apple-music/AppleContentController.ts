@@ -6,7 +6,7 @@ import type {
 } from '~adapters/apple-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
 import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
@@ -115,7 +115,7 @@ export class AppleContentController implements ContentController {
     return;
   }
 
-  public getPlayerState(): PlayerState | null {
+  public getPlayerState(): PlaybackState | null {
     if (!this.getPlayer()) {
       return null;
     }
@@ -131,7 +131,7 @@ export class AppleContentController implements ContentController {
       REPEAT_MAP[typedKey] === this.getPlayer().repeatMode;
     }) as RepeatMode;
 
-    const playerState: PlayerState = {
+    const playerState: PlaybackState = {
       currentTime: this.getPlayer().currentPlaybackTime,
       isPlaying: this.getPlayer().isPlaying,
       repeatMode: repeatMode,

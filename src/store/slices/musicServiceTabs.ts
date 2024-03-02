@@ -31,13 +31,13 @@ const musicServiceTabsSlice = createSlice({
       state,
       action: PayloadAction<{
         tabId: number;
-        playerState: MusicServiceTab['playerState'];
+        playbackState: MusicServiceTab['playbackState'];
       }>
     ) => {
-      const { tabId, playerState } = action.payload;
+      const { tabId, playbackState } = action.payload;
       const index = state.findIndex((tab) => tab.tabId === tabId);
       if (index !== -1) {
-        state[index].playerState = playerState;
+        state[index].playbackState = playbackState;
       }
     },
     updateMusicServiceTabCurrentTrack: (

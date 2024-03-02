@@ -11,7 +11,7 @@ import { getMusicServiceName } from '~util/musicService';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const { musicServiceTab } = useMusicServiceTab();
-  const playerState = musicServiceTab?.playerState;
+  const playerState = musicServiceTab?.playbackState;
   const currentTrack = musicServiceTab?.currentTrack;
 
   const queue = useMemo(() => {
