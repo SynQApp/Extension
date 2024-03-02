@@ -40,7 +40,7 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 - [x] Clean up observer pattern as it's too coupled.
 - [x] Create messaging utils that abstract the
 - [x] Add SDK-like functions for controlling the mini player from observers and elsewhere.
-- [ ] Move all background message handlers into the background/messages directory
+- [x] Move all background message handlers into the background/messages directory
 - [ ] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
 - [ ] Consolidate the CSUI components into one CSUI.
 - [ ] Create better separations in contexts.

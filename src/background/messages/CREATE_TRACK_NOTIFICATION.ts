@@ -1,7 +1,8 @@
+import type { PlasmoMessaging } from '@plasmohq/messaging';
+
 import { store } from '~store';
 import type { Track } from '~types';
-import type { HubMessageHandler } from '~types/HubMessageHandler';
-import { sendAnalytic, sendEvent } from '~util/analytics';
+import { sendEvent } from '~util/analytics';
 import { imageUrlToDataUrl } from '~util/imageUrlToDataUrl';
 
 const ICON_PATH = 'assets/icon.png';
@@ -21,11 +22,17 @@ const createMessage = (track: Track) => {
   }`;
 };
 
-export const handler: HubMessageHandler<Track> = async (
-  track,
-  sender,
-  sendResponse
+export const handler: PlasmoMessaging.MessageHandler<Track> = async (
+  req,
+  res
 ) => {
+  const track = req.body;
+  const sender = req.sender;
+
+  if (!track) {
+    return;
+  }
+
   await sendEvent({
     name: 'track_played'
   });
