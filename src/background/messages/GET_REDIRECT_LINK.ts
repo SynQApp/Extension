@@ -1,8 +1,8 @@
-import type { MusicService } from '@synq/music-service-clients';
 import levenshtein from 'fast-levenshtein';
 
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
+import type { MusicService } from '~/types';
 import { AmazonAdapter } from '~adapters/amazon-music/AmazonAdapter';
 import { AppleAdapter } from '~adapters/apple-music/AppleAdapter';
 import { SpotifyAdapter } from '~adapters/spotify/SpotifyAdapter';

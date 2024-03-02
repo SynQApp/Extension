@@ -1,3 +1,4 @@
+import type { ParsedLink } from '~core/link';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 
 export type LinkTrack = Pick<
@@ -105,4 +106,14 @@ export interface BackgroundController {
    * Get the link for the current track.
    */
   search(searchInput: SearchInput): ValueOrPromise<SearchResult[]>;
+
+  /**
+   * Parse a link to provide basic track details.
+   */
+  parseLink(link: string): ParsedLink | null;
+
+  /**
+   * Create a link from basic track details.
+   */
+  getLink(parsedLink: ParsedLink): string;
 }

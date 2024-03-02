@@ -1,7 +1,7 @@
-import { MUSIC_SERVICE } from '@synq/music-service-clients';
 import SpotifyLogo from 'data-base64:~assets/images/spotify-logo.svg';
 
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
+import { MUSIC_SERVICE } from '~types';
 
 import { SpotifyBackgroundController } from './SpotifyBackgroundController';
 import { SpotifyContentController } from './SpotifyContentController';

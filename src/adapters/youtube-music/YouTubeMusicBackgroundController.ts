@@ -3,7 +3,10 @@ import type {
   SearchInput,
   SearchResult
 } from '~core/adapter';
+import type { ParsedLink } from '~core/link';
 import type { Track } from '~types';
+
+import { YouTubeMusicAdapter } from './YouTubeMusicAdapter';
 
 const SEARCH_ENDPOINT = 'https://music.youtube.com/search';
 const WATCH_ENDPOINT = 'https://music.youtube.com/watch';
@@ -33,6 +36,47 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       .filter((track) => track !== null) as SearchResult[];
 
     return searchResults;
+  }
+
+  public getLink(parsedLink: ParsedLink): string {
+    const { type } = parsedLink;
+    const baseUrl = YouTubeMusicAdapter.baseUrl;
+
+    if (type === 'ALBUM') {
+      return `${baseUrl}/playlist?list=${parsedLink.albumId}`;
+    } else if (type === 'ARTIST') {
+      return `${baseUrl}/channel/${parsedLink.artistId}`;
+    } else if (type === 'TRACK') {
+      return `${baseUrl}/watch?v=${parsedLink.trackId}`;
+    } else {
+      throw new Error('Invalid link type');
+    }
+  }
+
+  public parseLink(link: string): ParsedLink | null {
+    const parsedLink: Partial<ParsedLink> = {
+      musicService: 'YOUTUBEMUSIC'
+    };
+
+    const url = new URL(link);
+    const path = url.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const query = url.searchParams;
+
+    if (pathParts[0] === 'watch') {
+      parsedLink.trackId = query.get('v') || '';
+      parsedLink.type = 'TRACK';
+    } else if (pathParts[0] === 'playlist') {
+      parsedLink.albumId = query.get('list') || '';
+      parsedLink.type = 'ALBUM';
+    } else if (pathParts[0] === 'channel') {
+      parsedLink.artistId = pathParts[1];
+      parsedLink.type = 'ARTIST';
+    }
+
+    return parsedLink.albumId || parsedLink.artistId || parsedLink.trackId
+      ? (parsedLink as ParsedLink)
+      : null;
   }
 
   private async _getSearchPage(query: string): Promise<string> {

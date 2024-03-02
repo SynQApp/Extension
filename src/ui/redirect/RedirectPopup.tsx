@@ -1,10 +1,10 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { parseLink } from '@synq/music-service-clients';
 import { Button, Flex, Image, Stack, Text, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
+import { parseLink } from '~core/link';
 import { sendToBackground } from '~core/messaging';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';

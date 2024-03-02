@@ -3,7 +3,9 @@ import type {
   SearchInput,
   SearchResult
 } from '~core/adapter';
+import type { ParsedLink } from '~core/link';
 
+import { AmazonAdapter } from './AmazonAdapter';
 import type { AmznMusic } from './types';
 
 const SEARCH_ENDPOINT = 'https://na.mesk.skill.music.a2z.com/api/showSearch';
@@ -68,6 +70,51 @@ export class AmazonBackgroundController implements BackgroundController {
     }));
 
     return searchResults;
+  }
+
+  public parseLink(link: string): ParsedLink | null {
+    const parsedLink: Partial<ParsedLink> = {
+      musicService: 'AMAZONMUSIC'
+    };
+
+    const url = new URL(link);
+    const path = url.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const query = url.searchParams;
+
+    if (pathParts[0] === 'albums') {
+      if (query.has('trackAsin')) {
+        const trackId = query.get('trackAsin');
+        parsedLink.trackId = trackId || '';
+        parsedLink.albumId = pathParts[1];
+        parsedLink.type = 'TRACK';
+      } else {
+        parsedLink.albumId = pathParts[1];
+        parsedLink.type = 'ALBUM';
+      }
+    } else if (pathParts[0] === 'artists') {
+      parsedLink.artistId = pathParts[1];
+      parsedLink.type = 'ARTIST';
+    }
+
+    return parsedLink.albumId || parsedLink.artistId || parsedLink.trackId
+      ? (parsedLink as ParsedLink)
+      : null;
+  }
+
+  public getLink(parsedLink: ParsedLink): string {
+    const { type } = parsedLink;
+    const baseUrl = AmazonAdapter.baseUrl;
+
+    if (type === 'ALBUM') {
+      return `${baseUrl}/albums/${parsedLink.albumId}`;
+    } else if (type === 'ARTIST') {
+      return `${baseUrl}/artists/${parsedLink.artistId}`;
+    } else if (type === 'TRACK') {
+      return `${baseUrl}/albums/${parsedLink.albumId}?trackAsin=${parsedLink.trackId}`;
+    } else {
+      throw new Error('Invalid link type');
+    }
   }
 
   private async _fetchConfig(): Promise<AmznMusic['appConfig']> {

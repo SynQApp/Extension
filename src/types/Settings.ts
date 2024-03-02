@@ -1,4 +1,4 @@
-import type { MusicService } from '@synq/music-service-clients';
+import type { MusicService } from '~/types';
 
 export interface Settings {
   miniPlayerKeyControlsEnabled: boolean;

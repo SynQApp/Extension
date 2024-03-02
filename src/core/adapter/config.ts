@@ -1,5 +1,4 @@
-import type { MusicService } from '@synq/music-service-clients';
-
+import type { MusicService } from '~/types';
 import type { KeyControlsOptions } from '~core/keys';
 
 import type { BackgroundController, ContentController } from './controller';

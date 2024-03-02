@@ -1,7 +1,7 @@
-import { MUSIC_SERVICE } from '@synq/music-service-clients';
 import AppleLogo from 'data-base64:~assets/images/apple-logo.svg';
 
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
+import { MUSIC_SERVICE } from '~types';
 
 import { AppleBackgroundController } from './AppleBackgroundController';
 import { AppleContentController } from './AppleContentController';

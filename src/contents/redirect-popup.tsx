@@ -1,10 +1,10 @@
-import { parseLink } from '@synq/music-service-clients';
 import { UiProvider } from '@synq/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
+import { parseLink } from '~core/link';
 import { store } from '~store';
 import { RedirectPopup } from '~ui/redirect/RedirectPopup';
 import { sendAnalytic } from '~util/analytics';

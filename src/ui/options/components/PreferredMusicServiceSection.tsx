@@ -1,9 +1,9 @@
-import { MUSIC_SERVICE, type MusicService } from '@synq/music-service-clients';
 import { Radio, RadioGroup, Stack } from '@synq/ui';
 
 import adapters from '~adapters';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
+import { MUSIC_SERVICE, type MusicService } from '~types';
 import { sendAnalytic } from '~util/analytics';
 
 import { OptionsSection } from './OptionsSection';

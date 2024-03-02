@@ -1,6 +1,7 @@
-import type { MusicService } from '@synq/music-service-clients';
 import { List, token } from '@synq/ui';
 import { styled } from 'styled-components';
+
+import type { MusicService } from '~/types';
 
 import { ListItemMenu } from '../ListItemMenu';
 import { TrackListItem } from '../TrackListItem';
@@ -53,12 +54,6 @@ export const Queue = ({
                           handleVisitTrackOnMusicService(track?.link);
                         }
                       }
-                      // {
-                      //   icon: 'share',
-                      //   text: 'Share',
-                      //   // TODO: Implement share click handler
-                      //   onClick: () => console.info('Share')
-                      // }
                     ]}
                   />
                 )

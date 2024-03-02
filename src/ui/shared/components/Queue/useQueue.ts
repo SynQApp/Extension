@@ -1,7 +1,7 @@
-import type { MusicService } from '@synq/music-service-clients';
-import { getLink } from '@synq/music-service-clients';
 import { useMemo } from 'react';
 
+import type { MusicService } from '~/types';
+import { getLink } from '~core/link';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';

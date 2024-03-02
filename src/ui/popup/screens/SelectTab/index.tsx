@@ -1,8 +1,8 @@
-import type { MusicService } from '@synq/music-service-clients';
 import { List, Scrollable, Text, token } from '@synq/ui';
 import { useMemo } from 'react';
 import { styled } from 'styled-components';
 
+import type { MusicService } from '~/types';
 import { useAppSelector } from '~store';
 import Layout from '~ui/popup/Layout';
 import { TrackListItem } from '~ui/shared/components/TrackListItem';

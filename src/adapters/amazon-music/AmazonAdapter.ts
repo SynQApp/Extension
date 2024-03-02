@@ -1,7 +1,7 @@
-import { MUSIC_SERVICE } from '@synq/music-service-clients';
 import AmazonLogo from 'data-base64:~assets/images/amazon-logo.svg';
 
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
+import { MUSIC_SERVICE } from '~types';
 
 import { AmazonBackgroundController } from './AmazonBackgroundController';
 import { AmazonContentController } from './AmazonContentController';

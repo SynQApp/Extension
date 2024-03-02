@@ -1,4 +1,5 @@
 export * from './MusicControllerMessage';
+export * from './MusicService';
 export * from './MusicServiceTab';
 export * from './PlayerState';
 export * from './QueueItem';

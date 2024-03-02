@@ -1,5 +1,3 @@
-import { getLink } from '@synq/music-service-clients';
-
 import type {
   NativeYouTubeMusicMoviePlayer,
   NativeYouTubeMusicQueueItem,
@@ -9,6 +7,7 @@ import type {
   YtmApp
 } from '~adapters/youtube-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
+import { getLink } from '~core/link';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';

@@ -1,8 +1,7 @@
-import { getLink } from '@synq/music-service-clients';
-
 import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type { ContentController } from '~core/adapter';
 import type { LinkTrack } from '~core/adapter';
+import { getLink } from '~core/link';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track } from '~types';
 import { debounce } from '~util/debounce';

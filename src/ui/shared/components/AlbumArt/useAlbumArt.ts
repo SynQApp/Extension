@@ -1,5 +1,4 @@
-import type { MusicService } from '@synq/music-service-clients';
-
+import type { MusicService } from '~/types';
 import adapters from '~adapters';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';

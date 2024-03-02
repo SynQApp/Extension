@@ -1,7 +1,7 @@
-import { MUSIC_SERVICE } from '@synq/music-service-clients';
 import YoutubeLogo from 'data-base64:~assets/images/youtube-logo.svg';
 
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
+import { MUSIC_SERVICE } from '~types';
 
 import { YouTubeMusicBackgroundController } from './YouTubeMusicBackgroundController';
 import { YouTubeMusicContentController } from './YouTubeMusicContentController';

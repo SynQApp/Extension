@@ -1,10 +1,10 @@
-import { MUSIC_SERVICE, type MusicService } from '@synq/music-service-clients';
 import { Flex, Stack, Text, token } from '@synq/ui';
 import { styled } from 'styled-components';
 
 import adapters from '~adapters';
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPreferredMusicService } from '~store/slices/settings';
+import { MUSIC_SERVICE, type MusicService } from '~types';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
 import { sendAnalytic } from '~util/analytics';
 
