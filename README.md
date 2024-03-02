@@ -20,7 +20,7 @@
 <div align="center">
 
 [![PRs-Welcome][contribute-image]][contribute-url]
-[![Download][downloads-image]][npm-url]
+[![Download][download-image]][download-url]
 
 </div>
 
@@ -58,6 +58,7 @@ We ❤️ contributors! Feel free to contribute to this project but **please rea
   Made with <a rel="noopener noreferrer" target="_blank" href="https://contrib.rocks">contrib.rocks</a>
 </p>
 
-[downloads-image]: https://img.shields.io/badge/download-40k_users-blue
+[download-image]: https://img.shields.io/badge/download-40k_users-blue
+[download-url]: https://www.synqapp.io/
 [contribute-url]: https://github.com/SynQApp/Extension/blob/main/CONTRIBUTING.md
 [contribute-image]: https://img.shields.io/badge/PRs-welcome-blue.svg
