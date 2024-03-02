@@ -1,4 +1,4 @@
-import type { KeyControlsOptions } from '~shared/keyControlsListener';
+import type { KeyControlsOptions } from '~core/keys';
 
 export const APPLE_KEY_CONTROLS: KeyControlsOptions = {
   next: true,

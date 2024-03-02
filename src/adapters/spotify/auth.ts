@@ -1,4 +1,4 @@
-import { SpotifyEndpoints } from '~constants/spotify';
+import { SpotifyEndpoints } from '~adapters/spotify/constants';
 
 export const getAuthorizationToken = async (): Promise<string> => {
   const response = await fetch(

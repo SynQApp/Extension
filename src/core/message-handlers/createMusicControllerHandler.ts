@@ -1,15 +1,13 @@
+import type { ContentController } from '~core/adapter';
 import type { ReconnectingHub } from '~core/messaging/hub';
-import { setSearchLoading, setSearchResults } from '~store/slices/search';
 import { MusicControllerMessage } from '~types';
-
-import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
 /**
  * Register a controller handler that handles events from other components
  * in the extension.
  */
-export const createMusicControllerHandler = (
-  controller: MusicServicePlaybackController,
+export const createContentControllerHandler = (
+  controller: ContentController,
   hub: ReconnectingHub
 ) => {
   hub.addListener(async (message) => {
@@ -66,11 +64,6 @@ export const createMusicControllerHandler = (
 
       case MusicControllerMessage.TOGGLE_REPEAT_MODE: {
         await controller.toggleRepeatMode();
-        break;
-      }
-
-      case MusicControllerMessage.PREPARE_FOR_AUTOPLAY: {
-        await controller.prepareForAutoplay();
         break;
       }
 

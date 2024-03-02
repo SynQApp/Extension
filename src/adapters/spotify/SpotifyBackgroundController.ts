@@ -1,5 +1,5 @@
+import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type { NativeSpotifySongTrack } from '~adapters/spotify/types';
-import { SpotifyEndpoints } from '~constants/spotify';
 import type {
   BackgroundController,
   SearchInput,

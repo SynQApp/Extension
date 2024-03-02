@@ -1,7 +1,6 @@
 import globToRegExp from 'glob-to-regexp';
 
 import {
-  createAutoplayReadyHandler,
   createMusicControllerHandler,
   createRedirectHandler,
   createTabsHandler
@@ -11,12 +10,16 @@ import { onDocumentReady } from '~util/onDocumentReady';
 
 import type { MusicServiceAdapter } from './config';
 
-declare global {
-  interface Window {
-    hub: ReconnectingHub;
-  }
-}
+declare let window: Window & {
+  hub: ReconnectingHub;
+};
 
+/**
+ * Match the current URL to an adapter.
+ * @param url
+ * @param adapters
+ * @returns {MusicServiceAdapter | undefined}
+ */
 export const matchAdapter = (url: string, adapters: MusicServiceAdapter[]) => {
   return adapters.find((adapter) =>
     adapter.urlMatches.some((match) => {
@@ -40,10 +43,9 @@ export const registerAdapter = (service: MusicServiceAdapter) => {
     window.hub = hub;
 
     const controller = service.contentController();
-    const observer = service.observer(controller);
+    const observer = service.contentObserver(controller);
 
     createMusicControllerHandler(controller, hub);
-    createAutoplayReadyHandler(controller, hub);
     createTabsHandler(controller, observer, hub);
     createRedirectHandler(controller, hub);
 

@@ -13,6 +13,6 @@ export const SpotifyAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new SpotifyBackgroundController(),
   contentController: () => new SpotifyContentController(),
-  observer: (contentController: ContentController) =>
+  contentObserver: (contentController: ContentController) =>
     new SpotifyObserver(contentController as SpotifyContentController)
 };

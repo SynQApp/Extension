@@ -13,6 +13,6 @@ export const AmazonAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new AmazonBackgroundController(),
   contentController: () => new AmazonContentController(),
-  observer: (contentController: ContentController) =>
+  contentObserver: (contentController: ContentController) =>
     new AmazonMusicObserver(contentController as AmazonContentController)
 };

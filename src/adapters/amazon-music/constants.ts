@@ -1,4 +1,4 @@
-import type { KeyControlsOptions } from '~shared/keyControlsListener';
+import type { KeyControlsOptions } from '~core/keys';
 
 export const AMAZON_KEY_CONTROLS: KeyControlsOptions = {
   volumeDown: true,

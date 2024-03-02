@@ -4,6 +4,12 @@ import {
   sendToBackground as plasmoSendToBackground
 } from '@plasmohq/messaging';
 
+import type { ReconnectingHub } from './hub';
+
+declare let window: Window & {
+  hub: ReconnectingHub;
+};
+
 /**
  * Send a message to the background service worker. Works both in MAIN and ISOLATED worlds.
  * @param request The message to send to the background service worker.

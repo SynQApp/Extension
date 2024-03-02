@@ -5,12 +5,10 @@ import type {
   NativeAppleMusicMediaItem
 } from '~adapters/apple-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
-import { NotReadyReason, RepeatMode } from '~types';
+import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
-
-import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
 
 declare let window: Window & {
   MusicKit: { getInstance: () => MusicKit };
@@ -107,10 +105,6 @@ export class AppleContentController implements ContentController {
     this.getPlayer().seekToTime(time);
   }
 
-  public prepareForAutoplay(): void {
-    return;
-  }
-
   public prepareForSession(): void {
     return;
   }
@@ -174,10 +168,6 @@ export class AppleContentController implements ContentController {
     });
   }
 
-  public isReady(): true | NotReadyReason {
-    return true;
-  }
-
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queue = this.getQueue();
 
@@ -207,12 +197,17 @@ export class AppleContentController implements ContentController {
       return null;
     }
 
+    const albumCoverUrl = track.attributes.artwork.url.replace(
+      '{w}x{h}bb',
+      '300x300'
+    );
+
     return {
       name: track.attributes.name,
       artistName: track.attributes.artistName,
       albumName: track.attributes.albumName,
       duration: track.attributes.durationInMillis,
-      albumCoverUrl: track.attributes.artwork.url
+      albumCoverUrl
     };
   }
 

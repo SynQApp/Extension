@@ -8,11 +8,9 @@ export const config: PlasmoCSConfig = {
   all_frames: true
 };
 
-declare global {
-  interface Window {
-    setDestinationLink: (link: string) => void;
-  }
-}
+declare let window: Window & {
+  setDestinationLink: (link: string) => void;
+};
 
 const initialize = async () => {
   const url = new URL(window.location.href);

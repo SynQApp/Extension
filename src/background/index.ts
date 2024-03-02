@@ -1,11 +1,9 @@
 import { getHubMap, startHub } from '@plasmohq/messaging/pub-sub';
 
 import { initializeInstallHandler } from './createInstallHandler';
-import { popupListener } from './popupListener';
 import { registerHubMessageHandlers } from './registerHubMessageHandlers';
 import { updateMusicServiceTabs } from './updateMusicServiceTabs';
 
-popupListener();
 startHub();
 updateMusicServiceTabs();
 initializeInstallHandler();

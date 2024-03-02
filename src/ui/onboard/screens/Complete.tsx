@@ -3,7 +3,6 @@ import MiniPlayerExample from 'data-base64:~assets/images/mini-player-example.pn
 import RedirectExample from 'data-base64:~assets/images/redirect-example.png';
 import { styled } from 'styled-components';
 
-import { SPOTIFY_ENABLED } from '~constants/features';
 import {
   AMAZON_MUSIC_URL,
   APPLE_MUSIC_URL,
@@ -20,8 +19,6 @@ const EXAMPLE_SPOTIFY_LINK =
   'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC';
 const EXAMPLE_APPLE_MUSIC_LINK =
   'https://music.apple.com/us/album/never-gonna-give-you-up/1452434638?i=1452434833';
-const EXAMPLE_YOUTUBE_MUSIC_LINK =
-  'https://music.youtube.com/watch?v=lYBUbBu4W08';
 
 export const Complete = () => {
   const musicService = useAppSelector(
@@ -55,15 +52,8 @@ export const Complete = () => {
       case 'SPOTIFY':
         window.open(EXAMPLE_APPLE_MUSIC_LINK);
         break;
-      case 'APPLEMUSIC':
-        window.open(
-          SPOTIFY_ENABLED ? EXAMPLE_SPOTIFY_LINK : EXAMPLE_YOUTUBE_MUSIC_LINK
-        );
-        break;
       default:
-        window.open(
-          SPOTIFY_ENABLED ? EXAMPLE_SPOTIFY_LINK : EXAMPLE_APPLE_MUSIC_LINK
-        );
+        window.open(EXAMPLE_SPOTIFY_LINK);
         break;
     }
 
@@ -158,13 +148,7 @@ export const Complete = () => {
                     onClick={handleRedirectExampleClick}
                   >
                     Example{' '}
-                    {SPOTIFY_ENABLED
-                      ? musicService === 'SPOTIFY'
-                        ? 'Apple Music'
-                        : 'Spotify'
-                      : musicService === 'APPLEMUSIC'
-                      ? 'YouTube Music'
-                      : 'Apple Music'}{' '}
+                    {musicService === 'SPOTIFY' ? 'Apple Music' : 'Spotify'}{' '}
                     Link
                   </Button>
                 </span>

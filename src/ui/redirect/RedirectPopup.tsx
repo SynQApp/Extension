@@ -8,7 +8,7 @@ import { css, styled, useTheme } from 'styled-components';
 import { sendToBackground } from '~core/messaging';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
-import { MusicLinkControllerMessage } from '~types';
+import { MusicControllerMessage } from '~types';
 import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceName } from '~util/musicService';
 
@@ -35,7 +35,7 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
     }
 
     sendToContent({
-      name: MusicLinkControllerMessage.REDIRECT,
+      name: MusicControllerMessage.REDIRECT,
       body: {
         to: tab.id
       }

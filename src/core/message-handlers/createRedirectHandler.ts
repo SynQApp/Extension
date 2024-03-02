@@ -1,7 +1,7 @@
 import type { ContentController } from '~core/adapter/controller';
 import { sendToBackground } from '~core/messaging';
 import type { ReconnectingHub } from '~core/messaging/hub';
-import { MusicLinkControllerMessage, type Settings } from '~types';
+import { MusicControllerMessage, type Settings } from '~types';
 
 /**
  * Register a controller handler that handles events from other components
@@ -13,7 +13,7 @@ export const createRedirectHandler = (
 ) => {
   hub.addListener(async (message) => {
     switch (message?.name) {
-      case MusicLinkControllerMessage.REDIRECT: {
+      case MusicControllerMessage.REDIRECT: {
         await handleRedirect(controller, hub);
         break;
       }

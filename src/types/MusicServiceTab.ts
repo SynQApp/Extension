@@ -10,5 +10,4 @@ export interface MusicServiceTab {
   currentTrack?: Track | null;
   queue?: Track[];
   pictureInPicture?: boolean;
-  autoPlayReady?: boolean;
 }

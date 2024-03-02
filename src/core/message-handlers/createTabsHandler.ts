@@ -4,7 +4,7 @@ import type { ContentController, ContentObserver } from '~core/adapter';
 import { sendToBackground } from '~core/messaging';
 import type { ReconnectingHub } from '~core/messaging/hub';
 import { updateMusicServiceTab } from '~store/slices/musicServiceTabs';
-import { type MusicServiceTab, NotReadyReason } from '~types';
+import { type MusicServiceTab } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
 import { getMusicServiceFromUrl } from '~util/musicService';
 import { dispatchFromContent } from '~util/store';
@@ -46,8 +46,7 @@ const handleUpdateTab = async (
     tabId: tab.id!,
     musicService,
     currentTrack,
-    playbackState: playerState,
-    autoPlayReady: true
+    playbackState: playerState
   };
 
   dispatchFromContent(updateMusicServiceTab(musicServiceTab));

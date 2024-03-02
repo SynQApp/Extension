@@ -1,6 +1,6 @@
 import { getLink } from '@synq/music-service-clients';
 
-import { SpotifyEndpoints } from '~constants/spotify';
+import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type { ContentController } from '~core/adapter';
 import type { LinkTrack } from '~core/adapter';
 import { RepeatMode } from '~types';

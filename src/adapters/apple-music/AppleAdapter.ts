@@ -13,6 +13,6 @@ export const AppleAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new AppleBackgroundController(),
   contentController: () => new AppleContentController(),
-  observer: (contentController: ContentController) =>
+  contentObserver: (contentController: ContentController) =>
     new AppleObserver(contentController as AppleContentController)
 };

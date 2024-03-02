@@ -6,7 +6,6 @@ import { Provider } from 'react-redux';
 
 import { sendToContent } from '~core/messaging/sendToContent';
 import { store } from '~store';
-import { UiStateMessage } from '~types';
 import { PipToggleButton } from '~ui/pip/PipToggleButton';
 import { PipUi } from '~ui/pip/PipUi';
 import { sendAnalytic } from '~util/analytics';
@@ -79,21 +78,12 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
       </UiProvider>
     );
 
-    sendToContent({
-      name: UiStateMessage.PIP_OPENED
-    });
-
     setShowButton(false);
 
     sendAnalytic({ name: 'pip_opened' });
 
     pipWindow.addEventListener('pagehide', () => {
-      sendToContent({
-        name: UiStateMessage.PIP_CLOSED
-      });
-
       setShowButton(true);
-
       sendAnalytic({ name: 'pip_closed' });
     });
   };

@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  addKeyControlsListener,
-  removeKeyControlsListener
-} from '~shared/keyControlsListener';
+import { addKeyControlsListener, removeKeyControlsListener } from '~core/keys';
 import { useAppSelector } from '~store';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { usePermissionsCheck } from '~ui/shared/hooks/usePermissionsCheck';
@@ -45,11 +42,7 @@ const Popup = () => {
     if (permissionsAccepted === false) {
       navigate('/accept-permissions');
     } else if (selectedTab) {
-      if (!selectedTab.autoPlayReady) {
-        navigate('/enable-autoplay');
-      } else {
-        navigate('/');
-      }
+      navigate('/');
     } else if (!tabs || tabs.length === 0) {
       navigate('/select-platform');
     } else if (tabs.length > 1) {

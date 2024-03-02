@@ -1,13 +1,10 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { AMAZON_KEY_CONTROLS } from '~constants/amazon';
-import { APPLE_KEY_CONTROLS } from '~constants/apple';
-import { SPOTIFY_KEY_CONTROLS } from '~constants/spotify';
-import { YTM_KEY_CONTROLS } from '~constants/youtube';
-import {
-  addKeyControlsListener,
-  removeKeyControlsListener
-} from '~shared/keyControlsListener';
+import { AMAZON_KEY_CONTROLS } from '~adapters/amazon-music/constants';
+import { APPLE_KEY_CONTROLS } from '~adapters/apple-music/constants';
+import { SPOTIFY_KEY_CONTROLS } from '~adapters/spotify/constants';
+import { YTM_KEY_CONTROLS } from '~adapters/youtube-music/constants';
+import { addKeyControlsListener, removeKeyControlsListener } from '~core/keys';
 import { persistor, store } from '~store';
 
 export const config: PlasmoCSConfig = {

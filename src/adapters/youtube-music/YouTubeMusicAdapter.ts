@@ -13,6 +13,6 @@ export const YouTubeMusicAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new YouTubeMusicBackgroundController(),
   contentController: () => new YouTubeMusicContentController(),
-  observer: (contentController: ContentController) =>
+  contentObserver: (contentController: ContentController) =>
     new YouTubeMusicObserver(contentController as YouTubeMusicContentController)
 };

@@ -40,10 +40,6 @@ export class YouTubeMusicContentController implements ContentController {
 
   constructor() {}
 
-  public prepareForAutoplay(): ValueOrPromise<void> {
-    return;
-  }
-
   public play(): void {
     this.getPlayer().playVideo();
   }
