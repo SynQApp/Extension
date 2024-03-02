@@ -39,7 +39,7 @@ const synqCompose =
         };
 
         // We need to set the name of the store so that we can find it later.
-        store.name = config.name;
+        (store as any).name = config.name;
         window.__REDUX_STORES__.push(store);
 
         return store;

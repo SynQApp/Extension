@@ -4,7 +4,7 @@ import { AmazonBackgroundController } from './AmazonBackgroundController';
 import { AmazonContentController } from './AmazonContentController';
 import { AmazonMusicObserver } from './AmazonContentObserver';
 
-export const AmazonAdapater: MusicServiceAdapter = {
+export const AmazonAdapter: MusicServiceAdapter = {
   displayName: 'Amazon Music',
   id: 'AMAZONMUSIC',
   baseUrl: 'https://music.amazon.com/',

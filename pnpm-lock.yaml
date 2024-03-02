@@ -50,6 +50,9 @@ dependencies:
   fast-levenshtein:
     specifier: ^3.0.0
     version: 3.0.0
+  glob-to-regexp:
+    specifier: ^0.4.1
+    version: 0.4.1
   i:
     specifier: ^0.3.7
     version: 0.3.7
@@ -109,6 +112,9 @@ devDependencies:
   '@types/fast-levenshtein':
     specifier: ^0.0.4
     version: 0.0.4
+  '@types/glob-to-regexp':
+    specifier: ^0.4.4
+    version: 0.4.4
   '@types/node':
     specifier: 18.15.12
     version: 18.15.12
@@ -4687,6 +4693,10 @@ packages:
     resolution: {integrity: sha512-lB98tui0uxc7erbj0serZfJlHKLNJHwBltPnbmO1WRpL5T325GOHRiQfr2E29V2q+S1brDO63Fpdt6vb3bES9Q==}
     dev: true
 
+  /@types/glob-to-regexp@0.4.4:
+    resolution: {integrity: sha512-nDKoaKJYbnn1MZxUY0cA1bPmmgZbg0cTq7Rh13d0KWYNOiKbqoR+2d89SnRPszGh7ROzSwZ/GOjZ4jPbmmZ6Eg==}
+    dev: true
+
   /@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -6863,6 +6873,10 @@ packages:
 
   /glob-to-regexp@0.3.0:
     resolution: {integrity: sha512-Iozmtbqv0noj0uDDqoL0zNq0VBEfK2YFoMAZoxJe4cwphvLR+JskfF30QhXHOR4m3KrE6NLRYw+U9MRXvifyig==}
+    dev: false
+
+  /glob-to-regexp@0.4.1:
+    resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
     dev: false
 
   /glob@10.3.10:

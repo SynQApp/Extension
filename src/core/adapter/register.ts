@@ -1,3 +1,5 @@
+import globToRegExp from 'glob-to-regexp';
+
 import {
   createAutoplayReadyHandler,
   createMusicControllerHandler,
@@ -14,6 +16,15 @@ declare global {
     hub: ReconnectingHub;
   }
 }
+
+export const matchAdapter = (url: string, adapters: MusicServiceAdapter[]) => {
+  return adapters.find((adapter) =>
+    adapter.urlMatches.some((match) => {
+      const regex = globToRegExp(match);
+      return regex.test(url);
+    })
+  );
+};
 
 /**
  * Initialize the music service in the content script.

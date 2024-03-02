@@ -3,7 +3,7 @@ import levenshtein from 'fast-levenshtein';
 
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
-import { AmazonAdapater } from '~adapters/amazon-music/AmazonAdapter';
+import { AmazonAdapter } from '~adapters/amazon-music/AmazonAdapter';
 import { AppleAdapter } from '~adapters/apple-music/AppleAdapter';
 import { SpotifyAdapter } from '~adapters/spotify/SpotifyAdapter';
 import { YouTubeMusicAdapter } from '~adapters/youtube-music/YouTubeMusicAdapter';
@@ -22,7 +22,7 @@ type SearchResultWithoutLink = Omit<SearchResult, 'link'>;
 const LINK_CONTROLLERS_MAP: Record<MusicService, BackgroundController | null> =
   {
     SPOTIFY: SpotifyAdapter.backgroundController(),
-    AMAZONMUSIC: AmazonAdapater.backgroundController(),
+    AMAZONMUSIC: AmazonAdapter.backgroundController(),
     APPLEMUSIC: AppleAdapter.backgroundController(),
     DEEZER: null,
     YOUTUBEMUSIC: YouTubeMusicAdapter.backgroundController()

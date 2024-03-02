@@ -9,7 +9,7 @@ export const YouTubeMusicAdapter: MusicServiceAdapter = {
   id: 'YOUTUBE',
   baseUrl: 'https://music.youtube.com/',
   icon: '',
-  urlMatches: ['*://music.spotify.com/*'],
+  urlMatches: ['*://music.youtube.com/*'],
   disabledFeatures: [],
   backgroundController: () => new YouTubeMusicBackgroundController(),
   contentController: () => new YouTubeMusicContentController(),
