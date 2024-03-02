@@ -1,4 +1,4 @@
-import type { ReduxHub } from '~util/connectToReduxHub';
+import type { ReconnectingHub } from '~core/messaging/hub';
 
 import type { BackgroundController, ContentController } from './controller';
 import type { Feature } from './feature';
@@ -15,6 +15,6 @@ export interface MusicServiceAdapter {
   contentController: () => ContentController;
   observer: (
     contentController: ContentController,
-    reduxHub: ReduxHub
+    reduxHub: ReconnectingHub
   ) => ContentObserver;
 }

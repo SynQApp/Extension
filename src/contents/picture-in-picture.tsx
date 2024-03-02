@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { store } from '~store';
 import { UiStateMessage } from '~types';
 import { PipToggleButton } from '~ui/pip/PipToggleButton';
 import { PipUi } from '~ui/pip/PipUi';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 declare let window: {
   documentPictureInPicture?: {
@@ -79,7 +79,7 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
       </UiProvider>
     );
 
-    sendMessage({
+    sendToContent({
       name: UiStateMessage.PIP_OPENED
     });
 
@@ -88,7 +88,7 @@ const PipTriggerUi = ({ anchor }: PlasmoCSUIProps) => {
     sendAnalytic({ name: 'pip_opened' });
 
     pipWindow.addEventListener('pagehide', () => {
-      sendMessage({
+      sendToContent({
         name: UiStateMessage.PIP_CLOSED
       });
 

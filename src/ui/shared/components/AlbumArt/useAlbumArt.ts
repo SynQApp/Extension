@@ -1,9 +1,9 @@
 import type { MusicService } from '@synq/music-service-clients';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>([
   // 'AMAZONMUSIC',
@@ -24,7 +24,7 @@ export const useAlbumArt = () => {
     musicServiceTab?.musicService
   )
     ? () => {
-        sendMessage(
+        sendToContent(
           {
             name: MusicControllerMessage.TOGGLE_LIKE
           },
@@ -40,7 +40,7 @@ export const useAlbumArt = () => {
     musicServiceTab?.musicService
   )
     ? () => {
-        sendMessage(
+        sendToContent(
           {
             name: MusicControllerMessage.TOGGLE_DISLIKE
           },

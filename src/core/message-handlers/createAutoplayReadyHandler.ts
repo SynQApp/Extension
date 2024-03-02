@@ -1,17 +1,19 @@
+import { sendToBackground } from '~core/messaging';
+import type { ReconnectingHub } from '~core/messaging/hub';
 import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTabs';
 import { AutoplayMessage, NotReadyReason } from '~types';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import { dispatchFromContent } from '~util/store';
 
 import type { ContentController } from '../adapter/controller';
 
 export const createAutoplayReadyHandler = (
   controller: ContentController,
-  hub: ReduxHub
+  hub: ReconnectingHub
 ) => {
   hub.addListener(async (message) => {
     switch (message?.name) {
       case AutoplayMessage.CHECK_AUTOPLAY_READY: {
-        const tab = await hub.asyncPostMessage<chrome.tabs.Tab>({
+        const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
           name: 'GET_SELF_TAB'
         });
 
@@ -19,7 +21,7 @@ export const createAutoplayReadyHandler = (
         const autoPlayReady =
           controllerReady !== NotReadyReason.AUTOPLAY_NOT_READY;
 
-        hub.dispatch(
+        dispatchFromContent(
           updateMusicServiceTabAutoPlayReady({
             tabId: tab.id!,
             autoPlayReady

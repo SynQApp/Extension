@@ -1,13 +1,13 @@
+import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 export const useNextButton = () => {
   const { musicServiceTab } = useMusicServiceTab();
 
   const handleClick = () => {
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.NEXT
       },

@@ -1,5 +1,5 @@
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import type { ReconnectingHub } from '~core/messaging/hub';
 
 import { YouTubeMusicBackgroundController } from './YouTubeMusicBackgroundController';
 import { YouTubeMusicContentController } from './YouTubeMusicContentController';
@@ -14,7 +14,7 @@ export const YouTubeMusicAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new YouTubeMusicBackgroundController(),
   contentController: () => new YouTubeMusicContentController(),
-  observer: (contentController: ContentController, reduxHub: ReduxHub) =>
+  observer: (contentController: ContentController, reduxHub: ReconnectingHub) =>
     new YouTubeMusicObserver(
       contentController as YouTubeMusicContentController,
       reduxHub

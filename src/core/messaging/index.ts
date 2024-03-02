@@ -1,0 +1,1 @@
+export { sendToBackground } from './sendToBackground';

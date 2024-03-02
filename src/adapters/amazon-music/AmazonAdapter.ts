@@ -1,5 +1,5 @@
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import type { ReconnectingHub } from '~core/messaging/hub';
 
 import { AmazonBackgroundController } from './AmazonBackgroundController';
 import { AmazonContentController } from './AmazonContentController';
@@ -14,7 +14,7 @@ export const AmazonAdapater: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new AmazonBackgroundController(),
   contentController: () => new AmazonContentController(),
-  observer: (contentController: ContentController, reduxHub: ReduxHub) =>
+  observer: (contentController: ContentController, reduxHub: ReconnectingHub) =>
     new AmazonMusicObserver(
       contentController as AmazonContentController,
       reduxHub

@@ -1,8 +1,8 @@
+import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 export const useVolumeSlider = () => {
   const { musicServiceTab } = useMusicServiceTab();
@@ -11,7 +11,7 @@ export const useVolumeSlider = () => {
   const handleVolumeSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const volume = parseInt(e.target.value);
 
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.SET_VOLUME,
         body: {

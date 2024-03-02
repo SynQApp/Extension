@@ -1,9 +1,11 @@
 import type { ContentObserver } from '~core/adapter';
+import { sendToBackground } from '~core/messaging';
+import type { ReconnectingHub } from '~core/messaging/hub';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import { dispatchFromContent } from '~util/store';
 
 import type { AppleContentController } from './AppleContentController';
 
@@ -22,7 +24,7 @@ export class AppleObserver implements ContentObserver {
 
   public constructor(
     private _controller: AppleContentController,
-    private _hub: ReduxHub
+    private _hub: ReconnectingHub
   ) {}
 
   public observe(): void {
@@ -64,11 +66,11 @@ export class AppleObserver implements ContentObserver {
   private async _handleTrackUpdated(): Promise<void> {
     const currentTrack = this._controller.getCurrentTrack();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabCurrentTrack({
         tabId: tab.id!,
         currentTrack: currentTrack ?? undefined
@@ -79,11 +81,11 @@ export class AppleObserver implements ContentObserver {
   private async _handlePlaybackUpdated(): Promise<void> {
     const playerState = this._controller.getPlayerState();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
         playerState: playerState ?? undefined

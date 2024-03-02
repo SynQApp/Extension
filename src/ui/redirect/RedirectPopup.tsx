@@ -5,13 +5,12 @@ import { Button, Flex, Image, Stack, Text, token } from '@synq/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
-import { sendToBackground } from '@plasmohq/messaging';
-
+import { sendToBackground } from '~core/messaging';
+import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
 import { MusicLinkControllerMessage } from '~types';
 import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceName } from '~util/musicService';
-import { sendMessage } from '~util/sendMessage';
 
 interface RedirectPopupProps {
   show: boolean;
@@ -27,11 +26,15 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
   );
 
   const handleOpenWithSynQ = async () => {
-    const tab = await sendToBackground({
+    const tab = await sendToBackground<any, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    sendMessage({
+    if (!tab) {
+      return;
+    }
+
+    sendToContent({
       name: MusicLinkControllerMessage.REDIRECT,
       body: {
         to: tab.id

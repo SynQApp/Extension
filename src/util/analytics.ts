@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { sendToBackground } from '@plasmohq/messaging';
+import { sendToBackground } from '~core/messaging';
 
 import { debounce as debounceFn } from './debounce';
 

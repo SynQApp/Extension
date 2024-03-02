@@ -1,5 +1,5 @@
+import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
-import { sendMessage } from '~util/sendMessage';
 
 export interface KeyControlsOptions {
   playPause?: boolean;
@@ -24,28 +24,28 @@ export const addKeyControlsListener = (
     switch (key) {
       case ' ':
         if (keyControlsOptions.playPause) {
-          sendMessage({
+          sendToContent({
             name: MusicControllerMessage.PLAY_PAUSE
           });
         }
         break;
       case 'ArrowRight':
         if (keyControlsOptions.next) {
-          sendMessage({
+          sendToContent({
             name: MusicControllerMessage.NEXT
           });
         }
         break;
       case 'ArrowLeft':
         if (keyControlsOptions.previous) {
-          sendMessage({
+          sendToContent({
             name: MusicControllerMessage.PREVIOUS
           });
         }
         break;
       case 'ArrowUp':
         if (keyControlsOptions.volumeUp) {
-          sendMessage({
+          sendToContent({
             name: MusicControllerMessage.SET_VOLUME,
             body: {
               relative: true,
@@ -56,7 +56,7 @@ export const addKeyControlsListener = (
         break;
       case 'ArrowDown':
         if (keyControlsOptions.volumeDown) {
-          sendMessage({
+          sendToContent({
             name: MusicControllerMessage.SET_VOLUME,
             body: {
               relative: true,

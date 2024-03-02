@@ -1,9 +1,11 @@
 import type { ContentObserver } from '~core/adapter';
+import { sendToBackground } from '~core/messaging';
+import type { ReconnectingHub } from '~core/messaging/hub';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import { dispatchFromContent } from '~util/store';
 import { waitForElement } from '~util/waitForElement';
 
 import type { SpotifyContentController } from './SpotifyContentController';
@@ -11,7 +13,7 @@ import type { SpotifyContentController } from './SpotifyContentController';
 export class SpotifyObserver implements ContentObserver {
   constructor(
     private _controller: SpotifyContentController,
-    private _hub: ReduxHub
+    private _hub: ReconnectingHub
   ) {}
 
   public async observe(): Promise<void> {
@@ -111,11 +113,11 @@ export class SpotifyObserver implements ContentObserver {
   private async _updateCurrentTrack(): Promise<void> {
     const currentTrack = await this._controller.getCurrentTrack();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabCurrentTrack({
         tabId: tab.id!,
         currentTrack: currentTrack ?? undefined
@@ -126,11 +128,11 @@ export class SpotifyObserver implements ContentObserver {
   private async _handlePlaybackUpdated(): Promise<void> {
     const playerState = await this._controller.getPlayerState();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
         playerState: playerState ?? undefined

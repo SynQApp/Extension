@@ -2,13 +2,13 @@ import { Button, Flex, Text, token } from '@synq/ui';
 import { useEffect, useState } from 'react';
 import { styled } from 'styled-components';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppDispatch } from '~store';
 import { updateMusicServiceTabAutoPlayReady } from '~store/slices/musicServiceTabs';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceNameFromUrl } from '~util/musicService';
-import { sendMessage } from '~util/sendMessage';
 
 let firstRender = true;
 
@@ -48,7 +48,7 @@ const AutoplayPopup = () => {
       })
     );
 
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.PREPARE_FOR_AUTOPLAY
       },

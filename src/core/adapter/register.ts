@@ -1,18 +1,17 @@
-import { createNotificationObserverHandler } from '~contents/lib/observer-handlers/notificationObserverHandler';
 import {
   createAutoplayReadyHandler,
   createMusicControllerHandler,
   createRedirectHandler,
   createTabsHandler
 } from '~core/message-handlers';
-import { type ReduxHub, connectToReduxHub } from '~util/connectToReduxHub';
+import { type ReconnectingHub, connectToHub } from '~core/messaging/hub';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 import type { MusicServiceAdapter } from './config';
 
 declare global {
   interface Window {
-    hub: ReduxHub;
+    hub: ReconnectingHub;
   }
 }
 
@@ -26,7 +25,7 @@ export const registerAdapter = (service: MusicServiceAdapter) => {
   const initialize = (extensionId: string) => {
     console.info(`SynQ: Initializing ${service.displayName}`);
 
-    const hub = connectToReduxHub(extensionId);
+    const hub = connectToHub(extensionId);
     window.hub = hub;
 
     const controller = service.contentController();

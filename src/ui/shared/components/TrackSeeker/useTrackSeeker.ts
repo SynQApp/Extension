@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 export const useTrackSeeker = () => {
   const { musicServiceTab } = useMusicServiceTab();
@@ -21,7 +21,7 @@ export const useTrackSeeker = () => {
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const time = parseInt(e.target.value);
 
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.SEEK_TO,
         body: {

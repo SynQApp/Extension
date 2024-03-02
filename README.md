@@ -36,10 +36,12 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 
 - [x] Implement each of the four starting services with browser-only logic.
 - [x] Centralize browser-based matching logic like it's done in TranslationService.
-- [ ] Refactor into modular service classes. This includes merging Playback and Link controllers into one class or configuration, removing each of the content script entries - instead create on content script for all music services with \* matching and dynamically set each one up based on configurations.
+- [x] Refactor into modular service classes. This includes merging Playback and Link controllers into one class or configuration, removing each of the content script entries - instead create on content script for all music services with \* matching and dynamically set each one up based on configurations.
+- [x] Clean up observer pattern as it's too coupled.
+- [x] Create messaging utils that abstract the
+- [ ] Move all background message handlers into the background/messages directory
 - [ ] Re-enable notifications using abstracted methods provided by core rather than subscribing to the observers.
 - [ ] Consolidate the CSUI components into one CSUI.
-- [ ] Clean up observer pattern as it's too coupled.
 - [ ] Add SDK-like functions for controlling the mini player from observers and elsewhere.
 - [ ] Create better separations in contexts.
 - [ ] Consolidate the autoplay/interaction requirement - if the user opens the popup, check if they have clicked on the page at all. Don't require each service to implement this logic.

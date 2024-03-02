@@ -1,7 +1,6 @@
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { sendToBackground } from '@plasmohq/messaging';
-
+import { sendToBackground } from '~core/messaging';
 import { onDocumentReady } from '~util/onDocumentReady';
 
 export const config: PlasmoCSConfig = {

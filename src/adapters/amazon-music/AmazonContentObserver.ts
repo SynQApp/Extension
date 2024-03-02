@@ -1,9 +1,11 @@
 import type { ContentObserver } from '~core/adapter';
+import { sendToBackground } from '~core/messaging';
+import type { ReconnectingHub } from '~core/messaging/hub';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import { dispatchFromContent } from '~util/store';
 
 import type { AmazonContentController } from './AmazonContentController';
 
@@ -16,7 +18,7 @@ const playbackStateChangedEvents = [
 
 export class AmazonMusicObserver implements ContentObserver {
   declare _controller: AmazonContentController;
-  declare _hub: ReduxHub;
+  declare _hub: ReconnectingHub;
   private _onStateChangeHandler!: () => void;
 
   private _currentState: {
@@ -28,7 +30,7 @@ export class AmazonMusicObserver implements ContentObserver {
     isPlaying?: boolean;
   };
 
-  constructor(controller: AmazonContentController, hub: ReduxHub) {
+  constructor(controller: AmazonContentController, hub: ReconnectingHub) {
     this._controller = controller;
     this._currentState = {
       trackId: undefined,
@@ -123,11 +125,11 @@ export class AmazonMusicObserver implements ContentObserver {
   private async _handleTrackUpdated(): Promise<void> {
     const currentTrack = this._controller.getCurrentTrack();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabCurrentTrack({
         tabId: tab.id!,
         currentTrack: currentTrack ?? undefined
@@ -138,11 +140,11 @@ export class AmazonMusicObserver implements ContentObserver {
   private async _handlePlaybackUpdated(): Promise<void> {
     const playerState = await this._controller.getPlayerState();
 
-    const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
+    const tab = await sendToBackground<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    this._hub.dispatch(
+    dispatchFromContent(
       updateMusicServiceTabPlayerState({
         tabId: tab.id!,
         playerState

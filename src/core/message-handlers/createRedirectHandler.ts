@@ -1,6 +1,7 @@
 import type { ContentController } from '~core/adapter/controller';
+import { sendToBackground } from '~core/messaging';
+import type { ReconnectingHub } from '~core/messaging/hub';
 import { MusicLinkControllerMessage, type Settings } from '~types';
-import type { ReduxHub } from '~util/connectToReduxHub';
 
 /**
  * Register a controller handler that handles events from other components
@@ -8,7 +9,7 @@ import type { ReduxHub } from '~util/connectToReduxHub';
  */
 export const createRedirectHandler = (
   controller: ContentController,
-  hub: ReduxHub
+  hub: ReconnectingHub
 ) => {
   hub.addListener(async (message) => {
     switch (message?.name) {
@@ -22,9 +23,9 @@ export const createRedirectHandler = (
 
 const handleRedirect = async (
   controller: ContentController,
-  hub: ReduxHub
+  hub: ReconnectingHub
 ): Promise<void> => {
-  const settings = await hub.asyncPostMessage<Settings>({
+  const settings = await sendToBackground<undefined, Settings>({
     name: 'GET_SETTINGS'
   });
 

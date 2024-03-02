@@ -1,6 +1,6 @@
+import type { ReconnectingHub } from '~core/messaging/hub';
 import { setSearchLoading, setSearchResults } from '~store/slices/search';
 import { MusicControllerMessage } from '~types';
-import type { ReduxHub } from '~util/connectToReduxHub';
 
 import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
@@ -10,7 +10,7 @@ import type { MusicServicePlaybackController } from '../../../services/MusicServ
  */
 export const createMusicControllerHandler = (
   controller: MusicServicePlaybackController,
-  hub: ReduxHub
+  hub: ReconnectingHub
 ) => {
   hub.addListener(async (message) => {
     switch (message?.name) {

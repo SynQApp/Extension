@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
-import { sendToBackground } from '@plasmohq/messaging';
-
+import { sendToBackground } from '~core/messaging';
 import type { Event } from '~util/analytics';
 
 interface UseAnalyticsProps extends Event {

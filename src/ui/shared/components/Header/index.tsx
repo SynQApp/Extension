@@ -2,7 +2,7 @@ import { Button, Flex, token } from '@synq/ui';
 import { Icon } from '@synq/ui';
 import styled from 'styled-components';
 
-import { sendToBackground } from '@plasmohq/messaging';
+import { sendToBackground } from '~core/messaging';
 
 import Logo from '../Logo';
 

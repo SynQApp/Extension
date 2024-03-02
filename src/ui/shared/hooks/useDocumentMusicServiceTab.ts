@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { sendToBackground } from '@plasmohq/messaging';
-
+import { sendToBackground } from '~core/messaging';
 import { useAppSelector } from '~store';
 import type { MusicServiceTab } from '~types';
 
@@ -14,9 +13,13 @@ export const useDocumentMusicServiceTab = () => {
 
   useEffect(() => {
     const updateTab = async () => {
-      const tab = await sendToBackground({
+      const tab = await sendToBackground<undefined, chrome.tabs.Tab>({
         name: 'GET_SELF_TAB'
       });
+
+      if (!tab) {
+        return;
+      }
 
       setTabId(tab.id);
     };

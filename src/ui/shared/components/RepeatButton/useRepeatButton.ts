@@ -1,8 +1,8 @@
+import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
-import { sendMessage } from '~util/sendMessage';
 
 export const useRepeatButton = () => {
   const { musicServiceTab } = useMusicServiceTab();
@@ -11,7 +11,7 @@ export const useRepeatButton = () => {
   const repeatMode = playerState?.repeatMode;
 
   const handleClick = () => {
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.TOGGLE_REPEAT_MODE
       },

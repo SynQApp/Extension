@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
 import type { MusicServiceTab } from '~types';
 import { TabsMessage } from '~types/TabsMessage';
-import { sendMessage } from '~util/sendMessage';
 
 export const usePopupMusicServiceTab = () => {
   const musicServiceTabs = useAppSelector((state) => state.musicServiceTabs);
@@ -41,7 +41,7 @@ export const usePopupMusicServiceTab = () => {
       return;
     }
 
-    sendMessage({
+    sendToContent({
       name: TabsMessage.SET_SELECTED_TAB,
       body: musicServiceTab.tabId
     });

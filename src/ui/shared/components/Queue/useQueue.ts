@@ -2,12 +2,12 @@ import type { MusicService } from '@synq/music-service-clients';
 import { getLink } from '@synq/music-service-clients';
 import { useMemo } from 'react';
 
+import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 import { findIndexes } from '~util/findIndexes';
 import { getMusicServiceName } from '~util/musicService';
-import { sendMessage } from '~util/sendMessage';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const { musicServiceTab } = useMusicServiceTab();
@@ -51,7 +51,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     );
     const duplicateIndex = trackIndexes.indexOf(trackIndex);
 
-    sendMessage(
+    sendToContent(
       {
         name: MusicControllerMessage.PLAY_QUEUE_TRACK,
         body: {

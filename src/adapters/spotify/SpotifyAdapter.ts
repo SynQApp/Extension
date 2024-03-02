@@ -1,5 +1,5 @@
 import type { ContentController, MusicServiceAdapter } from '~core/adapter';
-import type { ReduxHub } from '~util/connectToReduxHub';
+import type { ReconnectingHub } from '~core/messaging/hub';
 
 import { SpotifyBackgroundController } from './SpotifyBackgroundController';
 import { SpotifyContentController } from './SpotifyContentController';
@@ -14,6 +14,6 @@ export const SpotifyAdapter: MusicServiceAdapter = {
   disabledFeatures: [],
   backgroundController: () => new SpotifyBackgroundController(),
   contentController: () => new SpotifyContentController(),
-  observer: (contentController: ContentController, reduxHub: ReduxHub) =>
+  observer: (contentController: ContentController, reduxHub: ReconnectingHub) =>
     new SpotifyObserver(contentController as SpotifyContentController, reduxHub)
 };
