@@ -1,12 +1,22 @@
-import type {
-  NotReadyReason,
-  PlayerState,
-  QueueItem,
-  Track,
-  ValueOrPromise
-} from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 
-export interface MusicServicePlaybackController {
+export type LinkTrack = Pick<
+  Track,
+  'name' | 'artistName' | 'duration' | 'albumCoverUrl' | 'albumName'
+> | null;
+
+export type SearchInput = Partial<Pick<Track, 'duration' | 'albumName'>> &
+  Pick<Track, 'name' | 'artistName'>;
+
+export interface SearchResult {
+  link: string;
+  name: string;
+  artistName: string;
+  duration?: number;
+  albumName?: string;
+}
+
+export interface ContentController {
   /**
    * Play the current track.
    */
@@ -63,11 +73,6 @@ export interface MusicServicePlaybackController {
   seekTo(time: number): ValueOrPromise<void>;
 
   /**
-   * Prepare the music service UI for autoplay.
-   */
-  prepareForAutoplay(): ValueOrPromise<void>;
-
-  /**
    * Get the current player state. Returns undefined if the player is not active.
    */
   getPlayerState(): ValueOrPromise<PlayerState | null>;
@@ -83,14 +88,21 @@ export interface MusicServicePlaybackController {
   getQueue(): ValueOrPromise<QueueItem[]>;
 
   /**
-   * Check if the controller is ready for use.
-   */
-  isReady(): ValueOrPromise<true | NotReadyReason>;
-
-  /**
    * Play the item in the queue.
    * @param id The ID of the item to play.
    * @param duplicateIndex If there are multiple items with the same ID, this is the duplicate index of the item to play.
    */
   playQueueTrack(id: string, duplicateIndex?: number): ValueOrPromise<void>;
+
+  /**
+   * Get basic track details for current link.
+   */
+  getLinkTrack(): ValueOrPromise<LinkTrack>;
+}
+
+export interface BackgroundController {
+  /**
+   * Get the link for the current track.
+   */
+  search(searchInput: SearchInput): ValueOrPromise<SearchResult[]>;
 }

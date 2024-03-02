@@ -6,8 +6,8 @@ import { TabsMessage } from '~types/TabsMessage';
 import type { ReduxHub } from '~util/connectToReduxHub';
 import { getMusicServiceFromUrl } from '~util/musicService';
 
-import type { MusicServiceObserver } from '../../../adapters/MusicServiceObserver';
-import type { MusicServicePlaybackController } from '../../../adapters/MusicServicePlaybackController';
+import type { MusicServiceObserver } from '../../../services/MusicServiceObserver';
+import type { MusicServicePlaybackController } from '../../../services/MusicServicePlaybackController';
 
 export const createTabsHandler = (
   controller: MusicServicePlaybackController,

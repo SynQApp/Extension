@@ -1,14 +1,16 @@
 import { getLink } from '@synq/music-service-clients';
 
 import { SpotifyEndpoints } from '~constants/spotify';
-import { NotReadyReason, RepeatMode } from '~types';
+import type { ContentController } from '~core/adapter';
+import type { LinkTrack } from '~core/adapter';
+import { RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track } from '~types';
-import type { NativeSpotifyTrack } from '~types/Spotify';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
-import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
+import { getAuthorizationToken } from './auth';
+import type { NativeSpotifySongTrack, NativeSpotifyTrack } from './types';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,
@@ -24,7 +26,7 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
 
 const QUEUE_CACHE_TIME = 30000;
 
-export class SpotifyController implements MusicServicePlaybackController {
+export class SpotifyContentController implements ContentController {
   private _accessToken: string;
   private _cachedQueue:
     | {
@@ -198,10 +200,6 @@ export class SpotifyController implements MusicServicePlaybackController {
       'seekTo',
       25
     );
-  }
-
-  public async prepareForAutoplay(): Promise<void> {
-    await this._preparePlayer();
   }
 
   public async getPlayerState(): Promise<PlayerState | null> {
@@ -401,16 +399,6 @@ export class SpotifyController implements MusicServicePlaybackController {
     return queueItems;
   }
 
-  public async isReady(): Promise<true | NotReadyReason> {
-    const playerReady = await this._isPlayerReady();
-
-    if (!playerReady) {
-      return NotReadyReason.AUTOPLAY_NOT_READY;
-    }
-
-    return true;
-  }
-
   public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
     const queue = await this.getQueue(true);
     const trackIds = queue.map((item) => item.track?.id);
@@ -453,6 +441,38 @@ export class SpotifyController implements MusicServicePlaybackController {
       : 0;
 
     return volume;
+  }
+
+  async getLinkTrack(): Promise<LinkTrack> {
+    const url = new URL(window.location.href);
+    const pathParts = url.pathname.split('/');
+    const trackId = pathParts[pathParts.length - 1];
+
+    const track = await this._getTrack(trackId);
+
+    if (!track) {
+      return null;
+    }
+
+    return {
+      name: track.name,
+      artistName: track.artists[0].name,
+      albumName: track.album.name,
+      duration: track.duration_ms,
+      albumCoverUrl: track.album.images[0].url
+    };
+  }
+
+  private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {
+    const token = await getAuthorizationToken();
+
+    const response = await fetch(`${SpotifyEndpoints.TRACKS}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => response.json());
+
+    return response;
   }
 
   private _itemToSongInfo(item: NativeSpotifyTrack): Track {
@@ -510,74 +530,45 @@ export class SpotifyController implements MusicServicePlaybackController {
     });
   }
 
-  private async _isPlayerReady() {
-    const playerState = await this._fetchSpotify(
-      SpotifyEndpoints.PLAYER_STATE,
-      'GET'
-    );
-
-    return !!playerState;
-  }
-
-  /**
-   * _playerReady could be false if either the player is actually not ready,
-   * or if we haven't checked yet. First check if API can be used, and if not,
-   * initialize the player.
-   */
-  private async _preparePlayer() {
-    const isPlayerReady = await this._isPlayerReady();
-
-    if (!isPlayerReady) {
-      const remotePlayer = await this._fetchSpotify(
-        SpotifyEndpoints.PLAYER_STATE,
-        'GET'
-      );
-
-      if (!remotePlayer) {
-        await this._forceInitializePlayer();
-      }
-    }
-  }
-
   /**
    * If the player hasn't been interacted with, API calls will fail. This method
    * clicks the play button to initialize the player and then again once it has
    * started playing to pause it.
    */
-  private async _forceInitializePlayer() {
-    return new Promise((resolve) => {
-      const isMuted = this._getVolume() === 0;
+  // private async _forceInitializePlayer() {
+  //   return new Promise((resolve) => {
+  //     const isMuted = this._getVolume() === 0;
 
-      if (!isMuted) {
-        this.toggleMute();
-      }
+  //     if (!isMuted) {
+  //       this.toggleMute();
+  //     }
 
-      const playButton = document.querySelector(
-        'button[data-testid="control-button-playpause"]'
-      ) as HTMLButtonElement;
+  //     const playButton = document.querySelector(
+  //       'button[data-testid="control-button-playpause"]'
+  //     ) as HTMLButtonElement;
 
-      playButton.click();
+  //     playButton.click();
 
-      const observer = new MutationObserver((mutations, observerInstance) => {
-        const playButtonValue = playButton.getAttribute('aria-label');
-        if (playButtonValue === 'Pause') {
-          playButton.click();
-          observerInstance.disconnect();
+  //     const observer = new MutationObserver((mutations, observerInstance) => {
+  //       const playButtonValue = playButton.getAttribute('aria-label');
+  //       if (playButtonValue === 'Pause') {
+  //         playButton.click();
+  //         observerInstance.disconnect();
 
-          if (!isMuted) {
-            this.toggleMute();
-          }
+  //         if (!isMuted) {
+  //           this.toggleMute();
+  //         }
 
-          resolve(void 0);
-        }
-      });
+  //         resolve(void 0);
+  //       }
+  //     });
 
-      observer.observe(playButton, {
-        attributes: true,
-        attributeFilter: ['aria-label']
-      });
-    });
-  }
+  //     observer.observe(playButton, {
+  //       attributes: true,
+  //       attributeFilter: ['aria-label']
+  //     });
+  //   });
+  // }
 
   /**
    * Cache the queue to prevent overwhelming the Spotify API.

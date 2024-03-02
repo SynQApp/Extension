@@ -1,8 +1,12 @@
 import { getLink } from '@synq/music-service-clients';
 
+import type {
+  MusicKit,
+  NativeAppleMusicMediaItem
+} from '~adapters/apple-music/types';
+import type { ContentController, LinkTrack } from '~core/adapter';
 import { NotReadyReason, RepeatMode } from '~types';
 import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
-import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
@@ -23,9 +27,7 @@ const REPEAT_MAP: Record<RepeatMode, number> = {
  * already exposed on the window object. Then we can call methods on the instance to
  * control playback.
  */
-export class AppleMusicPlaybackController
-  implements MusicServicePlaybackController
-{
+export class AppleContentController implements ContentController {
   private _unmuteVolume = 50;
 
   public play(): void {
@@ -191,6 +193,29 @@ export class AppleMusicPlaybackController
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
+  public async getLinkTrack(): Promise<LinkTrack> {
+    const params = new URLSearchParams(window.location.search);
+    const trackId = params.get('i');
+
+    if (!trackId) {
+      return null;
+    }
+
+    const track = await this._getTrack(trackId);
+
+    if (!track) {
+      return null;
+    }
+
+    return {
+      name: track.attributes.name,
+      artistName: track.attributes.artistName,
+      albumName: track.attributes.albumName,
+      duration: track.attributes.durationInMillis,
+      albumCoverUrl: track.attributes.artwork.url
+    };
+  }
+
   private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {
     const track = mediaItem.attributes;
 
@@ -207,6 +232,15 @@ export class AppleMusicPlaybackController
       }),
       name: track.name
     };
+  }
+
+  private async _getTrack(
+    id: string
+  ): Promise<NativeAppleMusicMediaItem | null> {
+    const musicKit = window.MusicKit.getInstance();
+    const track = await musicKit.api.song(id);
+
+    return track;
   }
 
   public getPlayer() {

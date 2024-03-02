@@ -14,7 +14,8 @@ export const SpotifyEndpoints = {
   SEARCH: 'https://api.spotify.com/v1/search',
   SEEK_TO: 'https://api.spotify.com/v1/me/player/seek',
   SET_REPEAT_MODE: 'https://api.spotify.com/v1/me/player/repeat',
-  SET_VOLUME: 'https://api.spotify.com/v1/me/player/volume'
+  SET_VOLUME: 'https://api.spotify.com/v1/me/player/volume',
+  TRACKS: 'https://api.spotify.com/v1/tracks'
 };
 
 export const SPOTIFY_KEY_CONTROLS: KeyControlsOptions = {

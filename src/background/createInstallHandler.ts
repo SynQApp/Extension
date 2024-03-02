@@ -57,7 +57,7 @@ const openOnboardingPage = async (update: boolean) => {
   chrome.tabs.create({ url });
 };
 
-export const createInstallHandler = () => {
+export const initializeInstallHandler = () => {
   chrome.runtime.onInstalled.addListener(async (installDetails) => {
     store.dispatch(clearMusicServiceTabs());
 

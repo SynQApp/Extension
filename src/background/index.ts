@@ -1,6 +1,6 @@
 import { getHubMap, startHub } from '@plasmohq/messaging/pub-sub';
 
-import { createInstallHandler } from './createInstallHandler';
+import { initializeInstallHandler } from './createInstallHandler';
 import { popupListener } from './popupListener';
 import { registerHubMessageHandlers } from './registerHubMessageHandlers';
 import { updateMusicServiceTabs } from './updateMusicServiceTabs';
@@ -8,7 +8,7 @@ import { updateMusicServiceTabs } from './updateMusicServiceTabs';
 popupListener();
 startHub();
 updateMusicServiceTabs();
-createInstallHandler();
+initializeInstallHandler();
 
 chrome.runtime.onConnectExternal.addListener((port) => {
   registerHubMessageHandlers(port);

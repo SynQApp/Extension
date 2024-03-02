@@ -3,12 +3,9 @@ import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { Track } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import { ObserverEvent } from '../../../services/MusicServiceObserver';
-
 export const createNotificationObserverHandler =
-  (hub: ReduxHub) =>
-  async (message: PlasmoMessaging.Request<ObserverEvent>) => {
-    if (message.name !== ObserverEvent.TRACK_UPDATED) {
+  (hub: ReduxHub) => async (message: PlasmoMessaging.Request<any>) => {
+    if (message.name !== 'TRACK_UPDATED') {
       return;
     }
 

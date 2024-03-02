@@ -1,7 +1,5 @@
 import { getLink } from '@synq/music-service-clients';
 
-import { NotReadyReason, RepeatMode } from '~types';
-import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import type {
   NativeYouTubeMusicMoviePlayer,
   NativeYouTubeMusicQueueItem,
@@ -9,12 +7,12 @@ import type {
   NativeYouTubeMusicThumbnail,
   YtConfig,
   YtmApp
-} from '~types/YouTubeMusic';
+} from '~adapters/youtube-music/types';
+import type { ContentController, LinkTrack } from '~core/adapter';
+import { RepeatMode } from '~types';
+import type { PlayerState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
-import { normalizeVolume } from '~util/volume';
-
-import type { MusicServicePlaybackController } from '../MusicServicePlaybackController';
 
 declare let window: Window & {
   yt: {
@@ -37,9 +35,7 @@ const REPEAT_STATES_MAP: Record<string, RepeatMode> = {
   'Repeat all': RepeatMode.REPEAT_ALL
 };
 
-export class YouTubeMusicPlaybackController
-  implements MusicServicePlaybackController
-{
+export class YouTubeMusicContentController implements ContentController {
   private _unmuteVolume: number = 50;
 
   constructor() {}
@@ -213,10 +209,6 @@ export class YouTubeMusicPlaybackController
     });
   }
 
-  public isReady(): true | NotReadyReason {
-    return true;
-  }
-
   public playQueueTrack(id: string, duplicateIndex = 0): ValueOrPromise<void> {
     const queueItems = this.getQueue();
 
@@ -230,6 +222,16 @@ export class YouTubeMusicPlaybackController
       'queue'
     ) as unknown as YtmApp['store'];
     queue.dispatch({ type: 'SET_INDEX', payload: trackIndex });
+  }
+
+  public async getLinkTrack(): Promise<LinkTrack> {
+    const track = this.getCurrentTrack();
+
+    if (!track) {
+      return null;
+    }
+
+    return track;
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {

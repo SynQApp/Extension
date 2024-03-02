@@ -1,36 +1,16 @@
 import type {
-  GetBasicTrackDetailsResponse,
-  MusicServiceLinkController,
+  BackgroundController,
   SearchInput,
   SearchResult
-} from '~services/MusicServiceLinkController';
+} from '~core/adapter';
 import type { Track } from '~types';
-import { waitForElement } from '~util/waitForElement';
-
-import { YouTubeMusicPlaybackController } from './YouTubeMusicPlaybackController';
 
 const SEARCH_ENDPOINT = 'https://music.youtube.com/search';
 const WATCH_ENDPOINT = 'https://music.youtube.com/watch';
 
 type PartialTrack = Pick<Track, 'name' | 'artistName' | 'albumName' | 'id'>;
 
-export class YouTubeMusicLinkController implements MusicServiceLinkController {
-  private _ytmMusicPlaybackController: YouTubeMusicPlaybackController;
-
-  constructor() {
-    this._ytmMusicPlaybackController = new YouTubeMusicPlaybackController();
-  }
-
-  async getBasicTrackDetails(): Promise<GetBasicTrackDetailsResponse> {
-    const track = this._ytmMusicPlaybackController.getCurrentTrack();
-
-    if (!track) {
-      return null;
-    }
-
-    return track;
-  }
-
+export class YouTubeMusicBackgroundController implements BackgroundController {
   async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 

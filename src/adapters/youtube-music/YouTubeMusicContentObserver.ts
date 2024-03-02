@@ -1,27 +1,21 @@
+import type { ContentObserver } from '~core/adapter';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import {
-  MusicServiceObserver,
-  type ObserverStateFilter
-} from '../MusicServiceObserver';
-import type { YouTubeMusicPlaybackController } from './YouTubeMusicPlaybackController';
+import type { YouTubeMusicContentController } from './YouTubeMusicContentController';
 
-export class YouTubeMusicObserver extends MusicServiceObserver {
-  declare _controller: YouTubeMusicPlaybackController;
+export class YouTubeMusicObserver implements ContentObserver {
   private _onStateChangeHandler!: () => void;
   private _onVideoDataChangeHandler!: () => void;
   private _mutationObservers: MutationObserver[] = [];
 
-  constructor(controller: YouTubeMusicPlaybackController, hub: ReduxHub) {
-    super(controller, hub);
-
-    this._controller = controller;
-    this._hub = hub;
-  }
+  constructor(
+    private _controller: YouTubeMusicContentController,
+    private _hub: ReduxHub
+  ) {}
 
   public observe(): void {
     const interval = setInterval(() => {
@@ -32,25 +26,6 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
         this._setupSongInfoObserver();
       }
     }, 500);
-  }
-
-  public resume(filter: ObserverStateFilter): void {
-    super.resume(filter);
-
-    this._handlePlaybackUpdated();
-    this._handleTrackUpdated();
-  }
-
-  public unobserve(): void {
-    this._controller
-      .getPlayer()
-      .removeEventListener('onStateChange', this._onStateChangeHandler);
-
-    this._controller
-      .getPlayer()
-      .removeEventListener('videodatachange', this._onVideoDataChangeHandler);
-
-    this._mutationObservers.forEach((observer) => observer.disconnect());
   }
 
   private _setupPlayerStateObserver() {
@@ -125,33 +100,21 @@ export class YouTubeMusicObserver extends MusicServiceObserver {
   }
 
   private async _handleTrackUpdated(): Promise<void> {
-    super.handleTrackUpdated();
-
-    if (this.isPaused()) {
-      return;
-    }
-
     const currentTrack = this._controller.getCurrentTrack();
 
     const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    if (!this.isPaused('currentTrack')) {
-      this._hub.dispatch(
-        updateMusicServiceTabCurrentTrack({
-          tabId: tab.id!,
-          currentTrack: currentTrack ?? undefined
-        })
-      );
-    }
+    this._hub.dispatch(
+      updateMusicServiceTabCurrentTrack({
+        tabId: tab.id!,
+        currentTrack: currentTrack ?? undefined
+      })
+    );
   }
 
   private async _handlePlaybackUpdated(): Promise<void> {
-    if (this.isPaused('playerState')) {
-      return;
-    }
-
     const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });

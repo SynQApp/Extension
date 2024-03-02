@@ -1,7 +1,4 @@
-import { sendToBackground } from '@plasmohq/messaging';
-
-import type { MusicServiceLinkController } from '~adapters/MusicServiceLinkController';
-import { persistor, store } from '~store';
+import type { ContentController } from '~core/adapter/controller';
 import { MusicLinkControllerMessage, type Settings } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
@@ -10,7 +7,7 @@ import type { ReduxHub } from '~util/connectToReduxHub';
  * in the extension.
  */
 export const createRedirectHandler = (
-  controller: MusicServiceLinkController,
+  controller: ContentController,
   hub: ReduxHub
 ) => {
   hub.addListener(async (message) => {
@@ -24,7 +21,7 @@ export const createRedirectHandler = (
 };
 
 const handleRedirect = async (
-  controller: MusicServiceLinkController,
+  controller: ContentController,
   hub: ReduxHub
 ): Promise<void> => {
   const settings = await hub.asyncPostMessage<Settings>({

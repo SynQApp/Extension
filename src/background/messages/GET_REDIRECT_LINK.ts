@@ -3,14 +3,11 @@ import levenshtein from 'fast-levenshtein';
 
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
-import type {
-  MusicServiceLinkController,
-  SearchResult
-} from '~services/MusicServiceLinkController';
-import { AmazonMusicController } from '~services/amazon-music/AmazonMusicController';
-import { AppleMusicLinkController } from '~services/apple-music/AppleMusicLinkController';
-import { SpotifyLinkController } from '~services/spotify/SpotifyLinkController';
-import { YouTubeMusicLinkController } from '~services/youtube-music/YouTubeMusicLinkController';
+import { AmazonAdapater } from '~adapters/amazon-music/AmazonAdapter';
+import { AppleAdapter } from '~adapters/apple-music/AppleAdapter';
+import { SpotifyAdapter } from '~adapters/spotify/SpotifyAdapter';
+import { YouTubeMusicAdapter } from '~adapters/youtube-music/YouTubeMusicAdapter';
+import type { BackgroundController, SearchResult } from '~core/adapter';
 
 interface GetRedirectLinkRequest {
   destinationMusicService: MusicService;
@@ -22,16 +19,14 @@ interface GetRedirectLinkRequest {
 
 type SearchResultWithoutLink = Omit<SearchResult, 'link'>;
 
-const LINK_CONTROLLERS_MAP: Record<
-  MusicService,
-  MusicServiceLinkController | null
-> = {
-  SPOTIFY: new SpotifyLinkController(),
-  AMAZONMUSIC: new AmazonMusicController(),
-  APPLEMUSIC: new AppleMusicLinkController(),
-  DEEZER: null,
-  YOUTUBEMUSIC: new YouTubeMusicLinkController()
-};
+const LINK_CONTROLLERS_MAP: Record<MusicService, BackgroundController | null> =
+  {
+    SPOTIFY: SpotifyAdapter.backgroundController(),
+    AMAZONMUSIC: AmazonAdapater.backgroundController(),
+    APPLEMUSIC: AppleAdapter.backgroundController(),
+    DEEZER: null,
+    YOUTUBEMUSIC: YouTubeMusicAdapter.backgroundController()
+  };
 
 const MAX_MILLISECONDS_DURATION_DIFFERNCE = 5000;
 const MINIMUM_SCORE = 80;

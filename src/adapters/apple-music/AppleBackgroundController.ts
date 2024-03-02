@@ -1,12 +1,14 @@
 import { load } from 'cheerio';
 
 import type {
-  GetBasicTrackDetailsResponse,
-  MusicServiceLinkController,
+  MusicKit,
+  NativeAppleMusicMediaItem
+} from '~adapters/apple-music/types';
+import type {
+  BackgroundController,
   SearchInput,
   SearchResult
-} from '~services/MusicServiceLinkController';
-import type { MusicKit, NativeAppleMusicMediaItem } from '~types/AppleMusic';
+} from '~core/adapter';
 
 declare let window: Window & {
   MusicKit: { getInstance: () => MusicKit };
@@ -14,30 +16,7 @@ declare let window: Window & {
 
 const SEARCH_ENDPOINT = 'https://music.apple.com/us/search';
 
-export class AppleMusicLinkController implements MusicServiceLinkController {
-  public async getBasicTrackDetails(): Promise<GetBasicTrackDetailsResponse> {
-    const params = new URLSearchParams(window.location.search);
-    const trackId = params.get('i');
-
-    if (!trackId) {
-      return null;
-    }
-
-    const track = await this._getTrack(trackId);
-
-    if (!track) {
-      return null;
-    }
-
-    return {
-      name: track.attributes.name,
-      artistName: track.attributes.artistName,
-      albumName: track.attributes.albumName,
-      duration: track.attributes.durationInMillis,
-      albumCoverUrl: track.attributes.artwork.url
-    };
-  }
-
+export class AppleBackgroundController implements BackgroundController {
   async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
@@ -68,14 +47,5 @@ export class AppleMusicLinkController implements MusicServiceLinkController {
     });
 
     return songs.filter((song) => song !== null) as SearchResult[];
-  }
-
-  private async _getTrack(
-    id: string
-  ): Promise<NativeAppleMusicMediaItem | null> {
-    const musicKit = window.MusicKit.getInstance();
-    const track = await musicKit.api.song(id);
-
-    return track;
   }
 }

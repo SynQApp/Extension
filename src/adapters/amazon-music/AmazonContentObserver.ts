@@ -1,14 +1,11 @@
+import type { ContentObserver } from '~core/adapter';
 import {
   updateMusicServiceTabCurrentTrack,
   updateMusicServiceTabPlayerState
 } from '~store/slices/musicServiceTabs';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import {
-  MusicServiceObserver,
-  type ObserverStateFilter
-} from '../MusicServiceObserver';
-import type { AmazonMusicController } from './AmazonMusicController';
+import type { AmazonContentController } from './AmazonContentController';
 
 const playbackStateChangedEvents = [
   'playpause',
@@ -17,11 +14,10 @@ const playbackStateChangedEvents = [
   'timeupdate'
 ];
 
-export class AmazonMusicObserver extends MusicServiceObserver {
-  declare _controller: AmazonMusicController;
+export class AmazonMusicObserver implements ContentObserver {
+  declare _controller: AmazonContentController;
+  declare _hub: ReduxHub;
   private _onStateChangeHandler!: () => void;
-  private _queueObserverInterval!: NodeJS.Timer;
-  private _unsubscribeStoreObserver!: () => void;
 
   private _currentState: {
     trackId?: string;
@@ -32,9 +28,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     isPlaying?: boolean;
   };
 
-  constructor(controller: AmazonMusicController, hub: ReduxHub) {
-    super(controller, hub);
-
+  constructor(controller: AmazonContentController, hub: ReduxHub) {
     this._controller = controller;
     this._currentState = {
       trackId: undefined,
@@ -67,25 +61,6 @@ export class AmazonMusicObserver extends MusicServiceObserver {
     }, 500);
   }
 
-  public resume(filter?: ObserverStateFilter): void {
-    super.resume(filter);
-
-    this._handlePlaybackUpdated();
-    this._handleTrackUpdated();
-  }
-
-  public async unobserve(): Promise<void> {
-    const maestro = await this._controller.getMaestroInstance();
-
-    playbackStateChangedEvents.forEach((event) => {
-      maestro.removeEventListener(event, this._onStateChangeHandler);
-    });
-
-    clearInterval(this._queueObserverInterval);
-
-    this._unsubscribeStoreObserver();
-  }
-
   /**
    * Maestro is the Amazon Music player which has a couple basic events we can listen to
    * for reliable playback state updates.
@@ -115,7 +90,7 @@ export class AmazonMusicObserver extends MusicServiceObserver {
       return;
     }
 
-    this._unsubscribeStoreObserver = store.subscribe(async () => {
+    store.subscribe(async () => {
       const state = store.getState();
 
       if (state.Storage?.RATINGS?.TRACK_RATING !== this._currentState.rating) {
@@ -146,33 +121,21 @@ export class AmazonMusicObserver extends MusicServiceObserver {
   }
 
   private async _handleTrackUpdated(): Promise<void> {
-    super.handleTrackUpdated();
-
-    if (this.isPaused()) {
-      return;
-    }
-
     const currentTrack = this._controller.getCurrentTrack();
 
     const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({
       name: 'GET_SELF_TAB'
     });
 
-    if (!this.isPaused('currentTrack')) {
-      this._hub.dispatch(
-        updateMusicServiceTabCurrentTrack({
-          tabId: tab.id!,
-          currentTrack: currentTrack ?? undefined
-        })
-      );
-    }
+    this._hub.dispatch(
+      updateMusicServiceTabCurrentTrack({
+        tabId: tab.id!,
+        currentTrack: currentTrack ?? undefined
+      })
+    );
   }
 
   private async _handlePlaybackUpdated(): Promise<void> {
-    if (this.isPaused('playerState')) {
-      return;
-    }
-
     const playerState = await this._controller.getPlayerState();
 
     const tab = await this._hub.asyncPostMessage<chrome.tabs.Tab>({

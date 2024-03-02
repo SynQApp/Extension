@@ -1,7 +1,7 @@
 import { UiStateMessage } from '~types';
 import type { ReduxHub } from '~util/connectToReduxHub';
 
-import type { MusicServiceObserver } from '../../../services/MusicServiceObserver';
+import type { MusicServiceObserver } from '../../../adapters/MusicServiceObserver';
 
 const UI_STATE = {
   popupOpen: false,
