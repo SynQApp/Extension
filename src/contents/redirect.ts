@@ -21,15 +21,17 @@ const initialize = async () => {
   const artistName = url.searchParams.get('artistName');
   const albumName = url.searchParams.get('albumName');
   const duration = url.searchParams.get('duration');
+  const linkType = url.searchParams.get('linkType');
 
   const link = await sendToBackground({
     name: 'GET_REDIRECT_LINK',
     body: {
       destinationMusicService,
-      name,
+      trackName: name,
       artistName,
       albumName,
-      duration
+      duration,
+      linkType
     }
   });
 

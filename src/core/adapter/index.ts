@@ -4,8 +4,14 @@ export type { MusicServiceAdapter } from './config';
 export type {
   BackgroundController,
   ContentController,
-  LinkTrack,
-  SearchInput,
-  SearchResult
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  TrackLinkDetails,
+  SearchTracksInput,
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  AlbumSearchResult,
+  ArtistSearchResult,
+  TrackSearchResult
 } from './controller';
 export type { ContentObserver } from './observer';

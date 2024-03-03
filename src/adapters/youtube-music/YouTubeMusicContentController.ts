@@ -5,7 +5,12 @@ import type {
   NativeYouTubeMusicThumbnail,
   YtmApp
 } from '~adapters/youtube-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -213,14 +218,28 @@ export class YouTubeMusicContentController implements ContentController {
     queue.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
-  public async getLinkTrack(): Promise<LinkTrack> {
+  public async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
     const track = this.getCurrentTrack();
 
     if (!track) {
       return null;
     }
 
-    return track;
+    return {
+      albumCoverUrl: track.albumCoverUrl,
+      albumName: track.albumName,
+      artistName: track.artistName,
+      duration: track.duration,
+      name: track.name
+    };
+  }
+
+  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    throw new Error('Method not implemented.');
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {

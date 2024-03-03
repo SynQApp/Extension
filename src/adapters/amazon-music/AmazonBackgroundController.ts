@@ -1,9 +1,14 @@
 import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/link';
+import type { ValueOrPromise } from '~types';
 
 import { AmazonAdapter } from './AmazonAdapter';
 import type { AmznMusic } from './types';
@@ -11,7 +16,9 @@ import type { AmznMusic } from './types';
 const SEARCH_ENDPOINT = 'https://na.mesk.skill.music.a2z.com/api/showSearch';
 
 export class AmazonBackgroundController implements BackgroundController {
-  public async search(input: SearchInput): Promise<SearchResult[]> {
+  public async searchTracks(
+    input: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${input.name} ${input.artistName}`;
 
     const config = await this._fetchConfig();
@@ -70,6 +77,18 @@ export class AmazonBackgroundController implements BackgroundController {
     }));
 
     return searchResults;
+  }
+
+  searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): ValueOrPromise<AlbumSearchResult[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  searchArtists(
+    searchInput: SearchArtistsInput
+  ): ValueOrPromise<ArtistSearchResult[]> {
+    throw new Error('Method not implemented.');
   }
 
   public parseLink(link: string): ParsedLink | null {

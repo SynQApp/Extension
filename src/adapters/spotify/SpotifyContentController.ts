@@ -1,8 +1,12 @@
 import { SpotifyEndpoints } from '~adapters/spotify/constants';
-import type { ContentController } from '~core/adapter';
-import type { LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController
+} from '~core/adapter';
+import type { TrackLinkDetails } from '~core/adapter';
 import { RepeatMode } from '~types';
-import type { PlaybackState, QueueItem, Track } from '~types';
+import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
@@ -446,7 +450,7 @@ export class SpotifyContentController implements ContentController {
     return volume;
   }
 
-  async getLinkTrack(): Promise<LinkTrack> {
+  async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
     const url = new URL(window.location.href);
     const pathParts = url.pathname.split('/');
     const trackId = pathParts[pathParts.length - 1];
@@ -464,6 +468,14 @@ export class SpotifyContentController implements ContentController {
       duration: track.duration_ms,
       albumCoverUrl: track.album.images[0].url
     };
+  }
+
+  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    throw new Error('Method not implemented.');
   }
 
   private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {

@@ -2,7 +2,12 @@ import type {
   MusicKit,
   NativeAppleMusicMediaItem
 } from '~adapters/apple-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -183,7 +188,7 @@ export class AppleContentController implements ContentController {
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
-  public async getLinkTrack(): Promise<LinkTrack> {
+  public async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
     const params = new URLSearchParams(window.location.search);
     const trackId = params.get('i');
 
@@ -209,6 +214,14 @@ export class AppleContentController implements ContentController {
       duration: track.attributes.durationInMillis,
       albumCoverUrl
     };
+  }
+
+  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    throw new Error('Method not implemented.');
   }
 
   private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {

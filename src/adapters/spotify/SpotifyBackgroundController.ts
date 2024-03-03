@@ -1,11 +1,16 @@
 import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type { NativeSpotifySongTrack } from '~adapters/spotify/types';
 import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/link';
+import type { ValueOrPromise } from '~types';
 
 import { SpotifyAdapter } from './SpotifyAdapter';
 import { getAuthorizationToken } from './auth';
@@ -13,10 +18,12 @@ import { getAuthorizationToken } from './auth';
 const SPOTIFY_LISTEN_ENDPOINT = 'https://open.spotify.com/track';
 
 export class SpotifyBackgroundController implements BackgroundController {
-  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
+  async searchTracks(
+    basicTrackDetails: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
-    const tracks = await this._search(query);
+    const tracks = await this._fetchTracks(query);
 
     const searchResults = tracks.map((track) => {
       return {
@@ -31,7 +38,19 @@ export class SpotifyBackgroundController implements BackgroundController {
     return searchResults;
   }
 
-  private async _search(query: string): Promise<NativeSpotifySongTrack[]> {
+  searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): ValueOrPromise<AlbumSearchResult[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  searchArtists(
+    searchInput: SearchArtistsInput
+  ): ValueOrPromise<ArtistSearchResult[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  private async _fetchTracks(query: string): Promise<NativeSpotifySongTrack[]> {
     const token = await getAuthorizationToken();
 
     const searchParams = new URLSearchParams({

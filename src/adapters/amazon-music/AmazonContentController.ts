@@ -5,7 +5,12 @@ import type {
   Maestro,
   NativeAmazonMusicQueueItem
 } from '~adapters/amazon-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -310,7 +315,7 @@ export class AmazonContentController implements ContentController {
     this.getStore()?.dispatch(playTrackAction);
   }
 
-  public getLinkTrack(): ValueOrPromise<LinkTrack> {
+  public getTrackLinkDetails(): ValueOrPromise<TrackLinkDetails | null> {
     const searchParams = new URLSearchParams(window.location.search);
     const trackId = searchParams.get('trackAsin');
 
@@ -340,6 +345,14 @@ export class AmazonContentController implements ContentController {
       albumCoverUrl,
       duration: lengthTextToSeconds(track.secondaryText3)
     };
+  }
+
+  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    throw new Error('Method not implemented.');
   }
 
   private async _fetchQueue(): Promise<NativeAmazonMusicQueueItem[]> {

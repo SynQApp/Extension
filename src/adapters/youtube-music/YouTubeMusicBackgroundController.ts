@@ -1,10 +1,14 @@
 import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/link';
-import type { Track } from '~types';
+import type { Track, ValueOrPromise } from '~types';
 
 import { YouTubeMusicAdapter } from './YouTubeMusicAdapter';
 
@@ -14,7 +18,9 @@ const WATCH_ENDPOINT = 'https://music.youtube.com/watch';
 type PartialTrack = Pick<Track, 'name' | 'artistName' | 'albumName' | 'id'>;
 
 export class YouTubeMusicBackgroundController implements BackgroundController {
-  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
+  async searchTracks(
+    basicTrackDetails: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
     const htmlResponse = await this._getSearchPage(query);
@@ -33,9 +39,21 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
           albumName: basicTrackDetails.albumName
         };
       })
-      .filter((track) => track !== null) as SearchResult[];
+      .filter((track) => track !== null) as TrackSearchResult[];
 
     return searchResults;
+  }
+
+  searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): ValueOrPromise<AlbumSearchResult[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  searchArtists(
+    searchInput: SearchArtistsInput
+  ): ValueOrPromise<ArtistSearchResult[]> {
+    throw new Error('Method not implemented.');
   }
 
   public getLink(parsedLink: ParsedLink): string {

@@ -1,15 +1,17 @@
 import { load } from 'cheerio';
 
+import type { MusicKit } from '~adapters/apple-music/types';
 import type {
-  MusicKit,
-  NativeAppleMusicMediaItem
-} from '~adapters/apple-music/types';
-import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/link';
+import type { ValueOrPromise } from '~types';
 
 import { AppleAdapter } from './AppleAdapter';
 
@@ -20,7 +22,9 @@ declare let window: Window & {
 const SEARCH_ENDPOINT = 'https://music.apple.com/us/search';
 
 export class AppleBackgroundController implements BackgroundController {
-  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
+  async searchTracks(
+    basicTrackDetails: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
     const htmlResponse = await fetch(
@@ -49,7 +53,19 @@ export class AppleBackgroundController implements BackgroundController {
       };
     });
 
-    return songs.filter((song) => song !== null) as SearchResult[];
+    return songs.filter((song) => song !== null) as TrackSearchResult[];
+  }
+
+  searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): ValueOrPromise<AlbumSearchResult[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  searchArtists(
+    searchInput: SearchArtistsInput
+  ): ValueOrPromise<ArtistSearchResult[]> {
+    throw new Error('Method not implemented.');
   }
 
   public parseLink(link: string): ParsedLink | null {

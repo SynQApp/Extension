@@ -3,35 +3,25 @@ import levenshtein from 'fast-levenshtein';
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 import type { MusicService } from '~/types';
-import { AmazonAdapter } from '~adapters/amazon-music/AmazonAdapter';
-import { AppleAdapter } from '~adapters/apple-music/AppleAdapter';
-import { SpotifyAdapter } from '~adapters/spotify/SpotifyAdapter';
-import { YouTubeMusicAdapter } from '~adapters/youtube-music/YouTubeMusicAdapter';
-import type { BackgroundController, SearchResult } from '~core/adapter';
+import adapters from '~adapters';
+import type { BackgroundController, TrackSearchResult } from '~core/adapter';
+import type { LinkType } from '~core/link';
 
 interface GetRedirectLinkRequest {
   destinationMusicService: MusicService;
-  name: string;
   artistName: string;
-  albumName: string;
+  trackName?: string;
+  albumName?: string;
   duration: number;
+  linkType: LinkType;
 }
 
-type SearchResultWithoutLink = Omit<SearchResult, 'link'>;
-
-const LINK_CONTROLLERS_MAP: Record<MusicService, BackgroundController | null> =
-  {
-    SPOTIFY: SpotifyAdapter.backgroundController(),
-    AMAZONMUSIC: AmazonAdapter.backgroundController(),
-    APPLEMUSIC: AppleAdapter.backgroundController(),
-    DEEZER: null,
-    YOUTUBEMUSIC: YouTubeMusicAdapter.backgroundController()
-  };
+type SearchResultWithoutLink = Omit<TrackSearchResult, 'link'>;
 
 const MAX_MILLISECONDS_DURATION_DIFFERNCE = 5000;
 const MINIMUM_SCORE = 80;
 
-const SCORE_MAP = new Map<keyof SearchResult, number>([
+const SCORE_MAP = new Map<keyof TrackSearchResult, number>([
   ['albumName', 10],
   ['artistName', 45],
   ['name', 45]
@@ -46,30 +36,94 @@ const handler: PlasmoMessaging.MessageHandler<GetRedirectLinkRequest> = async (
     return;
   }
 
-  const sourceTrack = req.body;
+  const linkRequest = req.body;
 
-  const linkController = LINK_CONTROLLERS_MAP[req.body.destinationMusicService];
+  const adapter = adapters.find(
+    (adapter) => adapter.id === linkRequest.destinationMusicService
+  );
+  const backgroundController = adapter?.backgroundController();
 
-  if (linkController) {
-    const searchResults = await linkController.search(req.body);
-
-    const bestResult = getBestTrackMatch(
-      {
-        name: sourceTrack.name,
-        artistName: sourceTrack.artistName,
-        albumName: sourceTrack.albumName,
-        duration: sourceTrack.duration
-      },
-      searchResults
-    );
-
-    res.send(bestResult.link);
-  } else {
+  if (!backgroundController) {
     res.send(undefined);
+    return;
+  }
+
+  if (linkRequest.linkType === 'TRACK') {
+    const link = await getTrackRedirectLink(linkRequest, backgroundController);
+    res.send(link);
+  } else if (linkRequest.linkType === 'ALBUM') {
+    const link = await getAlbumRedirectLink(linkRequest, backgroundController);
+    res.send(link);
+  } else if (linkRequest.linkType === 'ARTIST') {
+    const link = await getArtistRedirectLink(linkRequest, backgroundController);
+    res.send(link);
   }
 };
 
 export default handler;
+
+const getTrackRedirectLink = async (
+  linkRequest: GetRedirectLinkRequest,
+  backgroundController: BackgroundController
+) => {
+  if (!linkRequest.trackName) {
+    return undefined;
+  }
+
+  const searchResults = await backgroundController.searchTracks({
+    artistName: linkRequest.artistName,
+    name: linkRequest.trackName,
+    albumName: linkRequest.albumName,
+    duration: linkRequest.duration
+  });
+
+  const bestResult = getBestTrackMatch(
+    {
+      name: linkRequest.trackName,
+      artistName: linkRequest.artistName,
+      albumName: linkRequest.albumName,
+      duration: linkRequest.duration
+    },
+    searchResults
+  );
+
+  return bestResult.link;
+};
+
+const getAlbumRedirectLink = async (
+  linkRequest: GetRedirectLinkRequest,
+  backgroundController: BackgroundController
+) => {
+  if (!linkRequest.albumName) {
+    return undefined;
+  }
+
+  const searchResults = await backgroundController.searchAlbums({
+    name: linkRequest.albumName,
+    artistName: linkRequest.artistName
+  });
+
+  if (!searchResults.length) {
+    return undefined;
+  }
+
+  return searchResults[0].link;
+};
+
+const getArtistRedirectLink = async (
+  linkRequest: GetRedirectLinkRequest,
+  backgroundController: BackgroundController
+) => {
+  const searchResults = await backgroundController.searchArtists({
+    name: linkRequest.artistName
+  });
+
+  if (!searchResults.length) {
+    return undefined;
+  }
+
+  return searchResults[0].link;
+};
 
 /**
  * Returns a normalized Levenshtein score between 0 and 1 on an exponential scale,
@@ -105,8 +159,8 @@ export const getLevenshteinScore = (
 
 export const getBestTrackMatch = (
   sourceTrack: SearchResultWithoutLink,
-  destinationTracks: SearchResult[]
-): SearchResult => {
+  destinationTracks: TrackSearchResult[]
+): TrackSearchResult => {
   // Score each of the destination songs
   const scoredDestinationSongs = destinationTracks.map((_) =>
     getTrackScore(sourceTrack, _)
@@ -131,7 +185,7 @@ export const getBestTrackMatch = (
  */
 export const getTrackScore = (
   sourceTrack: SearchResultWithoutLink,
-  destinationTrack: SearchResult
+  destinationTrack: TrackSearchResult
 ): number => {
   let score: number = 0;
 
