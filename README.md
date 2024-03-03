@@ -50,7 +50,7 @@ We ❤️ contributors! Feel free to contribute to this project but **please rea
 
 <a href="https://github.com/SynQApp/Extension/graphs/contributors">
   <p align="center">
-    <img width="720" src="https://contrib.rocks/image?repo=SynQApp/Extension" alt="A table of avatars from the project's contributors" />
+    <img width="160" src="https://contrib.rocks/image?repo=SynQApp/Extension" alt="A table of avatars from the project's contributors" />
   </p>
 </a>
 
