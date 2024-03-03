@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@synq/eslint-config'],
+  extends: ['@synqapp/eslint-config'],
   env: {
     node: true
   }

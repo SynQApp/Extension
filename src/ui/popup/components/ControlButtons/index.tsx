@@ -1,4 +1,4 @@
-import { Flex, token } from '@synq/ui';
+import { Flex, token } from '@synqapp/ui';
 import { useState } from 'react';
 import styled, { css } from 'styled-components';
 

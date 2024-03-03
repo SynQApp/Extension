@@ -1,4 +1,4 @@
-import { token } from '@synq/ui';
+import { token } from '@synqapp/ui';
 import { styled } from 'styled-components';
 
 import { ArtistName } from '~/ui/shared/components/ArtistName';

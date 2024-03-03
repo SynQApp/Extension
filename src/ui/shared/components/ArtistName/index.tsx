@@ -1,4 +1,4 @@
-import { type TextProps, token } from '@synq/ui';
+import { type TextProps, token } from '@synqapp/ui';
 import { styled } from 'styled-components';
 
 import { MarqueeText } from '../MarqueeText';

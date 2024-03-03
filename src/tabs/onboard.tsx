@@ -1,4 +1,4 @@
-import { UiProvider } from '@synq/ui';
+import { UiProvider } from '@synqapp/ui';
 import { Provider } from 'react-redux';
 
 import { store } from '~store';

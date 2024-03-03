@@ -1,4 +1,4 @@
-import { Icon } from '@synq/ui';
+import { Icon } from '@synqapp/ui';
 import { css, styled, useTheme } from 'styled-components';
 
 import { RepeatMode } from '~types';

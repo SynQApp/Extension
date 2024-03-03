@@ -1,4 +1,4 @@
-import { Stack, Text, UiProvider, token } from '@synq/ui';
+import { Stack, Text, UiProvider, token } from '@synqapp/ui';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import styled, {

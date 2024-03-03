@@ -1,4 +1,4 @@
-import { UiProvider } from '@synq/ui';
+import { UiProvider } from '@synqapp/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';

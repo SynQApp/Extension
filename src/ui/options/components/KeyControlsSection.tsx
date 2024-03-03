@@ -1,4 +1,4 @@
-import { Stack, Switch } from '@synq/ui';
+import { Stack, Switch } from '@synqapp/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import {

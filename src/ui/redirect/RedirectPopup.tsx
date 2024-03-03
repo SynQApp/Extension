@@ -1,6 +1,6 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Flex, Image, Stack, Text, token } from '@synq/ui';
+import { Button, Flex, Image, Stack, Text, token } from '@synqapp/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 

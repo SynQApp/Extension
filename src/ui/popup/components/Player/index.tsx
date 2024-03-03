@@ -1,4 +1,4 @@
-import { Flex, token } from '@synq/ui';
+import { Flex, token } from '@synqapp/ui';
 import styled from 'styled-components';
 
 import { AlbumArt } from '../../../shared/components/AlbumArt';

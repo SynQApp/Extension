@@ -1,6 +1,6 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Scrollable, Text, token } from '@synq/ui';
+import { Scrollable, Text, token } from '@synqapp/ui';
 import styled, { css } from 'styled-components';
 
 import Layout from '~ui/popup/Layout';

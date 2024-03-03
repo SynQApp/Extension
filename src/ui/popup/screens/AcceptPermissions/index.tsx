@@ -1,4 +1,4 @@
-import { Button, Text, token } from '@synq/ui';
+import { Button, Text, token } from '@synqapp/ui';
 import { useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 

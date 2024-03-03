@@ -1,4 +1,4 @@
-import { List, token } from '@synq/ui';
+import { List, token } from '@synqapp/ui';
 import { styled } from 'styled-components';
 
 import type { MusicService } from '~/types';

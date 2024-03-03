@@ -1,5 +1,5 @@
-import { Flex, Stack, Text, token } from '@synq/ui';
-import { Slider } from '@synq/ui';
+import { Flex, Stack, Text, token } from '@synqapp/ui';
+import { Slider } from '@synqapp/ui';
 import { css, styled } from 'styled-components';
 
 import { secondsToLengthText } from '~util/time';

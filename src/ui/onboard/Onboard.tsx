@@ -1,4 +1,4 @@
-import { token } from '@synq/ui';
+import { token } from '@synqapp/ui';
 import Slider, { type Settings } from 'react-slick';
 import { createGlobalStyle, styled, useTheme } from 'styled-components';
 

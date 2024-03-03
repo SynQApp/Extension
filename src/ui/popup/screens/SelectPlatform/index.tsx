@@ -1,4 +1,4 @@
-import { Image, Stack, Text, token } from '@synq/ui';
+import { Image, Stack, Text, token } from '@synqapp/ui';
 import WaveGraphicDark from 'data-base64:~assets/images/wave-graphic-dark.svg';
 import WaveGraphicLight from 'data-base64:~assets/images/wave-graphic-light.svg';
 import styled, { useTheme } from 'styled-components';

@@ -1,4 +1,4 @@
-import { Button, Image, Scrollable, Stack, Text, token } from '@synq/ui';
+import { Button, Image, Scrollable, Stack, Text, token } from '@synqapp/ui';
 import MiniPlayerExample from 'data-base64:~assets/images/mini-player-example.png';
 import RedirectExample from 'data-base64:~assets/images/redirect-example.png';
 import { styled } from 'styled-components';

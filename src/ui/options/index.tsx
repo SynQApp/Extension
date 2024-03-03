@@ -1,4 +1,4 @@
-import { Scrollable, token } from '@synq/ui';
+import { Scrollable, token } from '@synqapp/ui';
 import { createGlobalStyle, useTheme } from 'styled-components';
 
 import { Header } from './components/Header';

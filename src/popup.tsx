@@ -2,7 +2,7 @@
 
 import './ui/popup/index.css';
 
-import { UiProvider } from '@synq/ui';
+import { UiProvider } from '@synqapp/ui';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';

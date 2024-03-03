@@ -1,4 +1,4 @@
-import { Slider } from '@synq/ui';
+import { Slider } from '@synqapp/ui';
 import { css, styled } from 'styled-components';
 
 import { useVolumeSlider } from './useVolumeSlider';

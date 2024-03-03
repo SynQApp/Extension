@@ -1,5 +1,5 @@
-import { Button, Flex, token } from '@synq/ui';
-import { Icon } from '@synq/ui';
+import { Button, Flex, token } from '@synqapp/ui';
+import { Icon } from '@synqapp/ui';
 import styled from 'styled-components';
 
 import { sendToBackground } from '~core/messaging';

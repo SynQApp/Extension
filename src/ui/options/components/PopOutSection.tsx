@@ -1,4 +1,4 @@
-import { Switch } from '@synq/ui';
+import { Switch } from '@synqapp/ui';
 
 import { useAppDispatch, useAppSelector } from '~store';
 import { setPopOutButtonEnabled } from '~store/slices/settings';

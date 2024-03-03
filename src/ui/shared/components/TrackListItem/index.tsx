@@ -6,7 +6,7 @@ import {
   ListItem,
   Stack,
   token
-} from '@synq/ui';
+} from '@synqapp/ui';
 import { useEffect, useRef } from 'react';
 import styled, { css, useTheme } from 'styled-components';
 

@@ -1,4 +1,4 @@
-import { Button, Image, Text, token } from '@synq/ui';
+import { Button, Image, Text, token } from '@synqapp/ui';
 import styled, { css } from 'styled-components';
 
 interface MusicServiceButtonProps {

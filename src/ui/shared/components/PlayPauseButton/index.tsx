@@ -1,4 +1,4 @@
-import { Button, Flex, Icon } from '@synq/ui';
+import { Button, Flex, Icon } from '@synqapp/ui';
 import styled, { css, useTheme } from 'styled-components';
 
 import { usePlayPauseButton } from './usePlayPauseButton';

@@ -1,5 +1,5 @@
-import { Flex, Text, token } from '@synq/ui';
-import type { TextProps } from '@synq/ui';
+import { Flex, Text, token } from '@synqapp/ui';
+import type { TextProps } from '@synqapp/ui';
 import { useEffect, useRef, useState } from 'react';
 import Marquee from 'react-fast-marquee';
 import { styled } from 'styled-components';

@@ -1,4 +1,4 @@
-import { Text, token } from '@synq/ui';
+import { Text, token } from '@synqapp/ui';
 import { styled } from 'styled-components';
 
 interface OptionsSectionProps {

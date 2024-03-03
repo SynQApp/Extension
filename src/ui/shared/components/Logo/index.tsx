@@ -1,4 +1,4 @@
-import { Image, Text, type TextProps, token } from '@synq/ui';
+import { Image, Text, type TextProps, token } from '@synqapp/ui';
 import Icon from 'data-base64:~assets/images/icon-filled.svg';
 import styled from 'styled-components';
 

@@ -4,7 +4,7 @@ import {
   faThumbsUp as faThumbsUpSolid
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Image, Stack, token } from '@synq/ui';
+import { Flex, Image, Stack, token } from '@synqapp/ui';
 import { css, styled } from 'styled-components';
 
 import { useAlbumArt } from './useAlbumArt';

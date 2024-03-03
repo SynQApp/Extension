@@ -1,4 +1,4 @@
-import { Button, UiProvider } from '@synq/ui';
+import { Button, UiProvider } from '@synqapp/ui';
 import type { PlasmoCSConfig, PlasmoCSUIProps, PlasmoGetStyle } from 'plasmo';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';

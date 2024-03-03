@@ -8,7 +8,7 @@ import {
   type MenuProps,
   Text,
   token
-} from '@synq/ui';
+} from '@synqapp/ui';
 import { useEffect, useRef, useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 

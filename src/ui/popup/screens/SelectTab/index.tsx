@@ -1,4 +1,4 @@
-import { List, Scrollable, Text, token } from '@synq/ui';
+import { List, Scrollable, Text, token } from '@synqapp/ui';
 import { useMemo } from 'react';
 import { styled } from 'styled-components';
 

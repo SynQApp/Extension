@@ -1,4 +1,4 @@
-import { Flex, Stack, Text, token } from '@synq/ui';
+import { Flex, Stack, Text, token } from '@synqapp/ui';
 import { styled } from 'styled-components';
 
 import adapters from '~adapters';

@@ -1,4 +1,4 @@
-import { Radio, RadioGroup, Stack } from '@synq/ui';
+import { Radio, RadioGroup, Stack } from '@synqapp/ui';
 
 import adapters from '~adapters';
 import { useAppDispatch, useAppSelector } from '~store';
