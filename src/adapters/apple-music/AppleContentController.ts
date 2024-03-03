@@ -3,11 +3,12 @@ import type {
   NativeAppleMusicMediaItem
 } from '~adapters/apple-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
-import { getLink } from '~core/link';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
+
+import { AppleBackgroundController } from './AppleBackgroundController';
 
 declare let window: Window & {
   MusicKit: { getInstance: () => MusicKit };
@@ -219,7 +220,7 @@ export class AppleContentController implements ContentController {
       artistName: track.artistName,
       duration: Math.round(track.durationInMillis / 1000),
       id: track.playParams.id,
-      link: getLink({
+      link: new AppleBackgroundController().getLink({
         musicService: 'APPLEMUSIC',
         trackId: track.playParams.id,
         type: 'TRACK'

@@ -3,21 +3,15 @@ import type {
   NativeYouTubeMusicQueueItem,
   NativeYouTubeMusicQueueItemRendererData,
   NativeYouTubeMusicThumbnail,
-  YtConfig,
   YtmApp
 } from '~adapters/youtube-music/types';
 import type { ContentController, LinkTrack } from '~core/adapter';
-import { getLink } from '~core/link';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 
-declare let window: Window & {
-  yt: {
-    config_: YtConfig;
-  };
-};
+import { YouTubeMusicBackgroundController } from './YouTubeMusicBackgroundController';
 
 export enum YouTubeMusicPlayerState {
   UNSTARTED = -1,
@@ -281,7 +275,7 @@ export class YouTubeMusicContentController implements ContentController {
     );
     const albumCoverUrl =
       this._selectAlbumCoverUrl(rendererData.thumbnail.thumbnails) ?? '';
-    const link = getLink({
+    const link = new YouTubeMusicBackgroundController().getLink({
       musicService: 'YOUTUBEMUSIC',
       type: 'TRACK',
       trackId

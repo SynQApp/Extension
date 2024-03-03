@@ -1,13 +1,13 @@
 import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type { ContentController } from '~core/adapter';
 import type { LinkTrack } from '~core/adapter';
-import { getLink } from '~core/link';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
+import { SpotifyBackgroundController } from './SpotifyBackgroundController';
 import { getAuthorizationToken } from './auth';
 import type { NativeSpotifySongTrack, NativeSpotifyTrack } from './types';
 
@@ -328,7 +328,7 @@ export class SpotifyContentController implements ContentController {
       }
 
       const id = trackResponse.item.id;
-      const link = getLink({
+      const link = new SpotifyBackgroundController().getLink({
         musicService: 'SPOTIFY',
         trackId: id,
         type: 'TRACK'
@@ -491,7 +491,7 @@ export class SpotifyContentController implements ContentController {
       };
     }
 
-    const link = getLink({
+    const link = new SpotifyBackgroundController().getLink({
       musicService: 'SPOTIFY',
       trackId: item.id,
       type: 'TRACK'
