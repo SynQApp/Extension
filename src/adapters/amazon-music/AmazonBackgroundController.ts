@@ -14,6 +14,7 @@ import { AmazonAdapter } from './AmazonAdapter';
 import type {
   AmznMusic,
   NativeAmazonAlbumsWidget,
+  NativeAmazonArtistsWidget,
   NativeAmazonMusicSearchResult,
   NativeAmazonTracksWidget
 } from './types';
@@ -66,7 +67,21 @@ export class AmazonBackgroundController implements BackgroundController {
   public async searchArtists(
     searchInput: SearchArtistsInput
   ): Promise<ArtistSearchResult[]> {
-    throw new Error('Method not implemented.');
+    const response = await this._search(searchInput.name);
+    const widgets = response?.methods?.[0]?.template?.widgets;
+
+    const artistsWidget = widgets?.find(
+      (widget: any) => widget.header === 'Artists'
+    ) as NativeAmazonArtistsWidget | undefined;
+
+    const artists = artistsWidget?.items;
+
+    const searchResults = artists?.map((album: any) => ({
+      name: album.primaryText.text,
+      link: `https://music.amazon.com${album.primaryLink.deeplink}`
+    }));
+
+    return searchResults ?? [];
   }
 
   public parseLink(link: string): ParsedLink | null {

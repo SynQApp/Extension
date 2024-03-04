@@ -60,6 +60,11 @@ export interface NativeAmazonAlbumsWidget {
   items: NativeAmazonAlbum[];
 }
 
+export interface NativeAmazonArtistsWidget {
+  header: 'Artists';
+  items: NativeAmazonAlbum[];
+}
+
 export interface NativeAmazonMusicSearchResult {
   methods: {
     template: {

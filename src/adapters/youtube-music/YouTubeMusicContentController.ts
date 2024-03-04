@@ -258,7 +258,18 @@ export class YouTubeMusicContentController implements ContentController {
   }
 
   public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
-    throw new Error('Method not implemented.');
+    const nameElement = document.querySelector('#header .title') as HTMLElement;
+    const name = nameElement?.innerText ?? '';
+
+    const imageElement = document.querySelector(
+      '#header source'
+    ) as HTMLElement;
+    const artistImageUrl = imageElement?.getAttribute('srcset') ?? '';
+
+    return {
+      artistImageUrl,
+      name
+    };
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {

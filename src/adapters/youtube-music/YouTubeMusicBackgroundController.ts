@@ -59,7 +59,17 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
   public async searchArtists(
     searchInput: SearchArtistsInput
   ): Promise<ArtistSearchResult[]> {
-    throw new Error('Method not implemented.');
+    const apiSearchResult = await this._search(searchInput.name);
+
+    if (!apiSearchResult) {
+      return [];
+    }
+
+    const artistOptions = this._extractArtistOptions(apiSearchResult).filter(
+      (album) => album !== null
+    ) as ArtistSearchResult[];
+
+    return artistOptions;
   }
 
   public getLink(parsedLink: ParsedLink): string {
@@ -281,6 +291,71 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
     return {
       name,
       artistName,
+      link: `${BROWSE_ENDPOINT}/${id}`
+    };
+  }
+
+  private _extractArtistOptions(
+    apiSearchResult: YtmSearchApiResult
+  ): (ArtistSearchResult | null)[] {
+    const firstAlbum = this._getFirstArtist(apiSearchResult);
+    const topResultAlbum = this._getTopResultArtist(apiSearchResult);
+
+    return [topResultAlbum, firstAlbum];
+  }
+
+  private _getTopResultArtist(apiResult: any): ArtistSearchResult | null {
+    const resultTrack =
+      apiResult.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
+        ?.content?.sectionListRenderer?.contents?.[0]?.musicCardShelfRenderer;
+
+    if (!resultTrack) {
+      return null;
+    }
+
+    const name = resultTrack.title?.runs?.[0]?.text;
+    const id =
+      resultTrack.title?.runs?.[0]?.navigationEndpoint?.browseEndpoint
+        ?.browseId;
+
+    return {
+      name,
+      link: `${BROWSE_ENDPOINT}/${id}`
+    };
+  }
+
+  private _getFirstArtist(
+    apiResult: YtmSearchApiResult
+  ): ArtistSearchResult | null {
+    const sectionsList = apiResult.contents?.tabbedSearchResultsRenderer
+      ?.tabs?.[0]?.tabRenderer?.content?.sectionListRenderer
+      ?.contents as YtmSearchApiResultMusicShelfRenderer[];
+
+    if (!sectionsList) {
+      return null;
+    }
+
+    const resultArtist = sectionsList.find(
+      (section) =>
+        section?.musicShelfRenderer?.title?.runs?.[0]?.text === 'Artists'
+    )?.musicShelfRenderer?.contents?.[0]?.musicResponsiveListItemRenderer;
+
+    if (!resultArtist) {
+      return null;
+    }
+
+    const titleObj =
+      resultArtist.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer
+        ?.text?.runs?.[0];
+    const name = titleObj?.text;
+    const id = resultArtist.navigationEndpoint?.browseEndpoint?.browseId;
+
+    if (!id) {
+      return null;
+    }
+
+    return {
+      name,
       link: `${BROWSE_ENDPOINT}/${id}`
     };
   }

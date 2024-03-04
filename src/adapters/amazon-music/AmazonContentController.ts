@@ -363,7 +363,16 @@ export class AmazonContentController implements ContentController {
   }
 
   public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
-    throw new Error('Method not implemented.');
+    const appState = this.getStore()?.getState();
+    const pageData = appState?.TemplateStack?.currentTemplate?.innerTemplate;
+
+    const name = pageData?.headerText?.text;
+    const artistImageUrl = pageData?.backgroundImage;
+
+    return {
+      name,
+      artistImageUrl
+    };
   }
 
   private async _fetchQueue(): Promise<NativeAmazonMusicQueueItem[]> {
