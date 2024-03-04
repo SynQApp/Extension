@@ -67,6 +67,7 @@ pnpm i
 *Note that the extension framework we use, Plasmo, specifically expects you to use pnpm. We cannot guarantee that npm, yarn, bun, or any other package manager will work properly.*
 
 **Step 3: Build**
+
 *Chrome*
 ```
 pnpm build
