@@ -1,5 +1,4 @@
 import type { ContentObserver } from '~core/adapter';
-import type { ReconnectingHub } from '~core/messaging/hub';
 import { updateCurrentTrack, updatePlaybackState } from '~core/player';
 
 import type { YouTubeMusicContentController } from './YouTubeMusicContentController';
