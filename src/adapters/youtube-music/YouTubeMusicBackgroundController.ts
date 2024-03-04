@@ -7,7 +7,7 @@ import type {
   SearchTracksInput,
   TrackSearchResult
 } from '~core/adapter';
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 
 import { YouTubeMusicAdapter } from './YouTubeMusicAdapter';
 import type {
@@ -18,6 +18,8 @@ import type {
 const SEARCH_ENDPOINT = 'https://music.youtube.com/search';
 const WATCH_ENDPOINT = 'https://music.youtube.com/watch';
 const BROWSE_ENDPOINT = 'https://music.youtube.com/browse';
+
+const LIKED_MUSIC_PLAYLIST_ID = 'LM';
 
 export class YouTubeMusicBackgroundController implements BackgroundController {
   async searchTracks(
@@ -101,6 +103,12 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       parsedLink.trackId = query.get('v') || '';
       parsedLink.type = 'TRACK';
     } else if (pathParts[0] === 'playlist') {
+      const list = query.get('list');
+
+      if (list === LIKED_MUSIC_PLAYLIST_ID) {
+        return null;
+      }
+
       parsedLink.albumId = query.get('list') || '';
       parsedLink.type = 'ALBUM';
     } else if (pathParts[0] === 'channel') {

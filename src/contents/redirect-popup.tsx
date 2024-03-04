@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
-import { LinkType, parseLink } from '~core/link';
+import { type LinkType, parseLink } from '~core/links';
 import { store } from '~store';
 import { RedirectPopup } from '~ui/redirect/RedirectPopup';
 import { sendAnalytic } from '~util/analytics';

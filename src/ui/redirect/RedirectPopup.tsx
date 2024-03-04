@@ -4,7 +4,7 @@ import { Button, Flex, Image, Stack, Text, token } from '@synqapp/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
-import { LinkType, parseLink } from '~core/link';
+import { type LinkType, parseLink } from '~core/links';
 import { sendToBackground } from '~core/messaging';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';

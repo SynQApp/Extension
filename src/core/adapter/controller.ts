@@ -1,4 +1,4 @@
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 
 export interface TrackLinkDetails {

@@ -1,5 +1,5 @@
 import type { ContentController } from '~core/adapter/controller';
-import type { LinkType } from '~core/link';
+import type { LinkType } from '~core/links';
 import { sendToBackground } from '~core/messaging';
 import type { ReconnectingHub } from '~core/messaging/hub';
 import { MusicControllerMessage, type Settings } from '~types';

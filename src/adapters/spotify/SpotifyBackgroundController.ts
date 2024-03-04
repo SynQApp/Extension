@@ -9,7 +9,7 @@ import type {
   SearchTracksInput,
   TrackSearchResult
 } from '~core/adapter';
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 import type { ValueOrPromise } from '~types';
 
 import { SpotifyAdapter } from './SpotifyAdapter';

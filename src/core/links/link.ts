@@ -1,7 +1,7 @@
 import adapters from '~adapters';
 import type { MusicService } from '~types';
 
-import { matchAdapter } from './adapter/register';
+import { matchAdapter } from '../adapter/register';
 
 export const LinkType = {
   ALBUM: 'ALBUM',

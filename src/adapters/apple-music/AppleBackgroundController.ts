@@ -10,14 +10,10 @@ import type {
   SearchTracksInput,
   TrackSearchResult
 } from '~core/adapter';
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 import type { ValueOrPromise } from '~types';
 
 import { AppleAdapter } from './AppleAdapter';
-
-declare let window: Window & {
-  MusicKit: { getInstance: () => MusicKit };
-};
 
 const SEARCH_ENDPOINT = 'https://music.apple.com/us/search';
 
