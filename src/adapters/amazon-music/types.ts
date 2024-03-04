@@ -40,11 +40,30 @@ export interface NativeAmazonMusicQueueItem {
   image: string;
 }
 
-export interface NativeAmazonMusicSearchResult {
-  primaryLink: string;
-  image: string;
+export interface NativeAmazonAlbum {
+  primaryLink: {
+    deeplink: string;
+  };
   primaryText: {
     text: string;
   };
   secondaryText: string;
+}
+
+export interface NativeAmazonTracksWidget {
+  header: 'Tracks';
+  items: NativeAmazonMusicQueueItem[];
+}
+
+export interface NativeAmazonAlbumsWidget {
+  header: 'Albums';
+  items: NativeAmazonAlbum[];
+}
+
+export interface NativeAmazonMusicSearchResult {
+  methods: {
+    template: {
+      widgets: (NativeAmazonTracksWidget | NativeAmazonAlbumsWidget)[];
+    };
+  }[];
 }

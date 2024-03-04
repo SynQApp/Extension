@@ -8,14 +8,16 @@ import type {
   TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/link';
-import type { Track, ValueOrPromise } from '~types';
 
 import { YouTubeMusicAdapter } from './YouTubeMusicAdapter';
+import type {
+  YtmSearchApiResult,
+  YtmSearchApiResultMusicShelfRenderer
+} from './types';
 
 const SEARCH_ENDPOINT = 'https://music.youtube.com/search';
 const WATCH_ENDPOINT = 'https://music.youtube.com/watch';
-
-type PartialTrack = Pick<Track, 'name' | 'artistName' | 'albumName' | 'id'>;
+const BROWSE_ENDPOINT = 'https://music.youtube.com/browse';
 
 export class YouTubeMusicBackgroundController implements BackgroundController {
   async searchTracks(
@@ -23,36 +25,40 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
   ): Promise<TrackSearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
-    const htmlResponse = await this._getSearchPage(query);
-    const trackOptions = this._extractTrackOptions(htmlResponse);
-    const searchResults = trackOptions
-      .map((track) => {
-        if (!track) {
-          return null;
-        }
+    const apiSearchResult = await this._search(query);
 
-        return {
-          link: `${WATCH_ENDPOINT}?v=${track.id}`,
-          name: track.name,
-          artistName: track.artistName,
-          duration: basicTrackDetails.duration,
-          albumName: basicTrackDetails.albumName
-        };
-      })
-      .filter((track) => track !== null) as TrackSearchResult[];
+    if (!apiSearchResult) {
+      return [];
+    }
 
-    return searchResults;
+    const trackOptions = this._extractTrackOptions(apiSearchResult).filter(
+      (option) => option !== null
+    ) as TrackSearchResult[];
+
+    return trackOptions;
   }
 
-  searchAlbums(
+  public async searchAlbums(
     searchInput: SearchAlbumsInput
-  ): ValueOrPromise<AlbumSearchResult[]> {
-    throw new Error('Method not implemented.');
+  ): Promise<AlbumSearchResult[]> {
+    const query = `${searchInput.name} ${searchInput.artistName}`;
+
+    const apiSearchResult = await this._search(query);
+
+    if (!apiSearchResult) {
+      return [];
+    }
+
+    const albumOptions = this._extractAlbumOptions(apiSearchResult).filter(
+      (album) => album !== null
+    ) as AlbumSearchResult[];
+
+    return albumOptions;
   }
 
-  searchArtists(
+  public async searchArtists(
     searchInput: SearchArtistsInput
-  ): ValueOrPromise<ArtistSearchResult[]> {
+  ): Promise<ArtistSearchResult[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -97,7 +103,9 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       : null;
   }
 
-  private async _getSearchPage(query: string): Promise<string> {
+  private async _search(
+    query: string
+  ): Promise<YtmSearchApiResult | undefined> {
     const htmlResponse = await fetch(
       `${SEARCH_ENDPOINT}?q=${encodeURI(query)}`,
       {
@@ -105,16 +113,12 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       }
     ).then((res) => res.text());
 
-    return htmlResponse;
-  }
-
-  private _extractTrackOptions(text: string): (PartialTrack | null)[] {
     const regex = /search',.*data\: '(.*)'\}\)\;ytcfg/;
-    const matches = text.match(regex);
+    const matches = htmlResponse.match(regex);
     let match = matches?.[1];
 
     if (!match) {
-      return [];
+      return undefined;
     }
 
     match = match.replace(/\\x/g, '%');
@@ -125,19 +129,22 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
 
     try {
       parsedMatch = JSON.parse(decodedMatch);
+      return parsedMatch;
     } catch (e) {
-      console.info("Couldn't parse JSON");
-      console.error(e);
-      return [];
+      return undefined;
     }
-
-    const firstTrack = this._getFirstTack(parsedMatch);
-    const topResultTrack = this._getTopResultTack(parsedMatch);
-
-    return [firstTrack, topResultTrack];
   }
 
-  private _getTopResultTack(apiResult: any): PartialTrack | null {
+  private _extractTrackOptions(
+    apiSearchResult: YtmSearchApiResult
+  ): (TrackSearchResult | null)[] {
+    const topResultTrack = this._getTopResultTrack(apiSearchResult);
+    const firstTrack = this._getFirstTrack(apiSearchResult);
+
+    return [topResultTrack, firstTrack];
+  }
+
+  private _getTopResultTrack(apiResult: any): TrackSearchResult | null {
     const resultTrack =
       apiResult.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
         ?.content?.sectionListRenderer?.contents?.[0]?.musicCardShelfRenderer;
@@ -159,11 +166,11 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       name,
       artistName,
       albumName,
-      id
+      link: `${WATCH_ENDPOINT}?v=${id}`
     };
   }
 
-  private _getFirstTack(apiResult: any): PartialTrack | null {
+  private _getFirstTrack(apiResult: any): TrackSearchResult | null {
     const sectionsList =
       apiResult.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
         ?.content?.sectionListRenderer?.contents;
@@ -201,7 +208,80 @@ export class YouTubeMusicBackgroundController implements BackgroundController {
       name,
       artistName,
       albumName,
-      id
+      link: `${WATCH_ENDPOINT}?v=${id}`
+    };
+  }
+
+  private _extractAlbumOptions(
+    apiSearchResult: YtmSearchApiResult
+  ): (AlbumSearchResult | null)[] {
+    const firstAlbum = this._getFirstAlbum(apiSearchResult);
+    const topResultAlbum = this._getTopResultAlbum(apiSearchResult);
+
+    return [topResultAlbum, firstAlbum];
+  }
+
+  private _getTopResultAlbum(apiResult: any): AlbumSearchResult | null {
+    const resultTrack =
+      apiResult.contents?.tabbedSearchResultsRenderer?.tabs?.[0]?.tabRenderer
+        ?.content?.sectionListRenderer?.contents?.[0]?.musicCardShelfRenderer;
+
+    if (!resultTrack) {
+      return null;
+    }
+
+    const name = resultTrack.title?.runs?.[0]?.text;
+    const artistName = resultTrack.subtitle?.runs?.[2]?.text;
+    const id =
+      resultTrack.title?.runs?.[0]?.navigationEndpoint?.browseEndpoint
+        ?.browseId;
+
+    return {
+      name,
+      artistName,
+      link: `${BROWSE_ENDPOINT}/${id}`
+    };
+  }
+
+  private _getFirstAlbum(
+    apiResult: YtmSearchApiResult
+  ): AlbumSearchResult | null {
+    const sectionsList = apiResult.contents?.tabbedSearchResultsRenderer
+      ?.tabs?.[0]?.tabRenderer?.content?.sectionListRenderer
+      ?.contents as YtmSearchApiResultMusicShelfRenderer[];
+
+    if (!sectionsList) {
+      return null;
+    }
+
+    const resultAlbum = sectionsList.find(
+      (section) =>
+        section?.musicShelfRenderer?.title?.runs?.[0]?.text === 'Albums'
+    )?.musicShelfRenderer?.contents?.[0]?.musicResponsiveListItemRenderer;
+
+    if (!resultAlbum) {
+      return null;
+    }
+
+    const titleObj =
+      resultAlbum.flexColumns?.[0]?.musicResponsiveListItemFlexColumnRenderer
+        ?.text?.runs?.[0];
+    const name = titleObj?.text;
+    const id = resultAlbum.navigationEndpoint?.browseEndpoint?.browseId;
+
+    const subtitleRuns =
+      resultAlbum.flexColumns?.[1]?.musicResponsiveListItemFlexColumnRenderer
+        ?.text?.runs;
+    const artistName = subtitleRuns?.[2]?.text;
+
+    if (!id) {
+      return null;
+    }
+
+    return {
+      name,
+      artistName,
+      link: `${BROWSE_ENDPOINT}/${id}`
     };
   }
 }

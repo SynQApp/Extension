@@ -1,20 +1,5 @@
 import type { Store } from 'redux';
 
-export interface YtConfig {
-  IS_SUBSCRIBER: boolean;
-}
-
-export interface NativeYouTubeMusicNavigationRequest {
-  data: {
-    videoId: string;
-    watchEndpointMusicSupportedConfigs: {
-      watchEndpointMusicConfig: {
-        musicVideoType: string;
-      };
-    };
-  };
-}
-
 export interface NativeYouTubeMusicQueueItem {
   playlistPanelVideoWrapperRenderer: {
     primaryRenderer: {
@@ -87,10 +72,74 @@ export interface YtmAppState {
 
 export interface YtmApp {
   store: Store<YtmAppState>;
-  navigator_: {
-    navigate: (request: NativeYouTubeMusicNavigationRequest) => void;
-    originalNavigate: (request: NativeYouTubeMusicNavigationRequest) => void;
-  };
-  navigate_: (path: string) => void;
   playerUiState_: 'INACTIVE';
+}
+
+export interface YtmSearchResultRun {
+  text: string;
+  navigationEndpoint?: {
+    clickTrackingParams: string;
+    browseEndpoint: {
+      browseId: string;
+    };
+  };
+}
+
+export interface YtmSearchApiResultMusicCardShelfRenderer {
+  musicCardShelfRenderer: {
+    subtitle: {
+      runs: YtmSearchResultRun[];
+    };
+    thumbnail: {
+      thumbnails: NativeYouTubeMusicThumbnail[];
+    };
+    title: {
+      runs: YtmSearchResultRun[];
+    };
+  };
+}
+
+export interface YtmSearchApiResultMusicResponsiveListItemRenderer {
+  musicResponsiveListItemRenderer: {
+    flexColumns: {
+      musicResponsiveListItemFlexColumnRenderer: {
+        text: {
+          runs: YtmSearchResultRun[];
+        };
+      };
+    }[];
+    navigationEndpoint: {
+      browseEndpoint: {
+        browseId: string;
+      };
+    };
+  };
+}
+
+export interface YtmSearchApiResultMusicShelfRenderer {
+  musicShelfRenderer: {
+    contents: YtmSearchApiResultMusicResponsiveListItemRenderer[];
+    title: {
+      runs: YtmSearchResultRun[];
+    };
+  };
+}
+
+export interface YtmSearchApiResult {
+  contents: {
+    tabbedSearchResultsRenderer: {
+      tabs: {
+        tabRenderer: {
+          content: {
+            sectionListRenderer: {
+              contents: (
+                | YtmSearchApiResultMusicCardShelfRenderer
+                | YtmSearchApiResultMusicShelfRenderer
+              )[];
+            };
+          };
+        };
+      }[];
+    };
+  };
 }

@@ -234,11 +234,30 @@ export class YouTubeMusicContentController implements ContentController {
     };
   }
 
-  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  public getAlbumLinkDetails(): AlbumLinkDetails | null {
+    const nameElement = document.querySelector(
+      'h2.ytmusic-detail-header-renderer'
+    ) as HTMLElement;
+    const name = nameElement?.innerText ?? '';
+
+    const artistNameElement = document.querySelector(
+      '#header .subtitle-container a'
+    ) as HTMLElement;
+    const artistName = artistNameElement?.innerText ?? '';
+
+    const albumCoverUrl = document.querySelector(
+      '#thumbnail img'
+    ) as HTMLElement;
+    const albumCover = albumCoverUrl?.getAttribute('src') ?? '';
+
+    return {
+      albumCoverUrl: albumCover,
+      artistName,
+      name
+    };
   }
 
-  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+  public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
     throw new Error('Method not implemented.');
   }
 

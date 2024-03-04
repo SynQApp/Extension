@@ -58,7 +58,7 @@ const handleRedirect = async (
         return;
       }
 
-      params.set('name', albumDetails.name ?? '');
+      params.set('albumName', albumDetails.name ?? '');
       params.set('artistName', albumDetails.artistName ?? '');
       params.set('albumCoverUrl', albumDetails.albumCoverUrl ?? '');
 
@@ -71,7 +71,7 @@ const handleRedirect = async (
         return;
       }
 
-      params.set('name', artistDetails.name ?? '');
+      params.set('artistName', artistDetails.name ?? '');
       params.set('artistImageUrl', artistDetails.artistImageUrl ?? '');
 
       break;

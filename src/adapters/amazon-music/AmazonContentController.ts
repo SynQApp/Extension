@@ -347,11 +347,22 @@ export class AmazonContentController implements ContentController {
     };
   }
 
-  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  public getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    const appState = this.getStore()?.getState();
+    const pageData = appState?.TemplateStack?.currentTemplate?.innerTemplate;
+
+    const artistName = pageData?.headerPrimaryText;
+    const albumName = pageData?.headerImageAltText;
+    const albumCoverUrl = pageData?.headerImage;
+
+    return {
+      name: albumName,
+      artistName,
+      albumCoverUrl
+    };
   }
 
-  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+  public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
     throw new Error('Method not implemented.');
   }
 
