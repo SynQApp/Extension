@@ -41,9 +41,34 @@ Then, install the project's dependencies:
 pnpm install
 ```
 
+Next, run an initial build:
+
+*Chrome*
+
+```bash
+pnpm build
+```
+
+*Edge*
+
+```bash
+pnpm build --target=edge-mv3
+```
+
+### Add the local build to your browser
+
+1. Go to `chrome://extensions` or `edge://extensions/`
+1. Enable Developer Mode (top right for Chrome, left sidebar for Edge)
+1. Select "Load Unpacked"
+1. Navigate to `/build` and select either the `/chrome-mv3-prod` or `/edge-mv3-prod` folder
+
+If it worked, the onboarding screen should have loaded in a new tab!
+
 ### Implement your changes
 
 Now you're all setup and can start implementing your changes. This project uses the [Plasmo](https://www.plasmo.com/) browser extension framework, so consider referring to their documentation for additional resources.
+
+If you're adding a new music service adapter or modifying an existing adapter, please utilize the [Guide to Building Adapters](https://github.com/SynQApp/Extension/blob/main/docs/BuildingAnAdapter.md) to help you understand the structure of Adapters.
 
 Here are some useful scripts for when you are developing:
 
