@@ -28,8 +28,7 @@
 ## Table of contents
 
 - <a href="#about">About</a>
-- <a href="#getting-started">Getting Started</a>
-- <a href="#bugs">Bugs and Requests</a>
+- <a href="#services">Supported Music Services</a>
 - <a href="#contributors">Contributors</a>
 
 <h2 id="about">About</h2>
@@ -50,45 +49,25 @@ SynQ is a browser extension for Google Chrome and Microsoft Edge that aims to ma
 
 ⌨️ **Key Controls**: Effortlessly control your music with added keyboard shortcuts integrated directly into the mini player.
 
-### [Install SynQ Here](https://www.synqapp.io)
+#### [Install SynQ Here](https://www.synqapp.io)
 
-<h2 id="getting-started">Getting Started</h2>
+<h2 id="services">Supported Music Services</h2>
 
-*Note: This section is **ONLY** for anyone interested in playing around with the code on their machines. If you just want to download SynQ, please do so [here](https://www.synqapp.io).*
+As of March 2, 2024, SynQ supports the following music services:
+* Spotify
+* Apple Music
+* YouTube Music
+* Amazon Music
 
-**Step 1: Clone Repository**
-```
-git clone https://github.com/SynQApp/Extension.git
-```
-**Step 2: Install Dependencies**
-```
-pnpm i
-```
-*Note that the extension framework we use, Plasmo, specifically expects you to use pnpm. We cannot guarantee that npm, yarn, bun, or any other package manager will work properly.*
+If you're a developer and see a missing music service, try building an adapter for it! Learn more about building adapters in our [Guide to Building Adapters](https://github.com/SynQApp/Extension/blob/main/docs/BuildingAnAdapter.md). If you're excited and ready, go ahead and submit a request for a new adapter in our issues to get started:
 
-**Step 3: Build**
-
-*Chrome*
-```
-pnpm build
-```
-*Edge*
-```
-pnpm build --target=edge-mv3
-```
-*See more on building at [Plasmo's docs](https://docs.plasmo.com/framework/workflows/build)*
-
-**Step 4: Add to Chrome/Edge**
-1. Go to `chrome://extensions` or `edge://extensions/`
-2. Enable Developer Mode (top right for Chrome, left sidebar for Edge)
-3. Select "Load Unpacked"
-4. Navigate to `/build` and select either the `chrome-mv3-prod` or `edge-mv3-prod` folder
+#### [Submit a Feature Request](https://github.com/SynQApp/Extension/issues)
 
 <h2 id="bugs">Bugs and Requests</h2>
 
 Find a bug? Think of an awesome new feature? Your music service isn't supported yet? Please submit an issue here:
 
-[Submit an Issue](https://github.com/SynQApp/Extension/issues)
+#### [Submit an Issue](https://github.com/SynQApp/Extension/issues)
 
 <h2 id="contributors">Contributors</h2>
 
