@@ -11,7 +11,8 @@
     "format:all": "prettier --write \"**/*.{js,ts,json}\"",
     "format:check": "prettier --check \"**/*.{js,ts,json}\"",
     "lint:all": "eslint --fix \"**/*.{js,ts,json}\"",
-    "lint:check": "eslint \"**/*.{js,ts,json}\""
+    "lint:check": "eslint \"**/*.{js,ts,json}\"",
+    "check": "pnpm run lint:check && pnpm run format:check"
   },
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
