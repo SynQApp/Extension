@@ -59,7 +59,20 @@ As of March 2, 2024, SynQ supports the following music services:
 * YouTube Music
 * Amazon Music
 
-If you're a developer and see a missing music service, try building an adapter for it! Learn more about building adapters in our [Guide to Building Adapters](https://github.com/SynQApp/Extension/blob/main/docs/BuildingAnAdapter.md). If you're excited and ready, go ahead and submit a request for a new adapter in our issues to get started:
+If you're a developer and see a missing music service, try building an adapter for it! Learn more about building adapters in our [Guide to Building Adapters](https://github.com/SynQApp/Extension/blob/main/docs/BuildingAnAdapter.md). We have requests for the following music services to be supported:
+* YouTube - [Issue](https://github.com/SynQApp/Extension/issues/42)
+* Tidal - [Issue](https://github.com/SynQApp/Extension/issues/39)
+* Deezer - [Issue](https://github.com/SynQApp/Extension/issues/40)
+* Pandora - [Issue](https://github.com/SynQApp/Extension/issues/45)
+* SoundCloud - [Issue](https://github.com/SynQApp/Extension/issues/41)
+* Gaana - [Issue](https://github.com/SynQApp/Extension/issues/43)
+* iHeartRadio - [Issue](https://github.com/SynQApp/Extension/issues/49)
+* SiriusXM - [Issue](https://github.com/SynQApp/Extension/issues/46)
+* TuneIn - [Issue](https://github.com/SynQApp/Extension/issues/44)
+* MixCloud - [Issue](https://github.com/SynQApp/Extension/issues/47)
+* LiveOne - [Issue](https://github.com/SynQApp/Extension/issues/48)
+
+If you're excited and ready, go ahead and submit a request for a new adapter in our issues to get started:
 
 #### [Submit a Feature Request](https://github.com/SynQApp/Extension/issues)
 
