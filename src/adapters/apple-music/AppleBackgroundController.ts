@@ -1,6 +1,5 @@
 import { load } from 'cheerio';
 
-import type { MusicKit } from '~adapters/apple-music/types';
 import type {
   AlbumSearchResult,
   ArtistSearchResult,
@@ -11,7 +10,6 @@ import type {
   TrackSearchResult
 } from '~core/adapter';
 import type { ParsedLink } from '~core/links';
-import type { ValueOrPromise } from '~types';
 
 import { AppleAdapter } from './AppleAdapter';
 
@@ -52,16 +50,79 @@ export class AppleBackgroundController implements BackgroundController {
     return songs.filter((song) => song !== null) as TrackSearchResult[];
   }
 
-  searchAlbums(
+  async searchAlbums(
     searchInput: SearchAlbumsInput
-  ): ValueOrPromise<AlbumSearchResult[]> {
-    throw new Error('Method not implemented.');
+  ): Promise<AlbumSearchResult[]> {
+    const query = `${searchInput.name} ${searchInput.artistName}`;
+
+    const htmlResponse = await fetch(
+      `${SEARCH_ENDPOINT}?term=${encodeURIComponent(query)}`
+    ).then((response) => response.text());
+
+    const $ = load(htmlResponse);
+    const albumElements = $(
+      '.section[aria-label="Albums"] li[role="listitem"]'
+    );
+
+    const artists = [...albumElements].map((albumElement) => {
+      const name = $(albumElement)
+        .find('.product-lockup__title-link')
+        .text()
+        .trim();
+      const artistName = $(albumElement)
+        .find('.product-lockup__subtitle-link')
+        .text()
+        .trim();
+      const link = $(albumElement)
+        .find('.product-lockup__title-link a')
+        .attr('href');
+
+      if (!name || !artistName || !link) {
+        return null;
+      }
+
+      return {
+        name,
+        artistName,
+        link
+      };
+    });
+
+    return artists.filter((artist) => artist !== null) as AlbumSearchResult[];
   }
 
-  searchArtists(
+  async searchArtists(
     searchInput: SearchArtistsInput
-  ): ValueOrPromise<ArtistSearchResult[]> {
-    throw new Error('Method not implemented.');
+  ): Promise<ArtistSearchResult[]> {
+    const htmlResponse = await fetch(
+      `${SEARCH_ENDPOINT}?term=${encodeURIComponent(searchInput.name)}`
+    ).then((response) => response.text());
+
+    const $ = load(htmlResponse);
+    const artistElements = $(
+      '.section[aria-label="Artists"] li[role="listitem"]'
+    );
+
+    const artists = [...artistElements].map((artistElement) => {
+      const name = $(artistElement)
+        .find('.ellipse-lockup-wrapper')
+        .text()
+        .trim();
+      const link = $(artistElement)
+        .find('.ellipse-lockup-wrapper a')
+        .attr('href');
+
+      if (!name || !link) {
+        return null;
+      }
+
+      return {
+        name,
+        link
+      };
+    });
+
+    return artists.filter((artist) => artist !== null) as AlbumSearchResult[];
   }
 
   public parseLink(link: string): ParsedLink | null {
