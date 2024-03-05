@@ -216,12 +216,62 @@ export class AppleContentController implements ContentController {
     };
   }
 
-  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  public async getAlbumLinkDetails(): Promise<AlbumLinkDetails | null> {
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const albumId = pathParts[3];
+
+    if (!albumId) {
+      return null;
+    }
+
+    const album = await this._getAlbum(albumId);
+
+    if (!album) {
+      return null;
+    }
+
+    const albumCoverUrl = album.attributes.artwork.url.replace(
+      '{w}x{h}bb',
+      '300x300'
+    );
+
+    const artistName = album.attributes.artistName;
+    const albumName = album.attributes.name;
+
+    return {
+      name: albumName,
+      artistName,
+      albumCoverUrl
+    };
   }
 
-  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  public async getArtistLinkDetails(): Promise<ArtistLinkDetails | null> {
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const artistId = pathParts[3];
+
+    if (!artistId) {
+      return null;
+    }
+
+    const artist = await this._getArtist(artistId);
+
+    if (!artist) {
+      return null;
+    }
+
+    const artistImageUrl = artist.attributes.artwork.url.replace(
+      '{w}x{h}bb',
+      '300x300'
+    );
+
+    const name = artist.attributes.name;
+
+    return {
+      name,
+      artistImageUrl
+    };
   }
 
   private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {
@@ -245,10 +295,28 @@ export class AppleContentController implements ContentController {
   private async _getTrack(
     id: string
   ): Promise<NativeAppleMusicMediaItem | null> {
-    const musicKit = window.MusicKit.getInstance();
+    const musicKit = this.getPlayer();
     const track = await musicKit.api.song(id);
 
     return track;
+  }
+
+  private async _getAlbum(
+    id: string
+  ): Promise<NativeAppleMusicMediaItem | null> {
+    const musicKit = this.getPlayer();
+    const album = await musicKit.api.album(id);
+
+    return album;
+  }
+
+  private async _getArtist(
+    id: string
+  ): Promise<NativeAppleMusicMediaItem | null> {
+    const musicKit = this.getPlayer();
+    const album = await musicKit.api.artist(id);
+
+    return album;
   }
 
   public getPlayer() {
