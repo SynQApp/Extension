@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  SynQ provides a mini player and link translations between all of our supported music services, including Spotify, Apple Music, YouTube Music, and Amazon Music!
+  SynQ provides a mini player and link conversions between all of our supported music services, including Spotify, Apple Music, YouTube Music, and Amazon Music!
 </p>
 
 <div align="center">
