@@ -131,9 +131,10 @@ export const Complete = () => {
                   size="md"
                   weight="regular"
                 >
-                  Receive a link to a song{' '}
-                  <HighlightedText>not on {musicServiceName}</HighlightedText>?
-                  No problem! SynQ will offer to{' '}
+                  Receive a{' '}
+                  <HighlightedText>non-{musicServiceName}</HighlightedText>{' '}
+                  music link (track, album, or artist)? No problem! SynQ will
+                  offer to{' '}
                   <HighlightedText>
                     open it in {musicServiceName} for you.
                   </HighlightedText>{' '}
