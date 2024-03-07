@@ -55,7 +55,6 @@ export class SpotifyBackgroundController implements BackgroundController {
         artistName: album.artists[0].name
       };
     });
-    console.log(searchResults);
     return searchResults;
   }
 

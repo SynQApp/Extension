@@ -64,7 +64,7 @@ export class AppleBackgroundController implements BackgroundController {
       '.section[aria-label="Albums"] li[role="listitem"]'
     );
 
-    const artists = [...albumElements].map((albumElement) => {
+    const albums = [...albumElements].map((albumElement) => {
       const name = $(albumElement)
         .find('.product-lockup__title-link')
         .text()
@@ -73,9 +73,7 @@ export class AppleBackgroundController implements BackgroundController {
         .find('.product-lockup__subtitle')
         .text()
         .trim();
-      const link = $(albumElement)
-        .find('.product-lockup__subtitle')
-        .attr('href');
+      const link = $(albumElement).find('.product-lockup__title').attr('href');
 
       if (!name || !artistName || !link) {
         return null;
@@ -88,7 +86,7 @@ export class AppleBackgroundController implements BackgroundController {
       };
     });
 
-    return artists.filter((artist) => artist !== null) as AlbumSearchResult[];
+    return albums.filter((artist) => artist !== null) as AlbumSearchResult[];
   }
 
   async searchArtists(
