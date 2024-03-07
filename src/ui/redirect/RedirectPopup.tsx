@@ -4,7 +4,7 @@ import { Button, Flex, Image, Stack, Text, token } from '@synqapp/ui';
 import SynQIcon from 'data-base64:~assets/images/icon-filled.svg';
 import { css, styled, useTheme } from 'styled-components';
 
-import { parseLink } from '~core/link';
+import { type LinkType, parseLink } from '~core/links';
 import { sendToBackground } from '~core/messaging';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { useAppSelector } from '~store';
@@ -13,11 +13,16 @@ import { sendAnalytic } from '~util/analytics';
 import { getMusicServiceName } from '~util/musicService';
 
 interface RedirectPopupProps {
+  linkType?: LinkType;
   show: boolean;
   onClose: () => void;
 }
 
-export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
+export const RedirectPopup = ({
+  linkType,
+  show,
+  onClose
+}: RedirectPopupProps) => {
   const settings = useAppSelector((state) => state.settings);
   const theme = useTheme();
 
@@ -37,14 +42,15 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
     sendToContent({
       name: MusicControllerMessage.REDIRECT,
       body: {
-        to: tab.id
+        to: tab.id,
+        linkType
       }
     });
 
     const parsedLink = parseLink(window.location.href);
 
     if (parsedLink) {
-      const { musicService, trackId } = parsedLink;
+      const { musicService } = parsedLink;
 
       sendAnalytic({
         name: 'redirect_popup_clicked',
@@ -70,7 +76,8 @@ export const RedirectPopup = ({ show, onClose }: RedirectPopupProps) => {
       <Main>
         <Stack direction="column" spacing="sm">
           <TitleText type="display" size="md" weight="semibold">
-            Listen on {preferredMusicServiceName} instead?
+            {linkType === 'TRACK' ? 'Listen' : 'View'} on{' '}
+            {preferredMusicServiceName} instead?
           </TitleText>
           <ContinueButton size="medium" onClick={handleOpenWithSynQ}>
             Continue

@@ -2,7 +2,12 @@ import type {
   MusicKit,
   NativeAppleMusicMediaItem
 } from '~adapters/apple-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -183,7 +188,7 @@ export class AppleContentController implements ContentController {
     this.getPlayer().changeToMediaAtIndex(trackIndex);
   }
 
-  public async getLinkTrack(): Promise<LinkTrack> {
+  public async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
     const params = new URLSearchParams(window.location.search);
     const trackId = params.get('i');
 
@@ -211,6 +216,64 @@ export class AppleContentController implements ContentController {
     };
   }
 
+  public async getAlbumLinkDetails(): Promise<AlbumLinkDetails | null> {
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const albumId = pathParts[3];
+
+    if (!albumId) {
+      return null;
+    }
+
+    const album = await this._getAlbum(albumId);
+
+    if (!album) {
+      return null;
+    }
+
+    const albumCoverUrl = album.attributes.artwork.url.replace(
+      '{w}x{h}bb',
+      '300x300'
+    );
+
+    const artistName = album.attributes.artistName;
+    const albumName = album.attributes.name;
+
+    return {
+      name: albumName,
+      artistName,
+      albumCoverUrl
+    };
+  }
+
+  public async getArtistLinkDetails(): Promise<ArtistLinkDetails | null> {
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter((part) => part !== '');
+    const artistId = pathParts[3];
+
+    if (!artistId) {
+      return null;
+    }
+
+    const artist = await this._getArtist(artistId);
+
+    if (!artist) {
+      return null;
+    }
+
+    const artistImageUrl = artist.attributes.artwork.url.replace(
+      '{w}x{h}bb',
+      '300x300'
+    );
+
+    const name = artist.attributes.name;
+
+    return {
+      name,
+      artistImageUrl
+    };
+  }
+
   private _mediaItemToSongInfo(mediaItem: NativeAppleMusicMediaItem): Track {
     const track = mediaItem.attributes;
 
@@ -232,10 +295,28 @@ export class AppleContentController implements ContentController {
   private async _getTrack(
     id: string
   ): Promise<NativeAppleMusicMediaItem | null> {
-    const musicKit = window.MusicKit.getInstance();
+    const musicKit = this.getPlayer();
     const track = await musicKit.api.song(id);
 
     return track;
+  }
+
+  private async _getAlbum(
+    id: string
+  ): Promise<NativeAppleMusicMediaItem | null> {
+    const musicKit = this.getPlayer();
+    const album = await musicKit.api.album(id);
+
+    return album;
+  }
+
+  private async _getArtist(
+    id: string
+  ): Promise<NativeAppleMusicMediaItem | null> {
+    const musicKit = this.getPlayer();
+    const album = await musicKit.api.artist(id);
+
+    return album;
   }
 
   public getPlayer() {

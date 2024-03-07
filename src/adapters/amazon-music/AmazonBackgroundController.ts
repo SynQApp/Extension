@@ -1,75 +1,86 @@
 import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 
 import { AmazonAdapter } from './AmazonAdapter';
-import type { AmznMusic } from './types';
+import type {
+  AmznMusic,
+  NativeAmazonAlbumsWidget,
+  NativeAmazonArtistsWidget,
+  NativeAmazonMusicSearchResult,
+  NativeAmazonTracksWidget
+} from './types';
 
 const SEARCH_ENDPOINT = 'https://na.mesk.skill.music.a2z.com/api/showSearch';
 
 export class AmazonBackgroundController implements BackgroundController {
-  public async search(input: SearchInput): Promise<SearchResult[]> {
+  public async searchTracks(
+    input: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${input.name} ${input.artistName}`;
 
-    const config = await this._fetchConfig();
-
-    const headers = {
-      accept: '*/*',
-      'accept-language': 'en-US,en;q=0.9',
-      'cache-control': 'no-cache',
-      'content-type': 'text/plain;charset=UTF-8',
-      pragma: 'no-cache',
-      'sec-ch-ua':
-        '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"macOS"',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'cross-site'
-    };
-
-    const filter = JSON.stringify({ IsLibrary: ['false'] });
-    const keyword = JSON.stringify({
-      interface:
-        'Web.TemplatesInterface.v1_0.Touch.SearchTemplateInterface.SearchKeywordClientInformation',
-      keyword: ''
-    });
-    const userHash = JSON.stringify({ level: 'LIBRARY_MEMBER' });
-
-    const body = {
-      filter,
-      headers: this._createBodyHeaders(config, query),
-      keyword,
-      userHash,
-      suggestedKeyword: query
-    };
-
-    const response = await fetch(SEARCH_ENDPOINT, {
-      headers,
-      referrer: 'https://music.amazon.com/',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      body: JSON.stringify(body),
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'omit'
-    }).then((res) => res.json());
-
+    const response = await this._search(query);
     const widgets = response?.methods?.[0]?.template?.widgets;
     const songsWidget = widgets?.find(
       (widget: any) => widget.header === 'Songs'
-    );
-    const tracks = songsWidget?.items;
+    ) as NativeAmazonTracksWidget | undefined;
 
+    const tracks = songsWidget?.items;
     const searchResults = tracks?.map((track: any) => ({
       name: track.primaryText.text,
       artistName: track.secondaryText,
       link: `https://music.amazon.com${track.primaryLink.deeplink}`
     }));
 
-    return searchResults;
+    return searchResults ?? [];
+  }
+
+  public async searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): Promise<AlbumSearchResult[]> {
+    const query = `${searchInput.name} ${searchInput.artistName}`;
+
+    const response = await this._search(query);
+    const widgets = response?.methods?.[0]?.template?.widgets;
+    const albumsWidget = widgets?.find(
+      (widget: any) => widget.header === 'Albums'
+    ) as NativeAmazonAlbumsWidget | undefined;
+
+    const albums = albumsWidget?.items;
+    const searchResults = albums?.map((album: any) => ({
+      name: album.primaryText.text,
+      artistName: album.secondaryText,
+      link: `https://music.amazon.com${album.primaryLink.deeplink}`
+    }));
+
+    return searchResults ?? [];
+  }
+
+  public async searchArtists(
+    searchInput: SearchArtistsInput
+  ): Promise<ArtistSearchResult[]> {
+    const response = await this._search(searchInput.name);
+    const widgets = response?.methods?.[0]?.template?.widgets;
+
+    const artistsWidget = widgets?.find(
+      (widget: any) => widget.header === 'Artists'
+    ) as NativeAmazonArtistsWidget | undefined;
+
+    const artists = artistsWidget?.items;
+
+    const searchResults = artists?.map((album: any) => ({
+      name: album.primaryText.text,
+      link: `https://music.amazon.com${album.primaryLink.deeplink}`
+    }));
+
+    return searchResults ?? [];
   }
 
   public parseLink(link: string): ParsedLink | null {
@@ -115,6 +126,53 @@ export class AmazonBackgroundController implements BackgroundController {
     } else {
       throw new Error('Invalid link type');
     }
+  }
+
+  private async _search(query: string): Promise<NativeAmazonMusicSearchResult> {
+    const config = await this._fetchConfig();
+
+    const headers = {
+      accept: '*/*',
+      'accept-language': 'en-US,en;q=0.9',
+      'cache-control': 'no-cache',
+      'content-type': 'text/plain;charset=UTF-8',
+      pragma: 'no-cache',
+      'sec-ch-ua':
+        '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"macOS"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'cross-site'
+    };
+
+    const filter = JSON.stringify({ IsLibrary: ['false'] });
+    const keyword = JSON.stringify({
+      interface:
+        'Web.TemplatesInterface.v1_0.Touch.SearchTemplateInterface.SearchKeywordClientInformation',
+      keyword: ''
+    });
+    const userHash = JSON.stringify({ level: 'LIBRARY_MEMBER' });
+
+    const body = {
+      filter,
+      headers: this._createBodyHeaders(config, query),
+      keyword,
+      userHash,
+      suggestedKeyword: query
+    };
+
+    const response = await fetch(SEARCH_ENDPOINT, {
+      headers,
+      referrer: 'https://music.amazon.com/',
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      body: JSON.stringify(body),
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit'
+    }).then((res) => res.json());
+
+    return response;
   }
 
   private async _fetchConfig(): Promise<AmznMusic['appConfig']> {

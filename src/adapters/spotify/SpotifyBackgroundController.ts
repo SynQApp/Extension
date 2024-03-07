@@ -1,26 +1,36 @@
 import { SpotifyEndpoints } from '~adapters/spotify/constants';
-import type { NativeSpotifySongTrack } from '~adapters/spotify/types';
 import type {
+  NativeSpotifyAlbum,
+  NativeSpotifyArtist,
+  NativeSpotifySongTrack
+} from '~adapters/spotify/types';
+import type {
+  AlbumSearchResult,
+  ArtistSearchResult,
   BackgroundController,
-  SearchInput,
-  SearchResult
+  SearchAlbumsInput,
+  SearchArtistsInput,
+  SearchTracksInput,
+  TrackSearchResult
 } from '~core/adapter';
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 
 import { SpotifyAdapter } from './SpotifyAdapter';
 import { getAuthorizationToken } from './auth';
 
-const SPOTIFY_LISTEN_ENDPOINT = 'https://open.spotify.com/track';
+const SPOTIFY_LISTEN_ENDPOINT = 'https://open.spotify.com';
 
 export class SpotifyBackgroundController implements BackgroundController {
-  async search(basicTrackDetails: SearchInput): Promise<SearchResult[]> {
+  async searchTracks(
+    basicTrackDetails: SearchTracksInput
+  ): Promise<TrackSearchResult[]> {
     const query = `${basicTrackDetails.name} ${basicTrackDetails.artistName}`;
 
-    const tracks = await this._search(query);
+    const tracks = await this._fetchTracks(query);
 
     const searchResults = tracks.map((track) => {
       return {
-        link: `${SPOTIFY_LISTEN_ENDPOINT}/${track.id}`,
+        link: `${SPOTIFY_LISTEN_ENDPOINT}/track/${track.id}`,
         name: track.name,
         artistName: track.artists[0].name,
         duration: basicTrackDetails.duration,
@@ -31,7 +41,39 @@ export class SpotifyBackgroundController implements BackgroundController {
     return searchResults;
   }
 
-  private async _search(query: string): Promise<NativeSpotifySongTrack[]> {
+  async searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): Promise<AlbumSearchResult[]> {
+    const query = `${searchInput.name} ${searchInput.artistName}`;
+
+    const albums = await this._fetchAlbums(query);
+
+    const searchResults = albums.map((album) => {
+      return {
+        link: `${SPOTIFY_LISTEN_ENDPOINT}/album/${album.id}`,
+        name: album.name,
+        artistName: album.artists[0].name
+      };
+    });
+    return searchResults;
+  }
+
+  async searchArtists(
+    searchInput: SearchArtistsInput
+  ): Promise<ArtistSearchResult[]> {
+    const artists = await this._fetchArtists(searchInput.name);
+
+    const searchResults = artists.map((artist) => {
+      return {
+        link: `${SPOTIFY_LISTEN_ENDPOINT}/artist/${artist.id}`,
+        name: artist.name
+      };
+    });
+
+    return searchResults;
+  }
+
+  private async _fetchTracks(query: string): Promise<NativeSpotifySongTrack[]> {
     const token = await getAuthorizationToken();
 
     const searchParams = new URLSearchParams({
@@ -50,6 +92,48 @@ export class SpotifyBackgroundController implements BackgroundController {
 
     const tracks = response.tracks.items;
     return tracks;
+  }
+
+  private async _fetchAlbums(query: string): Promise<NativeSpotifyAlbum[]> {
+    const token = await getAuthorizationToken();
+
+    const searchParams = new URLSearchParams({
+      q: query,
+      type: 'album'
+    });
+
+    const response = await fetch(
+      `${SpotifyEndpoints.SEARCH}?${searchParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    ).then((response) => response.json());
+
+    const albums = response.albums.items;
+    return albums;
+  }
+
+  private async _fetchArtists(query: string): Promise<NativeSpotifyArtist[]> {
+    const token = await getAuthorizationToken();
+
+    const searchParams = new URLSearchParams({
+      q: query,
+      type: 'artist'
+    });
+
+    const response = await fetch(
+      `${SpotifyEndpoints.SEARCH}?${searchParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    ).then((response) => response.json());
+
+    const albums = response.artists.items;
+    return albums;
   }
 
   public getLink(link: ParsedLink): string {

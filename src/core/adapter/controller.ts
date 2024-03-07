@@ -1,20 +1,49 @@
-import type { ParsedLink } from '~core/link';
+import type { ParsedLink } from '~core/links';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 
-export type LinkTrack = Pick<
-  Track,
-  'name' | 'artistName' | 'duration' | 'albumCoverUrl' | 'albumName'
-> | null;
+export interface TrackLinkDetails {
+  name: string;
+  artistName: string;
+  duration?: number;
+  albumCoverUrl?: string;
+  albumName?: string;
+}
 
-export type SearchInput = Partial<Pick<Track, 'duration' | 'albumName'>> &
+export type SearchTracksInput = Partial<Pick<Track, 'duration' | 'albumName'>> &
   Pick<Track, 'name' | 'artistName'>;
 
-export interface SearchResult {
+export interface TrackSearchResult {
   link: string;
   name: string;
   artistName: string;
   duration?: number;
   albumName?: string;
+}
+
+export interface AlbumLinkDetails {
+  name: string;
+  artistName: string;
+  albumCoverUrl?: string;
+}
+
+export type SearchAlbumsInput = Pick<Track, 'name' | 'artistName'>;
+
+export interface AlbumSearchResult {
+  link: string;
+  name: string;
+  artistName: string;
+}
+
+export interface ArtistLinkDetails {
+  name: string;
+  artistImageUrl?: string;
+}
+
+export type SearchArtistsInput = Pick<Track, 'name'>;
+
+export interface ArtistSearchResult {
+  link: string;
+  name: string;
 }
 
 export interface ContentController {
@@ -98,14 +127,40 @@ export interface ContentController {
   /**
    * Get basic track details for current link.
    */
-  getLinkTrack(): ValueOrPromise<LinkTrack>;
+  getTrackLinkDetails(): ValueOrPromise<TrackLinkDetails | null>;
+
+  /**
+   * Get basic track details for current link.
+   */
+  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null>;
+
+  /**
+   * Get basic track details for current link.
+   */
+  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null>;
 }
 
 export interface BackgroundController {
   /**
-   * Get the link for the current track.
+   * Search for tracks.
    */
-  search(searchInput: SearchInput): ValueOrPromise<SearchResult[]>;
+  searchTracks(
+    searchInput: SearchTracksInput
+  ): ValueOrPromise<TrackSearchResult[]>;
+
+  /**
+   * Search for albums.
+   */
+  searchAlbums(
+    searchInput: SearchAlbumsInput
+  ): ValueOrPromise<AlbumSearchResult[]>;
+
+  /**
+   * Search for artists.
+   */
+  searchArtists(
+    searchInput: SearchArtistsInput
+  ): ValueOrPromise<ArtistSearchResult[]>;
 
   /**
    * Parse a link to provide basic track details.

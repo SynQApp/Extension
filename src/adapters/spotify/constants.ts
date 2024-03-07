@@ -1,4 +1,6 @@
 export const SpotifyEndpoints = {
+  ALBUMS: 'https://api.spotify.com/v1/albums',
+  ARTISTS: 'https://api.spotify.com/v1/artists',
   CURRENTLY_PLAYING: 'https://api.spotify.com/v1/me/player/currently-playing',
   GET_AUTH_TOKEN: 'https://open.spotify.com/get_access_token',
   GET_QUEUE: 'https://api.spotify.com/v1/me/player/queue',

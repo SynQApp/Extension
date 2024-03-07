@@ -33,6 +33,8 @@ export interface AppleMusicApi {
     };
   }>;
   song: (id: string) => Promise<NativeAppleMusicMediaItem>;
+  album: (id: string) => Promise<NativeAppleMusicMediaItem>;
+  artist: (id: string) => Promise<NativeAppleMusicMediaItem>;
 }
 
 export interface MusicKit {

@@ -1,7 +1,7 @@
 import adapters from '~adapters';
 import type { MusicService } from '~types';
 
-import { matchAdapter } from './adapter/register';
+import { matchAdapter } from '../adapter/register';
 
 export const LinkType = {
   ALBUM: 'ALBUM',
@@ -19,6 +19,11 @@ export interface ParsedLink {
   type: LinkType;
 }
 
+/**
+ * Creates a string link from a parsed link. Cannot be used within ContentControllers.
+ * @param link
+ * @returns
+ */
 export const getLink = (link: ParsedLink): string => {
   const { musicService } = link;
 
@@ -32,6 +37,11 @@ export const getLink = (link: ParsedLink): string => {
   return backgroundController.getLink(link);
 };
 
+/**
+ * Parses a string link into structured. Cannot be used within ContentControllers.
+ * @param link
+ * @returns
+ */
 export const parseLink = (link: string): ParsedLink | null => {
   const adapter = matchAdapter(link, adapters);
 

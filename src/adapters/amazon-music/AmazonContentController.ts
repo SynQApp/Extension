@@ -5,7 +5,12 @@ import type {
   Maestro,
   NativeAmazonMusicQueueItem
 } from '~adapters/amazon-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -310,7 +315,7 @@ export class AmazonContentController implements ContentController {
     this.getStore()?.dispatch(playTrackAction);
   }
 
-  public getLinkTrack(): ValueOrPromise<LinkTrack> {
+  public getTrackLinkDetails(): ValueOrPromise<TrackLinkDetails | null> {
     const searchParams = new URLSearchParams(window.location.search);
     const trackId = searchParams.get('trackAsin');
 
@@ -339,6 +344,34 @@ export class AmazonContentController implements ContentController {
       albumName,
       albumCoverUrl,
       duration: lengthTextToSeconds(track.secondaryText3)
+    };
+  }
+
+  public getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
+    const appState = this.getStore()?.getState();
+    const pageData = appState?.TemplateStack?.currentTemplate?.innerTemplate;
+
+    const artistName = pageData?.headerPrimaryText;
+    const albumName = pageData?.headerImageAltText;
+    const albumCoverUrl = pageData?.headerImage;
+
+    return {
+      name: albumName,
+      artistName,
+      albumCoverUrl
+    };
+  }
+
+  public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    const appState = this.getStore()?.getState();
+    const pageData = appState?.TemplateStack?.currentTemplate?.innerTemplate;
+
+    const name = pageData?.headerText?.text;
+    const artistImageUrl = pageData?.backgroundImage;
+
+    return {
+      name,
+      artistImageUrl
     };
   }
 

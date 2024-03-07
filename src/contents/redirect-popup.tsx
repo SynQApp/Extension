@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
-import { parseLink } from '~core/link';
+import { type LinkType, parseLink } from '~core/links';
 import { store } from '~store';
 import { RedirectPopup } from '~ui/redirect/RedirectPopup';
 import { sendAnalytic } from '~util/analytics';
@@ -31,6 +31,7 @@ export const getShadowHostId = () => 'synq-redirect-popup';
 
 const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [linkType, setLinkType] = useState<LinkType | undefined>(undefined);
 
   useEffect(() => {
     const parsedLink = parseLink(window.location.href);
@@ -39,11 +40,18 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
       return;
     }
 
-    const { musicService, trackId, type } = parsedLink;
+    const { musicService, trackId, albumId, artistId, type } = parsedLink;
 
-    if (!musicService || !trackId || type !== 'TRACK') {
+    if (
+      !musicService ||
+      (type === 'TRACK' && !trackId) ||
+      (type === 'ALBUM' && !albumId) ||
+      (type === 'ARTIST' && !artistId)
+    ) {
       return;
     }
+
+    setLinkType(type);
 
     const state = store.getState();
     const settings = state.settings;
@@ -95,7 +103,11 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
     <Provider store={store}>
       <StyleSheetManager target={shadowRoot as any}>
         <UiProvider>
-          <RedirectPopup show={showPopup} onClose={handleClose} />
+          <RedirectPopup
+            show={showPopup}
+            linkType={linkType}
+            onClose={handleClose}
+          />
         </UiProvider>
       </StyleSheetManager>
     </Provider>

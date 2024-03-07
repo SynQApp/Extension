@@ -30,6 +30,29 @@ export interface NativeSpotifySongTrack {
   duration_ms: number;
 }
 
+export interface NativeSpotifyAlbum {
+  type: 'album';
+  id: string;
+  uri: string;
+  name: string;
+  artists: {
+    name: string;
+  }[];
+  images: {
+    url: string;
+  }[];
+}
+
+export interface NativeSpotifyArtist {
+  type: 'artist';
+  id: string;
+  uri: string;
+  name: string;
+  images: {
+    url: string;
+  }[];
+}
+
 export type NativeSpotifyTrack =
   | NativeSpotifyPodcastTrack
   | NativeSpotifySongTrack;

@@ -5,7 +5,12 @@ import type {
   NativeYouTubeMusicThumbnail,
   YtmApp
 } from '~adapters/youtube-music/types';
-import type { ContentController, LinkTrack } from '~core/adapter';
+import type {
+  AlbumLinkDetails,
+  ArtistLinkDetails,
+  ContentController,
+  TrackLinkDetails
+} from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
 import { findIndexes } from '~util/findIndexes';
@@ -213,14 +218,58 @@ export class YouTubeMusicContentController implements ContentController {
     queue.dispatch({ type: 'SET_INDEX', payload: trackIndex });
   }
 
-  public async getLinkTrack(): Promise<LinkTrack> {
+  public async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
     const track = this.getCurrentTrack();
 
     if (!track) {
       return null;
     }
 
-    return track;
+    return {
+      albumCoverUrl: track.albumCoverUrl,
+      albumName: track.albumName,
+      artistName: track.artistName,
+      duration: track.duration,
+      name: track.name
+    };
+  }
+
+  public getAlbumLinkDetails(): AlbumLinkDetails | null {
+    const nameElement = document.querySelector(
+      'h2.ytmusic-detail-header-renderer'
+    ) as HTMLElement;
+    const name = nameElement?.innerText ?? '';
+
+    const artistNameElement = document.querySelector(
+      '#header .subtitle-container a'
+    ) as HTMLElement;
+    const artistName = artistNameElement?.innerText ?? '';
+
+    const albumCoverUrl = document.querySelector(
+      '#thumbnail img'
+    ) as HTMLElement;
+    const albumCover = albumCoverUrl?.getAttribute('src') ?? '';
+
+    return {
+      albumCoverUrl: albumCover,
+      artistName,
+      name
+    };
+  }
+
+  public getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
+    const nameElement = document.querySelector('#header .title') as HTMLElement;
+    const name = nameElement?.innerText ?? '';
+
+    const imageElement = document.querySelector(
+      '#header source'
+    ) as HTMLElement;
+    const artistImageUrl = imageElement?.getAttribute('srcset') ?? '';
+
+    return {
+      artistImageUrl,
+      name
+    };
   }
 
   private _longBylineToArtistAlbum(longBylineRuns: { text: string }[]) {
