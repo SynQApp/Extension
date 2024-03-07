@@ -6,14 +6,19 @@ import type {
 } from '~core/adapter';
 import type { TrackLinkDetails } from '~core/adapter';
 import { RepeatMode } from '~types';
-import type { PlaybackState, QueueItem, Track, ValueOrPromise } from '~types';
+import type { PlaybackState, QueueItem, Track } from '~types';
 import { debounce } from '~util/debounce';
 import { findIndexes } from '~util/findIndexes';
 import { normalizeVolume } from '~util/volume';
 
 import { SpotifyBackgroundController } from './SpotifyBackgroundController';
 import { getAuthorizationToken } from './auth';
-import type { NativeSpotifySongTrack, NativeSpotifyTrack } from './types';
+import type {
+  NativeSpotifyAlbum,
+  NativeSpotifyArtist,
+  NativeSpotifySongTrack,
+  NativeSpotifyTrack
+} from './types';
 
 const REPEAT_MAP: Record<string, RepeatMode> = {
   track: RepeatMode.REPEAT_ONE,
@@ -470,18 +475,76 @@ export class SpotifyContentController implements ContentController {
     };
   }
 
-  getAlbumLinkDetails(): ValueOrPromise<AlbumLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  async getAlbumLinkDetails(): Promise<AlbumLinkDetails | null> {
+    const url = new URL(window.location.href);
+    const pathParts = url.pathname.split('/');
+    const albumId = pathParts[pathParts.length - 1];
+
+    const album = await this._getAlbum(albumId);
+
+    if (!album) {
+      return null;
+    }
+
+    const albumCoverUrl = album.images[0].url;
+    const artistName = album.artists[0].name;
+    const albumName = album.name;
+
+    return {
+      name: albumName,
+      artistName,
+      albumCoverUrl
+    };
   }
 
-  getArtistLinkDetails(): ValueOrPromise<ArtistLinkDetails | null> {
-    throw new Error('Method not implemented.');
+  async getArtistLinkDetails(): Promise<ArtistLinkDetails | null> {
+    const url = new URL(window.location.href);
+    const pathParts = url.pathname.split('/');
+    const artistId = pathParts[pathParts.length - 1];
+
+    const artist = await this._getArtist(artistId);
+
+    if (!artist) {
+      return null;
+    }
+
+    const artistImageUrl = artist.images[0].url;
+    const name = artist.name;
+
+    return {
+      name,
+      artistImageUrl
+    };
   }
 
   private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {
     const token = await getAuthorizationToken();
 
     const response = await fetch(`${SpotifyEndpoints.TRACKS}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => response.json());
+
+    return response;
+  }
+
+  private async _getAlbum(id: string): Promise<NativeSpotifyAlbum | null> {
+    const token = await getAuthorizationToken();
+
+    const response = await fetch(`${SpotifyEndpoints.ALBUMS}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((response) => response.json());
+
+    return response;
+  }
+
+  private async _getArtist(id: string): Promise<NativeSpotifyArtist | null> {
+    const token = await getAuthorizationToken();
+
+    const response = await fetch(`${SpotifyEndpoints.ARTISTS}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

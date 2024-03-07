@@ -70,11 +70,11 @@ export class AppleBackgroundController implements BackgroundController {
         .text()
         .trim();
       const artistName = $(albumElement)
-        .find('.product-lockup__subtitle-link')
+        .find('.product-lockup__subtitle')
         .text()
         .trim();
       const link = $(albumElement)
-        .find('.product-lockup__title-link a')
+        .find('.product-lockup__subtitle')
         .attr('href');
 
       if (!name || !artistName || !link) {
