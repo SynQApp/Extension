@@ -84,7 +84,7 @@ Find a bug? Think of an awesome new feature? Your music service isn't supported 
 
 <h2 id="contributors">Contributors</h2>
 
-We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment.
+We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](docs/CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment.
 
 <a href="https://github.com/SynQApp/Extension/graphs/contributors">
   <p align="center">
