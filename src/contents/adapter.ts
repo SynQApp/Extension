@@ -9,6 +9,7 @@ export const config: PlasmoCSConfig = {
     '*://music.amazon.com/*',
     '*://music.apple.com/*',
     '*://open.spotify.com/*',
+    '*://www.youtube.com/*',
     '*://music.youtube.com/*'
   ],
   all_frames: true,

@@ -28,20 +28,13 @@ export const Complete = () => {
   const musicServiceName = getMusicServiceName(musicService);
 
   const handleOpenMusicService = () => {
-    switch (musicService) {
-      case 'SPOTIFY':
-        window.open(SPOTIFY_URL);
-        break;
-      case 'YOUTUBEMUSIC':
-        window.open(YOUTUBE_MUSIC_URL);
-        break;
-      case 'APPLEMUSIC':
-        window.open(APPLE_MUSIC_URL);
-        break;
-      case 'AMAZONMUSIC':
-        window.open(AMAZON_MUSIC_URL);
-        break;
+    const adapter = adapters.find((adapter) => adapter.id === musicService);
+
+    if (!adapter) {
+      return;
     }
+
+    window.open(adapter.baseUrl);
 
     sendAnalytic({
       name: 'onboarding_popup_example'

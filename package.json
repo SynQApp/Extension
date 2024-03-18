@@ -87,6 +87,7 @@
         "*://music.apple.com/*",
         "*://*.spotify.com/*",
         "*://music.youtube.com/*",
+        "*://www.youtube.com/*",
         "*://music.amazon.com/*"
       ]
     }
