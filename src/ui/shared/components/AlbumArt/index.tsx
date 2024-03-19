@@ -69,6 +69,9 @@ interface ContainerProps {
 
 const Container = styled(Flex)<ContainerProps>`
   position: relative;
+  border-radius: ${token('radii.lg')};
+  border: 1px solid ${token('colors.onBackground')}24;
+
   ${({ $height }: ContainerProps) =>
     $height &&
     css`
@@ -117,10 +120,8 @@ const AlbumGlow = styled.div<AlbumGlowProps>`
 `;
 
 const AlbumArtImg = styled(Image)`
-  border-radius: ${token('radii.lg')};
-  border: 1px solid ${token('colors.onBackground')}24;
   color: transparent;
-  height: 100%;
+  border-radius: 12px;
   position: absolute;
   width: 100%;
   z-index: 1;

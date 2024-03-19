@@ -13,7 +13,6 @@ export class YouTubeContentObserver implements ContentObserver {
   public observe(): void {
     const interval = setInterval(() => {
       if (this._controller.getPlayer()) {
-        console.log('clearing interval');
         clearInterval(interval);
 
         this._setupPlayerStateObserver();
@@ -28,7 +27,6 @@ export class YouTubeContentObserver implements ContentObserver {
     };
 
     const player = this._controller.getPlayer();
-    console.log({ player });
 
     this._controller
       .getPlayer()
@@ -64,7 +62,6 @@ export class YouTubeContentObserver implements ContentObserver {
     this._mutationObservers.push(playerStateObserver);
 
     setInterval(async () => {
-      console.log('interval');
       await this._handlePlaybackUpdated();
     }, 1000);
   }
@@ -108,7 +105,6 @@ export class YouTubeContentObserver implements ContentObserver {
 
   private async _handlePlaybackUpdated(): Promise<void> {
     const playerState = this._controller.getPlayerState();
-    console.log({ playerState });
     await updatePlaybackState(playerState);
   }
 }

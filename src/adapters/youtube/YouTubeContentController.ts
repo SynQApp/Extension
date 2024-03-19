@@ -100,13 +100,7 @@ export class YouTubeContentController implements ContentController {
       volume = this.getPlayer().getVolume() + volume;
     }
 
-    const volumeSlider = document.getElementById(
-      'volume-slider'
-    ) as HTMLElement;
-    volumeSlider?.setAttribute('value', volume.toString());
-
-    const changeEvent = new Event('change');
-    volumeSlider?.dispatchEvent(changeEvent);
+    this.getPlayer().setVolume(volume);
   }
 
   public seekTo(time: number): void {
@@ -114,20 +108,6 @@ export class YouTubeContentController implements ContentController {
   }
 
   public getPlayerState(): PlaybackState | null {
-    // if (this._ytmApp.playerUiState_ === 'INACTIVE') {
-    //   return null;
-    // }
-
-    // const repeatButton = document.querySelector('.repeat.ytmusic-player-bar');
-    // const repeatButtonLabel = repeatButton?.getAttribute('aria-label');
-
-    // if (!repeatButtonLabel) {
-    //   return null;
-    // }
-
-    // const repeatMode =
-    //   REPEAT_STATES_MAP[repeatButtonLabel as keyof typeof REPEAT_STATES_MAP];
-
     return {
       currentTime: Math.round(this.getPlayer().getCurrentTime()),
       isPlaying:
@@ -139,17 +119,13 @@ export class YouTubeContentController implements ContentController {
   }
 
   public getCurrentTrack(): Track | null {
-    const additionalInfo = document
-      .querySelector('.byline.ytmusic-player-bar')
-      ?.textContent?.split('\u2022');
-    const albumName = additionalInfo?.[1]?.trim() ?? '';
-    const albumCoverUrl =
-      document.querySelector('#song-image img')?.getAttribute('src') ?? '';
-
     const videoData = this.getPlayer().getVideoData();
+    const duration = Math.round(this.getPlayer().getDuration());
     const artistName = videoData.author;
     const name = videoData.title;
     const id = videoData.video_id;
+
+    const albumCoverUrl = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
     const isLiked =
       (
@@ -164,13 +140,9 @@ export class YouTubeContentController implements ContentController {
           '.ytmusic-player-bar #button-shape-dislike'
         ) as HTMLElement
       )?.getAttribute('aria-pressed') === 'true';
-    const durationText = document
-      .getElementById('progress-bar')
-      ?.getAttribute('aria-valuemax');
-    const duration = durationText ? lengthTextToSeconds(durationText) : 0;
 
     return {
-      albumName,
+      albumName: '',
       albumCoverUrl,
       artistName,
       name,

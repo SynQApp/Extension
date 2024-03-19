@@ -91,7 +91,7 @@ export class YouTubeBackgroundController implements BackgroundController {
 
   public parseLink(link: string): ParsedLink | null {
     const parsedLink: Partial<ParsedLink> = {
-      musicService: 'YOUTUBEMUSIC'
+      musicService: 'YOUTUBE'
     };
 
     const url = new URL(link);

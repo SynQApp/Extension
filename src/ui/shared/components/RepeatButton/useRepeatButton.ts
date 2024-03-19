@@ -1,6 +1,6 @@
+import adapters from '~adapters';
 import { sendToContent } from '~core/messaging/sendToContent';
-import { useAppSelector } from '~store';
-import { MusicControllerMessage } from '~types';
+import { MusicControllerMessage, type MusicService } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 
@@ -9,6 +9,10 @@ export const useRepeatButton = () => {
   const playerState = musicServiceTab?.playbackState;
 
   const repeatMode = playerState?.repeatMode;
+
+  const repeatDisabled = adapters
+    .find((adapter) => adapter.id === musicServiceTab?.musicService)
+    ?.disabledFeatures?.includes('repeat');
 
   const handleClick = () => {
     sendToContent(
@@ -23,6 +27,7 @@ export const useRepeatButton = () => {
   };
 
   return {
+    repeatDisabled,
     repeatMode,
     handleClick
   };

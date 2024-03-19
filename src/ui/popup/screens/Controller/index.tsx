@@ -14,7 +14,7 @@ const PLAYER_HEIGHT = 135;
 
 const ControllerScreen = () => {
   const { queueCollapsible, document } = usePopupSettings();
-  const { showQueue, setShowQueue } = useControllerScreen();
+  const { queueDisabled, showQueue, setShowQueue } = useControllerScreen();
 
   const handleShowQueueButtonPress = () => {
     setShowQueue(!showQueue);
@@ -26,7 +26,7 @@ const ControllerScreen = () => {
         <div>
           <Player />
         </div>
-        {queueCollapsible && (
+        {!queueDisabled && queueCollapsible && (
           <ExpandButton onClick={handleShowQueueButtonPress}>
             <ExpandIcon
               height="16px"
@@ -36,11 +36,13 @@ const ControllerScreen = () => {
           </ExpandButton>
         )}
       </PlayerSection>
-      <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
-        <Scrollable height="100%">
-          <Queue documentContainer={document} />
-        </Scrollable>
-      </QueueSection>
+      {!queueDisabled && (
+        <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
+          <Scrollable height="100%">
+            <Queue documentContainer={document} />
+          </Scrollable>
+        </QueueSection>
+      )}
     </Layout>
   );
 };

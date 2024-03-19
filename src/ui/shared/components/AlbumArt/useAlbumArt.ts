@@ -5,25 +5,15 @@ import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 
-const LIKE_ENABLED_SERVICES = new Set<MusicService | undefined>(
-  adapters
-    .filter((adapter) => !adapter.disabledFeatures?.includes('like'))
-    .map((adapter) => adapter.id)
-);
-
-const DISLIKE_ENABLED_SERVICES = new Set<MusicService | undefined>(
-  adapters
-    .filter((adapter) => !adapter.disabledFeatures?.includes('dislike'))
-    .map((adapter) => adapter.id)
-);
-
 export const useAlbumArt = () => {
   const { musicServiceTab } = useMusicServiceTab();
   const currentTrack = musicServiceTab?.currentTrack;
 
-  const handleLikeClick = LIKE_ENABLED_SERVICES.has(
-    musicServiceTab?.musicService
-  )
+  const adapter = adapters.find(
+    (adapter) => adapter.id === musicServiceTab?.musicService
+  );
+
+  const handleLikeClick = !adapter?.disabledFeatures?.includes('like')
     ? () => {
         sendToContent(
           {
@@ -37,9 +27,7 @@ export const useAlbumArt = () => {
       }
     : undefined;
 
-  const handleDislikeClick = DISLIKE_ENABLED_SERVICES.has(
-    musicServiceTab?.musicService
-  )
+  const handleDislikeClick = !adapter?.disabledFeatures?.includes('dislike')
     ? () => {
         sendToContent(
           {

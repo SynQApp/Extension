@@ -13,7 +13,7 @@ export const YouTubeAdapter: MusicServiceAdapter = {
   baseUrl: 'https://www.youtube.com/',
   icon: YoutubeLogo,
   urlMatches: ['*://www.youtube.com/*'],
-  disabledFeatures: [],
+  disabledFeatures: ['queue', 'repeat'],
   enabledKeyControls: {
     next: true,
     previous: true,

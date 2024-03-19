@@ -10,7 +10,7 @@ interface RepeatButtonProps {
 }
 
 export const RepeatButton = ({ size }: RepeatButtonProps) => {
-  const { repeatMode, handleClick } = useRepeatButton();
+  const { repeatDisabled, repeatMode, handleClick } = useRepeatButton();
   const theme = useTheme();
 
   if (!size) {
@@ -18,13 +18,19 @@ export const RepeatButton = ({ size }: RepeatButtonProps) => {
   }
 
   return (
-    <Container onClick={handleClick} $size={`${size}px`}>
+    <Container
+      onClick={handleClick}
+      $size={`${size}px`}
+      $disabled={repeatDisabled}
+    >
       <Icon
         width={size * 0.66}
         height={size * 0.66}
         icon={repeatMode === RepeatMode.REPEAT_ONE ? 'repeatOne' : 'repeatAll'}
         color={
-          repeatMode === RepeatMode.NO_REPEAT
+          repeatDisabled
+            ? theme.colors.onBackgroundLow
+            : repeatMode === RepeatMode.NO_REPEAT
             ? theme.colors.onBackground
             : theme.colors.base.orange[4]
         }
@@ -34,6 +40,7 @@ export const RepeatButton = ({ size }: RepeatButtonProps) => {
 };
 
 interface ContainerProps {
+  $disabled?: boolean;
   $size?: string;
 }
 
@@ -41,7 +48,7 @@ const Container = styled.button<ContainerProps>`
   align-items: center;
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   justify-content: center;
   opacity: 1;
