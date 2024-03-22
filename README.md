@@ -96,6 +96,12 @@ We ❤️ contributors! Feel free to contribute to this project but **please rea
   Made with <a rel="noopener noreferrer" target="_blank" href="https://contrib.rocks">contrib.rocks</a>
 </p>
 
+A special thanks to the following individuals for helping make SynQ a reality:
+* Michael Lockwood ([Github](https://github.com/mlockwood))
+* Rachael Meziere
+* Garret Janeczko
+* Donnie Li ([Github](https://github.com/dongyangli1226))
+
 [download-image]: https://img.shields.io/badge/download-40k_users-orange
 [download-url]: https://www.synqapp.io/
 [contribute-url]: https://github.com/SynQApp/Extension/blob/main/CONTRIBUTING.md
