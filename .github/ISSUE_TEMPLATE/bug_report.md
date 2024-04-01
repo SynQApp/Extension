@@ -10,6 +10,9 @@ assignees: mkossoris
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**Music service**
+What music service are you using SynQ with? (e.g. YouTube Music, Spotify, etc)
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
