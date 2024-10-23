@@ -6,6 +6,7 @@ import { useAppSelector } from '~store';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { usePermissionsCheck } from '~ui/shared/hooks/usePermissionsCheck';
 
+import { useTabsQuery } from '../shared/hooks/useTabQuery';
 import AppRoutes from './PopupRoutes';
 import { usePopupSettings } from './contexts/PopupSettingsContext';
 
