@@ -39,13 +39,16 @@ export const RedirectPopup = ({
       return;
     }
 
-    sendToContent({
-      name: MusicControllerMessage.REDIRECT,
-      body: {
-        to: tab.id,
-        linkType
-      }
-    });
+    sendToContent(
+      {
+        name: MusicControllerMessage.REDIRECT,
+        body: {
+          to: tab.id,
+          linkType
+        }
+      },
+      tab.id
+    );
 
     const parsedLink = parseLink(window.location.href);
 
