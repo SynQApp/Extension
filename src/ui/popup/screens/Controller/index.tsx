@@ -94,7 +94,7 @@ const QueueSection = styled.section<QueueSectionProps>`
   ${({ $queueCollapsible }) =>
     !$queueCollapsible &&
     css`
-      height: calc(100% - ${PLAYER_HEIGHT}px);
+      height: calc(100vh - 175px);
     `}
 `;
 
