@@ -1,7 +1,7 @@
 {
   "name": "synq-extension",
   "displayName": "SynQ for Spotify, YouTube, Amazon Music, more",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Mini player with universal music sharing for Spotify, Apple Music, YouTube Music, and Amazon Music.",
   "author": "SynQ, LLC",
   "scripts": {
