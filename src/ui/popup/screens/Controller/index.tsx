@@ -8,11 +8,21 @@ import { Player } from '~ui/popup/components/Player';
 import { usePopupSettings } from '~ui/popup/contexts/PopupSettingsContext';
 import { Queue } from '~ui/shared/components/Queue';
 
+import adapters from '../../../../adapters';
+import type { MusicService } from '../../../../types';
+import { useMusicServiceTab } from '../../../shared/contexts/MusicServiceTab';
 import useControllerScreen from './useControllerScreen';
 
 const PLAYER_HEIGHT = 135;
 
+const QUEUE_ENABLED_SERVICES = new Set<MusicService | undefined>(
+  adapters
+    .filter((adapter) => !adapter.disabledFeatures?.includes('queue'))
+    .map((adapter) => adapter.id)
+);
+
 const ControllerScreen = () => {
+  const { musicServiceTab } = useMusicServiceTab();
   const { queueCollapsible, document } = usePopupSettings();
   const { showQueue, setShowQueue } = useControllerScreen();
 
@@ -26,21 +36,24 @@ const ControllerScreen = () => {
         <div>
           <Player />
         </div>
-        {queueCollapsible && (
-          <ExpandButton onClick={handleShowQueueButtonPress}>
-            <ExpandIcon
-              height="16px"
-              width="16px"
-              icon={showQueue ? faChevronUp : faChevronDown}
-            />
-          </ExpandButton>
-        )}
+        {queueCollapsible &&
+          QUEUE_ENABLED_SERVICES.has(musicServiceTab?.musicService) && (
+            <ExpandButton onClick={handleShowQueueButtonPress}>
+              <ExpandIcon
+                height="16px"
+                width="16px"
+                icon={showQueue ? faChevronUp : faChevronDown}
+              />
+            </ExpandButton>
+          )}
       </PlayerSection>
-      <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
-        <Scrollable height="100%">
-          <Queue documentContainer={document} />
-        </Scrollable>
-      </QueueSection>
+      {QUEUE_ENABLED_SERVICES.has(musicServiceTab?.musicService) && (
+        <QueueSection $show={showQueue} $queueCollapsible={queueCollapsible}>
+          <Scrollable height="100%">
+            <Queue documentContainer={document} />
+          </Scrollable>
+        </QueueSection>
+      )}
     </Layout>
   );
 };

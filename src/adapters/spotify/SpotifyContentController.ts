@@ -228,7 +228,7 @@ export class SpotifyContentController implements ContentController {
       return null;
     }
 
-    const currentTime = parseInt(currentTimeValue);
+    const currentTime = Math.round(parseInt(currentTimeValue) / 1000);
 
     const playPauseButton = document.querySelector(
       'button[data-testid="control-button-playpause"]'
@@ -293,7 +293,9 @@ export class SpotifyContentController implements ContentController {
     ) as HTMLInputElement;
 
     const duration = playbackProgressBarInput
-      ? parseInt(playbackProgressBarInput.getAttribute('max') ?? '0')
+      ? Math.round(
+          parseInt(playbackProgressBarInput.getAttribute('max') ?? '0') / 1000
+        )
       : 0;
 
     let currentTrack: Track | null = {

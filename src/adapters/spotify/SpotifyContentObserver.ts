@@ -8,7 +8,7 @@ export class SpotifyObserver implements ContentObserver {
   constructor(private _controller: SpotifyContentController) {}
 
   public async observe(): Promise<void> {
-    await waitForElement('.player-controls');
+    await waitForElement('[data-testid="player-controls"]');
 
     this._setupPlayerStateObserver();
     await this._setupTrackObserver();

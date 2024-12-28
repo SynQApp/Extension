@@ -1,1 +1,1 @@
-export type Feature = 'dislike' | 'like';
+export type Feature = 'dislike' | 'like' | 'queue';

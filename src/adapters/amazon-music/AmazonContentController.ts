@@ -18,6 +18,8 @@ import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 import { waitForElement } from '~util/waitForElement';
 
+import { debounce } from '../../util/debounce';
+
 declare let window: Window & {
   __REDUX_STORES__: (Store & { name: string })[];
   amznMusic: AmznMusic;
@@ -193,21 +195,33 @@ export class AmazonContentController implements ContentController {
 
     volume = normalizeVolume(volume);
 
-    this.getStore()?.dispatch({
-      type: 'PlaybackInterface.v1_0.SetVolumeMethod',
-      payload: {
-        volume: volume / 100
-      }
-    });
+    debounce(
+      () => {
+        this.getStore()?.dispatch({
+          type: 'PlaybackInterface.v1_0.SetVolumeMethod',
+          payload: {
+            volume: volume / 100
+          }
+        });
+      },
+      'amazon:setVolume',
+      25
+    );
   }
 
   public seekTo(time: number): void {
-    this.getStore()?.dispatch({
-      type: 'PLAYBACK_SCRUBBED',
-      payload: {
-        position: time
-      }
-    });
+    debounce(
+      () => {
+        this.getStore()?.dispatch({
+          type: 'PLAYBACK_SCRUBBED',
+          payload: {
+            position: time
+          }
+        });
+      },
+      'amazon:seekTo',
+      25
+    );
   }
 
   public async getPlayerState(): Promise<PlaybackState> {

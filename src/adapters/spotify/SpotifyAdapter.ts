@@ -13,7 +13,7 @@ export const SpotifyAdapter: MusicServiceAdapter = {
   baseUrl: 'https://open.spotify.com/',
   icon: SpotifyLogo,
   urlMatches: ['*://open.spotify.com/*'],
-  disabledFeatures: ['dislike'],
+  disabledFeatures: ['dislike', 'queue'],
   enabledKeyControls: {
     next: true,
     previous: true,
