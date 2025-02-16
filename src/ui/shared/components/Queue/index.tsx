@@ -2,7 +2,7 @@ import { type IconProps, List, token } from '@synqapp/ui';
 import { useCallback } from 'react';
 import { styled } from 'styled-components';
 
-import { MUSIC_SERVICE } from '../../../../types/MusicService';
+
 import { ListItemMenu } from '../ListItemMenu';
 import { TrackListItem } from '../TrackListItem';
 import { useQueue } from './useQueue';
@@ -21,31 +21,31 @@ export const Queue = ({
   const {
     handlePlayQueueTrack,
     handleVisitTrackOnMusicService,
-    musicService,
+    adapter,
     musicServiceName,
     queueItems
   } = useQueue(startAt, count);
 
   const getMenuItems = useCallback(
-    ({ link }) => {
-      const initMenuItems = [
+    ({ link }: { link: string }) => {
+      const defaultMenuItems = [
         {
           icon: 'musicNote' as IconProps['icon'],
           text: `View on ${musicServiceName}`,
           onClick: () => handleVisitTrackOnMusicService(link)
         }
       ];
-      if (musicService === MUSIC_SERVICE.YOUTUBEMUSIC) {
-        initMenuItems.push({
-          icon: 'musicNote' as IconProps['icon'],
-          text: 'View on YouTube',
-          onClick: () =>
-            handleVisitTrackOnMusicService(link.replace('music.', ''))
-        });
-      }
-      return <ListItemMenu menuItems={[...initMenuItems]} />;
+
+      const menuItems = adapter?.menuItems
+        ? adapter.menuItems({
+            link,
+            clickEvent: handleVisitTrackOnMusicService
+          })
+        : defaultMenuItems;
+
+      return <ListItemMenu menuItems={menuItems} />;
     },
-    [handleVisitTrackOnMusicService, musicService, musicServiceName]
+    [adapter, handleVisitTrackOnMusicService, musicServiceName]
   );
 
   return (

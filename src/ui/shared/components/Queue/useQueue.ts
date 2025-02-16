@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 
-import type { MusicService } from '~/types';
-import { getLink } from '~core/links';
 import { sendToContent } from '~core/messaging/sendToContent';
 import { MusicControllerMessage } from '~types';
 import { useMusicServiceTab } from '~ui/shared/contexts/MusicServiceTab';
 import { sendAnalytic } from '~util/analytics';
 import { findIndexes } from '~util/findIndexes';
-import { getMusicServiceName } from '~util/musicService';
+import { getMusicAdapter, getMusicServiceName } from '~util/musicService';
 
 export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const { musicServiceTab } = useMusicServiceTab();
@@ -41,6 +39,12 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
   const musicServiceName = useMemo(
     () =>
       musicServiceTab ? getMusicServiceName(musicServiceTab.musicService) : '',
+    [musicServiceTab]
+  );
+
+  const adapter = useMemo(
+    () =>
+      musicServiceTab ? getMusicAdapter(musicServiceTab.musicService) : null,
     [musicServiceTab]
   );
 
@@ -84,6 +88,7 @@ export const useQueue = (startAt: 'top' | 'next', count?: number) => {
     handleVisitTrackOnMusicService,
     musicService: musicServiceTab?.musicService,
     musicServiceName,
-    queueItems: queue
+    queueItems: queue,
+    adapter
   };
 };

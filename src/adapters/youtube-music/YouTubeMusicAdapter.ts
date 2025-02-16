@@ -9,6 +9,7 @@ import { YouTubeMusicObserver } from './YouTubeMusicContentObserver';
 
 export const YouTubeMusicAdapter: MusicServiceAdapter = {
   displayName: 'YouTube Music',
+  secondName: 'YouTube',
   id: MUSIC_SERVICE.YOUTUBEMUSIC,
   baseUrl: 'https://music.youtube.com/',
   icon: YoutubeLogo,
@@ -23,5 +24,31 @@ export const YouTubeMusicAdapter: MusicServiceAdapter = {
   backgroundController: () => new YouTubeMusicBackgroundController(),
   contentController: () => new YouTubeMusicContentController(),
   contentObserver: (contentController: ContentController) =>
-    new YouTubeMusicObserver(contentController as YouTubeMusicContentController)
+    new YouTubeMusicObserver(
+      contentController as YouTubeMusicContentController
+    ),
+  menuItems: ({
+    link,
+    clickEvent
+  }: {
+    link: string;
+    clickEvent: (url: string) => void;
+  }) => {
+    return [
+      {
+        icon: 'musicNote',
+        text: `View on ${YouTubeMusicAdapter.displayName}`,
+        onClick: () => {
+          clickEvent(link);
+        }
+      },
+      {
+        icon: 'musicNote',
+        text: `View on ${YouTubeMusicAdapter.secondName}`,
+        onClick: () => {
+          clickEvent(link.replace('music.', ''));
+        }
+      }
+    ];
+  }
 };
