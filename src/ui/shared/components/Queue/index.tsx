@@ -1,8 +1,8 @@
-import { List, token } from '@synqapp/ui';
+import { type IconProps, List, token } from '@synqapp/ui';
+import { useCallback } from 'react';
 import { styled } from 'styled-components';
 
-import type { MusicService } from '~/types';
-
+import { MUSIC_SERVICE } from '../../../../types/MusicService';
 import { ListItemMenu } from '../ListItemMenu';
 import { TrackListItem } from '../TrackListItem';
 import { useQueue } from './useQueue';
@@ -26,38 +26,44 @@ export const Queue = ({
     queueItems
   } = useQueue(startAt, count);
 
+  const getMenuItems = useCallback(
+    ({ link }) => {
+      const initMenuItems = [
+        {
+          icon: 'musicNote' as IconProps['icon'],
+          text: `View on ${musicServiceName}`,
+          onClick: () => handleVisitTrackOnMusicService(link)
+        }
+      ];
+      if (musicService === MUSIC_SERVICE.YOUTUBEMUSIC) {
+        initMenuItems.push({
+          icon: 'musicNote' as IconProps['icon'],
+          text: 'View on YouTube',
+          onClick: () =>
+            handleVisitTrackOnMusicService(link.replace('music.', ''))
+        });
+      }
+      return <ListItemMenu menuItems={[...initMenuItems]} />;
+    },
+    [handleVisitTrackOnMusicService, musicService, musicServiceName]
+  );
+
   return (
     <div>
       <QueueList>
         {queueItems.map(({ track, isPlaying }, index) => (
-          <div>
+          <div key={track?.id}>
             <TrackListItem
               active={isPlaying}
               documentContainer={documentContainer}
               imageAlt={`Album cover for ${track?.albumName}`}
               imageIconOverlay={isPlaying ? 'playing' : 'play'}
               imageUrl={track?.albumCoverUrl ?? ''}
-              key={index}
               onImageClick={() =>
                 track && handlePlayQueueTrack(track?.id, index)
               }
               primaryText={track?.name ?? 'Unknown Track'}
-              rightNode={
-                track?.link && (
-                  <ListItemMenu
-                    portalContainer={documentContainer.body}
-                    menuItems={[
-                      {
-                        icon: 'musicNote',
-                        text: `View on ${musicServiceName}`,
-                        onClick: () => {
-                          handleVisitTrackOnMusicService(track?.link);
-                        }
-                      }
-                    ]}
-                  />
-                )
-              }
+              rightNode={track?.link && getMenuItems({ link: track.link })}
               secondaryText={`${track?.artistName}${
                 track?.albumName && ` • ${track?.albumName}`
               }`}
