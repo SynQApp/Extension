@@ -119,10 +119,10 @@ export class YouTubeMusicContentController implements ContentController {
     }
 
     const repeatButton = document.querySelector('.repeat.ytmusic-player-bar');
-    const repeatButtonLabel = repeatButton?.getAttribute('aria-label');
+    let repeatButtonLabel = repeatButton?.getAttribute('title');
 
     if (!repeatButtonLabel) {
-      return null;
+      repeatButtonLabel = 'Repeat off';
     }
 
     const repeatMode =
