@@ -1,5 +1,6 @@
 import type { MusicService } from '~/types';
 import type { KeyControlsOptions } from '~core/keys';
+import type { ListItemMenuItem } from '~ui/shared/components/ListItemMenu';
 
 import type { BackgroundController, ContentController } from './controller';
 import type { Feature } from './feature';
@@ -15,6 +16,12 @@ export interface MusicServiceAdapter {
    * The readable name of the music service.
    */
   displayName: string;
+
+  /**
+   * The alternative name of the music service.
+   */
+
+  secondName?: string;
   /**
    * The unique identifier of the music service.
    */
@@ -55,4 +62,12 @@ export interface MusicServiceAdapter {
    * @param contentController The content controller for the music service.
    */
   contentObserver: (contentController: ContentController) => ContentObserver;
+
+  menuItems?: ({
+    link,
+    clickEvent
+  }: {
+    link: string;
+    clickEvent: (url: string) => void;
+  }) => ListItemMenuItem[];
 }

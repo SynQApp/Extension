@@ -12,3 +12,7 @@ export const getMusicServiceName = (musicService: MusicService): string => {
     adapters.find((adapter) => adapter.id === musicService)?.displayName ?? ''
   );
 };
+
+export const getMusicAdapter = (musicService: MusicService) => {
+  return adapters.find((adapter) => adapter.id === musicService);
+};

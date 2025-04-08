@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { css, styled, useTheme } from 'styled-components';
 
-interface ListItemMenuItem {
+export interface ListItemMenuItem {
   icon?: IconProps['icon'];
   onClick: () => void;
   text: string;
