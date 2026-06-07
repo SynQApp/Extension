@@ -13,7 +13,9 @@ export const SpotifyAdapter: MusicServiceAdapter = {
   baseUrl: 'https://open.spotify.com/',
   icon: SpotifyLogo,
   urlMatches: ['*://open.spotify.com/*'],
-  disabledFeatures: ['dislike', 'queue'],
+  // Redirecting *to* Spotify requires its search API, which is locked down
+  // behind the TOTP-protected token, so disable inbound redirects.
+  disabledFeatures: ['dislike', 'redirect'],
   enabledKeyControls: {
     next: true,
     previous: true,

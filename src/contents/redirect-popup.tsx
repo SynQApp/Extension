@@ -4,10 +4,20 @@ import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { StyleSheetManager } from 'styled-components';
 
+import adapters from '~adapters';
 import { type LinkType, parseLink } from '~core/links';
 import { store } from '~store';
+import type { MusicService } from '~types';
 import { RedirectPopup } from '~ui/redirect/RedirectPopup';
 import { sendAnalytic } from '~util/analytics';
+
+// Services that can be redirected *to*. A service opts out (e.g. Spotify, whose
+// search API is locked down) by listing 'redirect' in its disabledFeatures.
+const REDIRECT_ENABLED_SERVICES = new Set<MusicService | undefined>(
+  adapters
+    .filter((adapter) => !adapter.disabledFeatures?.includes('redirect'))
+    .map((adapter) => adapter.id)
+);
 
 export const config: PlasmoCSConfig = {
   matches: [
@@ -58,7 +68,8 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
 
     if (
       settings.preferredMusicService !== musicService &&
-      settings.redirectsEnabled
+      settings.redirectsEnabled &&
+      REDIRECT_ENABLED_SERVICES.has(settings.preferredMusicService)
     ) {
       setShowPopup(true);
 

@@ -1,4 +1,3 @@
-import { SpotifyEndpoints } from '~adapters/spotify/constants';
 import type {
   AlbumLinkDetails,
   ArtistLinkDetails,
@@ -8,23 +7,10 @@ import type { TrackLinkDetails } from '~core/adapter';
 import { RepeatMode } from '~types';
 import type { PlaybackState, QueueItem, Track } from '~types';
 import { debounce } from '~util/debounce';
-import { findIndexes } from '~util/findIndexes';
+import { lengthTextToSeconds } from '~util/time';
 import { normalizeVolume } from '~util/volume';
 
-import { SpotifyBackgroundController } from './SpotifyBackgroundController';
-import { getAuthorizationToken } from './auth';
-import type {
-  NativeSpotifyAlbum,
-  NativeSpotifyArtist,
-  NativeSpotifySongTrack,
-  NativeSpotifyTrack
-} from './types';
-
-const REPEAT_MAP: Record<string, RepeatMode> = {
-  track: RepeatMode.REPEAT_ONE,
-  context: RepeatMode.REPEAT_ALL,
-  off: RepeatMode.NO_REPEAT
-};
+import { SELECTORS } from './constants';
 
 const REPEAT_UI_MAP: Record<string, RepeatMode> = {
   'Enable repeat': RepeatMode.NO_REPEAT,
@@ -32,145 +18,74 @@ const REPEAT_UI_MAP: Record<string, RepeatMode> = {
   'Disable repeat': RepeatMode.REPEAT_ONE
 };
 
-const QUEUE_CACHE_TIME = 30000;
-
+/**
+ * Spotify locked down the web API token (see auth.ts history), so this
+ * controller drives playback entirely through the web player's UI: clicking
+ * the on-screen controls and reading state from the DOM. This mirrors the
+ * approach used by the other UI-based adapters (e.g. Amazon Music).
+ */
 export class SpotifyContentController implements ContentController {
-  private _accessToken: string;
-  private _cachedQueue:
-    | {
-        items: QueueItem[] | undefined;
-        trackId: string | undefined;
-      }
-    | undefined = undefined;
-  private _queueLoading: boolean = false;
-  private _currentTrack: Track | null = null;
-  private _currentTrackLoading: boolean = false;
+  // Tracks whether *we* opened the queue panel (vs. the user already having it
+  // open), so closeQueue only closes a panel we were responsible for opening.
+  private _openedQueueForPopup = false;
 
-  constructor() {
-    const sessionElement = document.getElementById('session');
-    if (!sessionElement) {
-      throw new Error('Session element not found');
-    }
-    const session = JSON.parse(sessionElement.innerText);
+  public play(): void {
+    const playPauseButton = this._getElement<HTMLButtonElement>(
+      SELECTORS.playPauseButton
+    );
 
-    this._accessToken = session.accessToken;
-  }
-
-  public async play(): Promise<void> {
-    await this._fetchSpotify(SpotifyEndpoints.PLAY, 'PUT');
-  }
-
-  public async playPause(): Promise<void> {
-    const playerState = await this.getPlayerState();
-
-    if (playerState?.isPlaying) {
-      await this.pause();
-    } else {
-      await this.play();
+    // The play/pause button is a toggle, so only click it if we're paused.
+    if (playPauseButton?.getAttribute('aria-label') === 'Play') {
+      playPauseButton.click();
     }
   }
 
-  public async pause(): Promise<void> {
-    await this._fetchSpotify(SpotifyEndpoints.PAUSE, 'PUT');
-  }
+  public pause(): void {
+    const playPauseButton = this._getElement<HTMLButtonElement>(
+      SELECTORS.playPauseButton
+    );
 
-  public async next(): Promise<void> {
-    await this._fetchSpotify(SpotifyEndpoints.NEXT, 'POST');
-  }
-
-  public async previous(): Promise<void> {
-    const playerState = await this.getPlayerState();
-
-    if (!playerState?.currentTime || playerState.currentTime < 5) {
-      await this._fetchSpotify(SpotifyEndpoints.PREVIOUS, 'POST');
-      return;
-    }
-
-    await this.seekTo(0);
-  }
-
-  public async toggleRepeatMode(): Promise<void> {
-    const playerState = await this._fetchSpotify<{
-      repeat_state: keyof typeof REPEAT_MAP;
-    }>(SpotifyEndpoints.PLAYER_STATE, 'GET');
-
-    if (!playerState) {
-      return;
-    }
-
-    const repeatMode = REPEAT_MAP[playerState.repeat_state];
-
-    switch (repeatMode) {
-      case RepeatMode.NO_REPEAT:
-        await this._fetchSpotify(
-          `${SpotifyEndpoints.SET_REPEAT_MODE}?state=context`,
-          'PUT'
-        );
-        break;
-      case RepeatMode.REPEAT_ONE:
-        await this._fetchSpotify(
-          `${SpotifyEndpoints.SET_REPEAT_MODE}?state=off`,
-          'PUT'
-        );
-        break;
-      case RepeatMode.REPEAT_ALL:
-        await this._fetchSpotify(
-          `${SpotifyEndpoints.SET_REPEAT_MODE}?state=track`,
-          'PUT'
-        );
-        break;
+    // The play/pause button is a toggle, so only click it if we're playing.
+    if (playPauseButton?.getAttribute('aria-label') === 'Pause') {
+      playPauseButton.click();
     }
   }
 
-  public async toggleLike(): Promise<void> {
-    const currentlyPlaying = await this._fetchSpotify<{
-      item: NativeSpotifyTrack;
-    }>(SpotifyEndpoints.CURRENTLY_PLAYING, 'GET');
+  public playPause(): void {
+    this._getElement<HTMLButtonElement>(SELECTORS.playPauseButton)?.click();
+  }
 
-    if (!currentlyPlaying?.item) {
-      return;
-    }
+  public next(): void {
+    this._getElement<HTMLButtonElement>(SELECTORS.nextButton)?.click();
+  }
 
-    const ids = [currentlyPlaying.item.id];
+  public previous(): void {
+    // Spotify's own skip-back button restarts the track if it's past the first
+    // few seconds and otherwise goes to the previous track, which matches the
+    // behaviour we want, so a single click is enough.
+    this._getElement<HTMLButtonElement>(SELECTORS.previousButton)?.click();
+  }
 
-    const searchParams = new URLSearchParams({
-      ids: ids.join(',')
-    });
+  public toggleRepeatMode(): void {
+    this._getElement<HTMLButtonElement>(SELECTORS.repeatButton)?.click();
+  }
 
-    // Returns array of booleans, get the first one
-    const [inLibrary] =
-      (await this._fetchSpotify<boolean[]>(
-        `${SpotifyEndpoints.IS_IN_LIBRARY}?${searchParams.toString()}`,
-        'GET'
-      )) || [];
-
-    if (inLibrary) {
-      await this._fetchSpotify(SpotifyEndpoints.MODIFY_LIBRARY, 'DELETE', {
-        ids
-      });
-    } else {
-      await this._fetchSpotify(SpotifyEndpoints.MODIFY_LIBRARY, 'PUT', {
-        ids
-      });
-    }
+  public toggleLike(): void {
+    this._getElement<HTMLButtonElement>(SELECTORS.likeButton)?.click();
   }
 
   /**
    * Spotify doesn't have a dislike feature, so this is a no-op.
    */
-  public async toggleDislike(): Promise<void> {
+  public toggleDislike(): void {
     return;
   }
 
   public toggleMute(): void {
-    (
-      document.querySelector(
-        'button[aria-describedby="volume-icon"]'
-      ) as HTMLButtonElement
-    )?.click();
+    this._getElement<HTMLButtonElement>(SELECTORS.muteButton)?.click();
   }
 
-  public async setVolume(volume: number, relative?: boolean): Promise<void> {
+  public setVolume(volume: number, relative?: boolean): void {
     if (relative) {
       volume = this._getVolume() + volume;
     }
@@ -178,498 +93,424 @@ export class SpotifyContentController implements ContentController {
     volume = normalizeVolume(volume);
 
     debounce(
-      async () => {
-        const searchParams = new URLSearchParams({
-          volume_percent: volume.toString()
-        });
+      () => {
+        const volumeInput = this._getVolumeInput();
 
-        await this._fetchSpotify(
-          `${SpotifyEndpoints.SET_VOLUME}?${searchParams.toString()}`,
-          'PUT'
-        );
+        if (!volumeInput) {
+          return;
+        }
+
+        // The volume slider is a [0, 1] range input.
+        this._setRangeInputValue(volumeInput, volume / 100);
       },
-      'setVolume',
+      'spotify:setVolume',
       25
     );
   }
 
-  public async seekTo(time: number): Promise<void> {
+  public seekTo(time: number): void {
     debounce(
-      async () => {
-        const searchParams = new URLSearchParams({
-          position_ms: (time * 1000).toString()
-        });
+      () => {
+        const progressInput = this._getProgressInput();
 
-        await this._fetchSpotify(
-          `${SpotifyEndpoints.SEEK_TO}?${searchParams.toString()}`,
-          'PUT'
-        );
+        if (!progressInput) {
+          return;
+        }
+
+        // The progress slider is a range input measured in milliseconds.
+        this._setRangeInputValue(progressInput, time * 1000);
       },
-      'seekTo',
+      'spotify:seekTo',
       25
     );
   }
 
-  public async getPlayerState(): Promise<PlaybackState | null> {
-    const playbackProgressBarElement = document.querySelector(
-      'div[data-testid="playback-progressbar"]'
-    );
-    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
-      'input[type="range"]'
-    ) as HTMLInputElement;
+  public getPlayerState(): PlaybackState | null {
+    const progressInput = this._getProgressInput();
 
-    if (!playbackProgressBarInput) {
+    if (!progressInput) {
       return null;
     }
 
-    const currentTimeValue = playbackProgressBarInput.getAttribute('value');
+    // Prefer the on-screen position text (e.g. "0:34"), which Spotify updates
+    // every second, and fall back to the range input's value (in ms).
+    const positionText = this._getElement<HTMLElement>(
+      SELECTORS.playbackPosition
+    )?.innerText;
 
-    if (!currentTimeValue) {
-      return null;
+    let currentTime: number;
+
+    if (positionText) {
+      currentTime = lengthTextToSeconds(positionText);
+    } else {
+      const currentTimeValue = progressInput.getAttribute('value');
+
+      if (!currentTimeValue) {
+        return null;
+      }
+
+      currentTime = Math.round(parseInt(currentTimeValue) / 1000);
     }
 
-    const currentTime = Math.round(parseInt(currentTimeValue) / 1000);
-
-    const playPauseButton = document.querySelector(
-      'button[data-testid="control-button-playpause"]'
+    const playPauseButton = this._getElement<HTMLButtonElement>(
+      SELECTORS.playPauseButton
     );
-    // The aria-label is "Play" when the song is paused and "Pause" when the song is playing
+    // The aria-label is "Play" when paused and "Pause" when playing.
     const isPlaying = playPauseButton?.getAttribute('aria-label') === 'Pause';
 
-    const repeatButton = document.querySelector(
-      'button[data-testid="control-button-repeat"]'
+    const repeatButton = this._getElement<HTMLButtonElement>(
+      SELECTORS.repeatButton
     );
     const repeatText = repeatButton?.getAttribute('aria-label');
     const repeatMode = repeatText
-      ? REPEAT_UI_MAP[repeatText]
+      ? REPEAT_UI_MAP[repeatText] ?? RepeatMode.NO_REPEAT
       : RepeatMode.NO_REPEAT;
-
-    const volume = this._getVolume();
 
     return {
       currentTime,
       isPlaying,
       repeatMode,
-      volume,
-      // TODO: Decouple queue, removing it from PlayerState, as it doesn't make sense there and causes problems especially
-      // for ObserverEmitter related tasks. Temp commented out so we can still test other functionality without overloading
-      // Spotify API.
-      queue: await this.getQueue()
+      volume: this._getVolume(),
+      queue: this.getQueue()
     };
   }
 
-  public async getCurrentTrack(partial?: boolean): Promise<Track | null> {
-    const name = (
-      document.querySelector(
-        'div[data-testid="context-item-info-title"]'
-      ) as HTMLElement
-    )?.innerText;
+  public getCurrentTrack(): Track | null {
+    const name = this._getElement<HTMLElement>(SELECTORS.trackTitle)?.innerText;
 
-    let artistNameElements = Array.from(
-      document.querySelectorAll('a[data-testid="context-item-info-artist"]')
-    ) as HTMLElement[];
+    let artistElements = this._getElements<HTMLElement>(SELECTORS.trackArtist);
 
-    if (!artistNameElements.length) {
-      artistNameElements = Array.from(
-        document.querySelectorAll('a[data-testid="context-item-info-show"]')
-      ) as HTMLElement[];
+    if (!artistElements.length) {
+      artistElements = this._getElements<HTMLElement>(SELECTORS.trackShow);
     }
 
-    const artistName = artistNameElements
-      ?.map((element: HTMLElement) => element.innerText)
+    const artistName = artistElements
+      .map((element) => element.innerText)
       .join(', ');
 
-    const albumCoverUrl = (
-      document.querySelector(
-        'img[data-testid="cover-art-image"]'
-      ) as HTMLImageElement
+    const albumCoverUrl = this._getElement<HTMLImageElement>(
+      SELECTORS.coverArt
     )?.src;
 
-    const playbackProgressBarElement = document.querySelector(
-      'div[data-testid="playback-progressbar"]'
-    );
-    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
-      'input[type="range"]'
-    ) as HTMLInputElement;
-
-    const duration = playbackProgressBarInput
-      ? Math.round(
-          parseInt(playbackProgressBarInput.getAttribute('max') ?? '0') / 1000
-        )
+    const progressInput = this._getProgressInput();
+    const duration = progressInput
+      ? Math.round(parseInt(progressInput.getAttribute('max') ?? '0') / 1000)
       : 0;
 
-    let currentTrack: Track | null = {
+    if (!name) {
+      return null;
+    }
+
+    return {
+      // The web player UI doesn't expose the track ID, so we leave it blank.
       id: '',
-      name: name ?? '',
-      artistName: artistName ?? '',
+      name,
+      artistName,
       albumName: '',
       albumCoverUrl: albumCoverUrl ?? '',
-      duration
+      duration,
+      isLiked: this._isCurrentTrackLiked(),
+      type: this._getElements(SELECTORS.trackShow).length ? 'podcast' : 'song'
     };
+  }
 
-    if (partial) {
-      return currentTrack;
+  /**
+   * Spotify only renders the queue panel (`aside[aria-label="Queue"]`) while the
+   * user has it open. When it's open we parse the full "Now playing" + "Next up"
+   * list; otherwise we fall back to reporting just the currently-playing track so
+   * downstream consumers always have something to show.
+   */
+  public getQueue(): QueueItem[] {
+    const queuePanel = this._getElement(SELECTORS.queuePanel);
+
+    if (!queuePanel) {
+      const currentTrack = this.getCurrentTrack();
+
+      return currentTrack ? [{ track: currentTrack, isPlaying: true }] : [];
     }
 
-    if (
-      !this._currentTrackLoading &&
-      (!this._currentTrack ||
-        !this._compareTracks(currentTrack, this._currentTrack))
-    ) {
-      this._currentTrackLoading = true;
+    const rows = Array.from(
+      queuePanel.querySelectorAll<HTMLElement>(SELECTORS.queueRow)
+    );
 
-      const query = new URLSearchParams({
-        additional_types: 'track,episode'
-      });
+    return rows
+      .map((row) => this._parseQueueRow(row))
+      .filter((item): item is QueueItem => item !== null);
+  }
 
-      const trackResponse = await this._fetchSpotify<{
-        item: NativeSpotifyTrack;
-      }>(`${SpotifyEndpoints.CURRENTLY_PLAYING}?${query.toString()}`, 'GET');
+  /**
+   * Each queue row sits inside a wrapper carrying a stable `data-flip-id`, which
+   * we surface as the track ID. To play a queue item we find the row with the
+   * matching flip ID and click its play button, falling back to restarting the
+   * current track when it's the one requested.
+   */
+  public playQueueTrack(id: string): void {
+    const queuePanel = this._getElement(SELECTORS.queuePanel);
 
-      this._currentTrackLoading = false;
-
-      if (!trackResponse?.item) {
-        return null;
-      }
-
-      if (trackResponse.item.type === 'episode') {
-        currentTrack.type = 'podcast';
-      } else {
-        currentTrack.type = 'song';
-      }
-
-      const id = trackResponse.item.id;
-      const link = new SpotifyBackgroundController().getLink({
-        musicService: 'SPOTIFY',
-        trackId: id,
-        type: 'TRACK'
-      });
-
-      currentTrack.id = trackResponse.item.id;
-      currentTrack.link = link;
-
-      const isInLibraryParams = new URLSearchParams({
-        ids: currentTrack.id
-      });
-
-      const isLiked = await this._fetchSpotify<boolean[]>(
-        `${SpotifyEndpoints.IS_IN_LIBRARY}?${isInLibraryParams.toString()}`,
-        'GET'
+    if (queuePanel && id) {
+      const wrapper = queuePanel.querySelector<HTMLElement>(
+        `[data-flip-id="${CSS.escape(id)}"]`
+      );
+      const playButton = wrapper?.querySelector<HTMLButtonElement>(
+        SELECTORS.queueRowPlayButton
       );
 
-      currentTrack.isLiked = isLiked?.[0];
-    } else {
-      currentTrack = this._currentTrack;
-    }
-
-    this._currentTrack = currentTrack;
-
-    return currentTrack;
-  }
-
-  public async getQueue(noCache?: boolean): Promise<QueueItem[]> {
-    // If the queue is cached and the current track is the same, the queue is
-    // likely the same as well (unless someone added or removed a track). Return
-    // the cached queue.
-    if (
-      !noCache &&
-      !this._queueLoading &&
-      this._cachedQueue?.trackId &&
-      this._cachedQueue.trackId === this._currentTrack?.id
-    ) {
-      return this._cachedQueue.items ?? [];
-    }
-
-    this._queueLoading = true;
-
-    const queueRes = await this._fetchSpotify<{ queue: NativeSpotifyTrack[] }>(
-      SpotifyEndpoints.GET_QUEUE,
-      'GET'
-    );
-
-    this._queueLoading = false;
-
-    const queue = queueRes?.queue;
-    const queueItems =
-      queue?.map((item) => {
-        const queueItem: QueueItem = {
-          track: this._itemToSongInfo(item),
-          isPlaying: false
-        };
-
-        return queueItem;
-      }) || [];
-
-    const currentSongInfo = await this.getCurrentTrack();
-    const currentSongQueueItem: QueueItem = {
-      track: currentSongInfo,
-      isPlaying: true
-    };
-
-    queueItems.unshift(currentSongQueueItem);
-
-    this._cacheQueue(queueItems, this._currentTrack?.id);
-
-    return queueItems;
-  }
-
-  public async playQueueTrack(id: string, duplicateIndex = 0): Promise<void> {
-    const queue = await this.getQueue(true);
-    const trackIds = queue.map((item) => item.track?.id);
-
-    const trackIndexes = findIndexes(trackIds, (trackId) => trackId === id);
-
-    const trackIndex = trackIndexes[duplicateIndex];
-
-    await this._fetchSpotify(SpotifyEndpoints.PLAY, 'PUT', {
-      uris: queue.map(
-        (item) =>
-          `spotify:${item.track?.type === 'podcast' ? 'episode' : 'track'}:${
-            item.track?.id
-          }`
-      ),
-      offset: {
-        position: trackIndex
+      if (playButton) {
+        playButton.click();
+        return;
       }
-    });
+    }
 
-    this._cachedQueue = undefined;
+    const currentTrack = this.getCurrentTrack();
 
-    return;
+    if (currentTrack && currentTrack.id === id) {
+      this.seekTo(0);
+    }
   }
 
-  private _getVolume(): number {
-    const volumeContainerElement = document.querySelector(
-      'div[data-testid="volume-bar"]'
+  /**
+   * Reading the full queue requires the queue panel to be visible, so we open it
+   * when the popup opens. We remember whether the user already had it open so
+   * closeQueue can leave their view untouched. Clicking the queue button (which
+   * lives in the now-playing bar) flips its aria-checked, which the playback
+   * observer already watches, so the freshly-visible queue is re-read for us.
+   */
+  public openQueue(): void {
+    if (this._isQueueOpen()) {
+      // The user already had the queue open; don't take ownership of closing it.
+      this._openedQueueForPopup = false;
+      return;
+    }
+
+    this._getElement<HTMLButtonElement>(SELECTORS.queueButton)?.click();
+    this._openedQueueForPopup = true;
+  }
+
+  /**
+   * Close the queue panel, but only if we were the ones who opened it for the
+   * popup; if the user already had it open we leave it as-is.
+   */
+  public closeQueue(): void {
+    if (!this._openedQueueForPopup) {
+      return;
+    }
+
+    this._openedQueueForPopup = false;
+
+    if (this._isQueueOpen()) {
+      this._getElement<HTMLButtonElement>(SELECTORS.queueButton)?.click();
+    }
+  }
+
+  private _isQueueOpen(): boolean {
+    return Boolean(this._getElement(SELECTORS.queuePanel));
+  }
+
+  private _parseQueueRow(row: HTMLElement): QueueItem | null {
+    const titleElement = row.querySelector<HTMLElement>(SELECTORS.queueRowTitle);
+    const name = titleElement?.innerText.trim();
+
+    if (!name) {
+      return null;
+    }
+
+    const subtitle = row.querySelector<HTMLElement>(SELECTORS.queueRowSubtitle);
+    const artistLinks = subtitle
+      ? Array.from(subtitle.querySelectorAll<HTMLElement>('a'))
+      : [];
+    const artistName = artistLinks.length
+      ? artistLinks.map((link) => link.innerText.trim()).join(', ')
+      : subtitle?.innerText.trim() ?? '';
+
+    const image = row.querySelector<HTMLImageElement>(SELECTORS.queueRowImage);
+    const albumCoverUrl = image?.src ?? '';
+
+    // The currently-playing row's play button toggles to a "Pause ..." label.
+    const playButton = row.querySelector<HTMLButtonElement>(
+      SELECTORS.queueRowPlayButton
     );
+    const isPlaying =
+      playButton?.getAttribute('aria-label')?.startsWith('Pause') ?? false;
 
-    if (!volumeContainerElement) {
-      return 50;
-    }
-
-    const volumeInputElement = volumeContainerElement.querySelector(
-      'input[type="range"]'
-    ) as HTMLInputElement;
-    const volume = volumeInputElement
-      ? parseFloat(volumeInputElement.value) * 100
-      : 0;
-
-    return volume;
-  }
-
-  async getTrackLinkDetails(): Promise<TrackLinkDetails | null> {
-    const url = new URL(window.location.href);
-    const pathParts = url.pathname.split('/');
-    const trackId = pathParts[pathParts.length - 1];
-
-    const track = await this._getTrack(trackId);
-
-    if (!track) {
-      return null;
-    }
+    // The row is wrapped by an element carrying a stable per-row `data-flip-id`,
+    // which is the closest thing the queue UI offers to a track identifier.
+    const id =
+      row.closest<HTMLElement>('[data-flip-id]')?.dataset.flipId ?? '';
 
     return {
-      name: track.name,
-      artistName: track.artists[0].name,
-      albumName: track.album.name,
-      duration: track.duration_ms,
-      albumCoverUrl: track.album.images[0].url
+      track: {
+        id,
+        name,
+        artistName,
+        albumName: '',
+        albumCoverUrl,
+        duration: 0,
+        type: 'song'
+      },
+      isPlaying
     };
   }
 
-  async getAlbumLinkDetails(): Promise<AlbumLinkDetails | null> {
-    const url = new URL(window.location.href);
-    const pathParts = url.pathname.split('/');
-    const albumId = pathParts[pathParts.length - 1];
+  public getTrackLinkDetails(): TrackLinkDetails | null {
+    // Spotify removed the og:* meta tags, so we read the detail-page header DOM
+    // instead. This describes the page being viewed regardless of playback.
+    const header = this._getEntityHeader();
+    const name = this._getElement<HTMLElement>(
+      SELECTORS.entityTitle
+    )?.innerText.trim();
 
-    const album = await this._getAlbum(albumId);
-
-    if (!album) {
+    if (!header || !name) {
       return null;
     }
-
-    const albumCoverUrl = album.images[0].url;
-    const artistName = album.artists[0].name;
-    const albumName = album.name;
-
-    return {
-      name: albumName,
-      artistName,
-      albumCoverUrl
-    };
-  }
-
-  async getArtistLinkDetails(): Promise<ArtistLinkDetails | null> {
-    const url = new URL(window.location.href);
-    const pathParts = url.pathname.split('/');
-    const artistId = pathParts[pathParts.length - 1];
-
-    const artist = await this._getArtist(artistId);
-
-    if (!artist) {
-      return null;
-    }
-
-    const artistImageUrl = artist.images[0].url;
-    const name = artist.name;
 
     return {
       name,
-      artistImageUrl
+      artistName: this._getHeaderArtists(header),
+      albumName:
+        header
+          .querySelector<HTMLAnchorElement>(SELECTORS.headerAlbumLink)
+          ?.innerText.trim() ?? '',
+      albumCoverUrl: this._getHeaderCoverUrl(header),
+      duration: this._getHeaderDuration(header)
     };
   }
 
-  private async _getTrack(id: string): Promise<NativeSpotifySongTrack | null> {
-    const token = await getAuthorizationToken();
+  public getAlbumLinkDetails(): AlbumLinkDetails | null {
+    // On an album page the entity title is the album name.
+    const header = this._getEntityHeader();
+    const name = this._getElement<HTMLElement>(
+      SELECTORS.entityTitle
+    )?.innerText.trim();
 
-    const response = await fetch(`${SpotifyEndpoints.TRACKS}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((response) => response.json());
-
-    return response;
-  }
-
-  private async _getAlbum(id: string): Promise<NativeSpotifyAlbum | null> {
-    const token = await getAuthorizationToken();
-
-    const response = await fetch(`${SpotifyEndpoints.ALBUMS}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((response) => response.json());
-
-    return response;
-  }
-
-  private async _getArtist(id: string): Promise<NativeSpotifyArtist | null> {
-    const token = await getAuthorizationToken();
-
-    const response = await fetch(`${SpotifyEndpoints.ARTISTS}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((response) => response.json());
-
-    return response;
-  }
-
-  private _itemToSongInfo(item: NativeSpotifyTrack): Track {
-    if (item.type === 'episode') {
-      return {
-        id: item.id,
-        name: item.name,
-        albumName: item.show.name,
-        artistName: item.show.publisher,
-        albumCoverUrl: item.images[0].url,
-        duration: Math.round(item.duration_ms / 1000),
-        type: 'podcast'
-      };
+    if (!header || !name) {
+      return null;
     }
 
-    const link = new SpotifyBackgroundController().getLink({
-      musicService: 'SPOTIFY',
-      trackId: item.id,
-      type: 'TRACK'
-    });
+    return {
+      name,
+      artistName: this._getHeaderArtists(header),
+      albumCoverUrl: this._getHeaderCoverUrl(header)
+    };
+  }
+
+  public getArtistLinkDetails(): ArtistLinkDetails | null {
+    // The artist page uses a different (adaptive) title element and has no
+    // artist image in the header, so we only report the name.
+    const name = this._getElement<HTMLElement>(
+      SELECTORS.artistEntityTitle
+    )?.innerText.trim();
+
+    if (!name) {
+      return null;
+    }
 
     return {
-      albumCoverUrl: item.album?.images[0].url,
-      albumName: item.album?.name,
-      artistName: item.artists.map((artist) => artist.name).join(' & '),
-      duration: Math.round(item.duration_ms / 1000),
-      id: item.id,
-      link,
-      name: item.name,
-      type: 'song'
+      name
     };
   }
 
   /**
-   * Fetch from Spotify API.
+   * Returns the detail-page header container (the block holding the cover art,
+   * title, and subtitle row). Anchored on the entity title since the
+   * surrounding class names are obfuscated and unstable.
    */
-  private async _fetchSpotify<T>(
-    url: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    body?: any
-  ) {
-    return fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${this._accessToken}`
-      },
-      body: body ? JSON.stringify(body) : undefined
-    }).then((res) => {
-      if (res.status === 204) {
-        return;
-      }
+  private _getEntityHeader(): HTMLElement | null {
+    const title = this._getElement<HTMLElement>(SELECTORS.entityTitle);
 
-      return res.json() as Promise<T>;
-    });
+    // title -> wrapping <span> -> header metadata container.
+    return title?.parentElement?.parentElement ?? null;
   }
 
-  /**
-   * If the player hasn't been interacted with, API calls will fail. This method
-   * clicks the play button to initialize the player and then again once it has
-   * started playing to pause it.
-   */
-  // private async _forceInitializePlayer() {
-  //   return new Promise((resolve) => {
-  //     const isMuted = this._getVolume() === 0;
-
-  //     if (!isMuted) {
-  //       this.toggleMute();
-  //     }
-
-  //     const playButton = document.querySelector(
-  //       'button[data-testid="control-button-playpause"]'
-  //     ) as HTMLButtonElement;
-
-  //     playButton.click();
-
-  //     const observer = new MutationObserver((mutations, observerInstance) => {
-  //       const playButtonValue = playButton.getAttribute('aria-label');
-  //       if (playButtonValue === 'Pause') {
-  //         playButton.click();
-  //         observerInstance.disconnect();
-
-  //         if (!isMuted) {
-  //           this.toggleMute();
-  //         }
-
-  //         resolve(void 0);
-  //       }
-  //     });
-
-  //     observer.observe(playButton, {
-  //       attributes: true,
-  //       attributeFilter: ['aria-label']
-  //     });
-  //   });
-  // }
-
-  /**
-   * Cache the queue to prevent overwhelming the Spotify API.
-   */
-  private _cacheQueue(queue: QueueItem[], trackId?: string) {
-    this._cachedQueue = {
-      items: queue,
-      trackId
-    };
-
-    setTimeout(() => {
-      this._cachedQueue = undefined;
-    }, QUEUE_CACHE_TIME);
+  private _getHeaderArtists(header: HTMLElement): string {
+    return Array.from(
+      header.querySelectorAll<HTMLElement>(SELECTORS.creatorLink)
+    )
+      .map((link) => link.innerText.trim())
+      .filter(Boolean)
+      .join(', ');
   }
 
-  private _compareTracks(track1: Track, track2: Track): boolean {
+  private _getHeaderCoverUrl(header: HTMLElement): string {
+    // The cover art is the only image with a srcset in the header (the small
+    // artist avatar in the subtitle uses a plain src).
     return (
-      track1.name === track2.name &&
-      track1.artistName === track2.artistName &&
-      track1.duration === track2.duration &&
-      track1.albumCoverUrl === track2.albumCoverUrl
+      header.parentElement?.querySelector<HTMLImageElement>('img[srcset]')
+        ?.src ?? ''
     );
+  }
+
+  private _getHeaderDuration(header: HTMLElement): number {
+    // The duration span in the subtitle row has no testid, so find the one whose
+    // text looks like a timestamp (e.g. "5:54"). Returned in milliseconds to
+    // match the redirect matcher's expected unit.
+    const durationText = Array.from(
+      header.querySelectorAll<HTMLElement>('span')
+    )
+      .map((span) => span.innerText.trim())
+      .find((text) => /^\d{1,2}:\d{2}$/.test(text));
+
+    return durationText ? lengthTextToSeconds(durationText) * 1000 : 0;
+  }
+
+  private _isCurrentTrackLiked(): boolean {
+    const likeButton = this._getElement<HTMLButtonElement>(SELECTORS.likeButton);
+
+    if (!likeButton) {
+      return false;
+    }
+
+    return likeButton.getAttribute('aria-checked') === 'true';
+  }
+
+  private _getVolume(): number {
+    const volumeInput = this._getVolumeInput();
+
+    if (!volumeInput) {
+      return 50;
+    }
+
+    // The volume slider is a [0, 1] range input.
+    return parseFloat(volumeInput.value) * 100;
+  }
+
+  private _getVolumeInput(): HTMLInputElement | null {
+    return (
+      this._getElement(SELECTORS.volumeBar)?.querySelector(
+        'input[type="range"]'
+      ) ?? null
+    );
+  }
+
+  private _getProgressInput(): HTMLInputElement | null {
+    return (
+      this._getElement(SELECTORS.progressBar)?.querySelector(
+        'input[type="range"]'
+      ) ?? null
+    );
+  }
+
+  /**
+   * Spotify's sliders are React-controlled range inputs. To change them we have
+   * to set the value through the native setter and then dispatch input/change
+   * events so React picks up the change.
+   */
+  private _setRangeInputValue(input: HTMLInputElement, value: number): void {
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value'
+    )?.set;
+
+    nativeInputValueSetter?.call(input, value.toString());
+
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  private _getElement<T extends Element>(selector: string): T | null {
+    return document.querySelector<T>(selector);
+  }
+
+  private _getElements<T extends Element>(selector: string): T[] {
+    return Array.from(document.querySelectorAll<T>(selector));
   }
 }

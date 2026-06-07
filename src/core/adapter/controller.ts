@@ -125,6 +125,20 @@ export interface ContentController {
   playQueueTrack(id: string, duplicateIndex?: number): ValueOrPromise<void>;
 
   /**
+   * Open the service's queue UI. Optional: only implemented by services (like
+   * Spotify) that can't read the queue from the DOM unless it's visible. Called
+   * when the popup opens so the full queue can be read.
+   */
+  openQueue?(): ValueOrPromise<void>;
+
+  /**
+   * Close the service's queue UI if {@link openQueue} opened it. Implementations
+   * should leave the queue open if the user already had it open. Called when the
+   * popup closes.
+   */
+  closeQueue?(): ValueOrPromise<void>;
+
+  /**
    * Get basic track details for current link.
    */
   getTrackLinkDetails(): ValueOrPromise<TrackLinkDetails | null>;

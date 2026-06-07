@@ -75,6 +75,16 @@ export const createContentControllerHandler = (
         break;
       }
 
+      case MusicControllerMessage.OPEN_QUEUE: {
+        await controller.openQueue?.();
+        break;
+      }
+
+      case MusicControllerMessage.CLOSE_QUEUE: {
+        await controller.closeQueue?.();
+        break;
+      }
+
       default: {
         break;
       }

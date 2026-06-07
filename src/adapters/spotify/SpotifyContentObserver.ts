@@ -1,115 +1,67 @@
 import type { ContentObserver } from '~core/adapter';
 import { updateCurrentTrack, updatePlaybackState } from '~core/player';
+import { debounce } from '~util/debounce';
 import { waitForElement } from '~util/waitForElement';
 
 import type { SpotifyContentController } from './SpotifyContentController';
+
+const NOW_PLAYING_BAR_SELECTOR = '[data-testid="now-playing-bar"]';
 
 export class SpotifyObserver implements ContentObserver {
   constructor(private _controller: SpotifyContentController) {}
 
   public async observe(): Promise<void> {
-    await waitForElement('[data-testid="player-controls"]');
+    const nowPlayingBar = await waitForElement(NOW_PLAYING_BAR_SELECTOR);
 
-    this._setupPlayerStateObserver();
-    await this._setupTrackObserver();
-  }
-
-  private _setupPlayerStateObserver() {
-    const playerStateObserver = new MutationObserver(async () => {
-      await this._handlePlaybackUpdated();
-    });
-
-    const playPauseButtonElement = document.querySelector(
-      'button[data-testid="control-button-playpause"]'
-    );
-    if (playPauseButtonElement) {
-      playerStateObserver.observe(playPauseButtonElement, {
-        attributeFilter: ['aria-label']
-      });
-    }
-
-    const playbackProgressBarElement = document.querySelector(
-      'div[data-testid="playback-progressbar"]'
-    );
-    const playbackProgressBarInput = playbackProgressBarElement?.querySelector(
-      'input[type="range"]'
-    );
-    if (playbackProgressBarInput) {
-      playerStateObserver.observe(playbackProgressBarInput, {
-        attributeFilter: ['value']
-      });
-    }
-
-    const volumeContainerElement = document.querySelector(
-      'div[data-testid="volume-bar"]'
-    );
-    const volumeInputElement = volumeContainerElement?.querySelector(
-      'input[type="range"]'
-    );
-    if (volumeInputElement) {
-      playerStateObserver.observe(volumeInputElement, {
-        attributeFilter: ['value']
-      });
-    }
-
-    const repeatButton = document.querySelector(
-      'button[data-testid="control-button-repeat"]'
-    );
-    if (repeatButton) {
-      playerStateObserver.observe(repeatButton, {
-        attributeFilter: ['aria-label']
-      });
-    }
-  }
-
-  private async _setupTrackObserver() {
-    const trackObserver = new MutationObserver(async () => {
-      await this._handleTrackUpdated();
-    });
-
-    const nowPlayingWidgetSelector = 'div[data-testid="now-playing-widget"]';
-    const nowPlayingWidget = await waitForElement(nowPlayingWidgetSelector);
-    if (nowPlayingWidget) {
-      trackObserver.observe(nowPlayingWidget, {
-        childList: true
-      });
-    }
-
-    const addToLibraryButtonSelector = 'button[data-testid="add-button"]';
-    const addToLibraryButton = nowPlayingWidget.querySelector(
-      addToLibraryButtonSelector
-    );
-    if (addToLibraryButton) {
-      trackObserver.observe(addToLibraryButton, {
-        attributeFilter: ['aria-checked']
-      });
-    }
-
-    const playPauseButtonElement = document.querySelector(
-      'button[data-testid="control-button-playpause"]'
-    );
-    if (playPauseButtonElement) {
-      trackObserver.observe(playPauseButtonElement, {
-        attributeFilter: ['aria-label']
-      });
-    }
+    this._setupPlaybackStateObserver(nowPlayingBar);
+    this._setupTrackObserver(nowPlayingBar);
   }
 
   /**
-   * The Spotify API can take more time than the mutation observer to update the current
-   * song info. This method will update the current track based only on the UI first and
-   * then update it again with the API data.
+   * Spotify frequently re-renders the individual control buttons, so observing
+   * them directly stops working once the original nodes are replaced (only the
+   * persistent volume input kept updating). Instead we observe the entire
+   * now-playing bar subtree, which is stable, and react to any relevant
+   * attribute, text, or child change inside it.
    */
-  private async _handleTrackUpdated(): Promise<void> {
-    await this._updateCurrentTrack(true);
+  private _setupPlaybackStateObserver(nowPlayingBar: Element): void {
+    const observer = new MutationObserver(() => {
+      // The position text changes ~once per second; debounce to coalesce the
+      // burst of mutations each tick produces into a single update.
+      debounce(
+        () => this._handlePlaybackUpdated(),
+        'spotify:playbackUpdated',
+        200
+      );
+    });
 
-    setTimeout(async () => {
-      await this._updateCurrentTrack();
-    }, 5000);
+    observer.observe(nowPlayingBar, {
+      subtree: true,
+      childList: true,
+      // characterData catches the progress position text ticking each second.
+      characterData: true,
+      attributeFilter: ['aria-label', 'aria-checked', 'value']
+    });
   }
 
-  private async _updateCurrentTrack(partial?: boolean): Promise<void> {
-    const currentTrack = await this._controller.getCurrentTrack(partial);
+  /**
+   * Track changes swap the cover art / title / artist nodes, and liking a track
+   * flips the like button's aria-label. Both happen inside the now-playing bar.
+   */
+  private _setupTrackObserver(nowPlayingBar: Element): void {
+    const observer = new MutationObserver(() => {
+      debounce(() => this._handleTrackUpdated(), 'spotify:trackUpdated', 200);
+    });
+
+    observer.observe(nowPlayingBar, {
+      subtree: true,
+      childList: true,
+      attributeFilter: ['aria-label', 'aria-checked', 'src']
+    });
+  }
+
+  private async _handleTrackUpdated(): Promise<void> {
+    const currentTrack = await this._controller.getCurrentTrack();
     await updateCurrentTrack(currentTrack);
   }
 
