@@ -1,7 +1,7 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 
 import { createTrackNotification } from '~core/notifications';
-import { store } from '~store';
+import { getSettings, store } from '~store';
 import type { Track } from '~types';
 import { sendEvent } from '~util/analytics';
 
@@ -26,9 +26,9 @@ export const handler: PlasmoMessaging.MessageHandler<Track> = async (req) => {
     name: 'track_played'
   });
 
-  const state = store.getState();
+  const settings = await getSettings();
 
-  if (!state.settings.notificationsEnabled) {
+  if (!settings.notificationsEnabled) {
     return;
   }
 

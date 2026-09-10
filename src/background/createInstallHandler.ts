@@ -1,4 +1,4 @@
-import { store } from '~store';
+import { getSettings, store, waitForRehydration } from '~store';
 import { clearMusicServiceTabs } from '~store/slices/musicServiceTabs';
 import { setSettings } from '~store/slices/settings';
 import type { Settings } from '~types';
@@ -19,7 +19,11 @@ const getPreviousLastFmSession = async () => {
 
 const transferSettings = async () => {
   const previousOptions = await getPreviousOptions();
-  const settings = store.getState().settings;
+
+  // Read through the rehydration-aware helper. Spreading a not-yet-rehydrated
+  // state here would persist the default settings back over the user's saved
+  // ones, turning a transient race into permanent data loss.
+  const settings = await getSettings();
 
   const notificationsEnabled = previousOptions.notifications;
   const miniPlayerKeyControlsEnabled = previousOptions.miniKeyControl;
@@ -59,6 +63,10 @@ const openOnboardingPage = async (update: boolean) => {
 
 export const initializeInstallHandler = () => {
   chrome.runtime.onInstalled.addListener(async (installDetails) => {
+    // Dispatching before rehydration completes means the incoming REHYDRATE
+    // action overwrites this reset with the previously stored tab list.
+    await waitForRehydration();
+
     store.dispatch(clearMusicServiceTabs());
 
     if (installDetails.reason === 'install') {
