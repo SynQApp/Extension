@@ -6,7 +6,7 @@ import { StyleSheetManager } from 'styled-components';
 
 import adapters from '~adapters';
 import { type LinkType, parseLink } from '~core/links';
-import { store } from '~store';
+import { getSettings, store } from '~store';
 import type { MusicService } from '~types';
 import { RedirectPopup } from '~ui/redirect/RedirectPopup';
 import { sendAnalytic } from '~util/analytics';
@@ -63,28 +63,45 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
 
     setLinkType(type);
 
-    const state = store.getState();
-    const settings = state.settings;
+    let cancelled = false;
 
-    if (
-      settings.preferredMusicService !== musicService &&
-      settings.redirectsEnabled &&
-      REDIRECT_ENABLED_SERVICES.has(settings.preferredMusicService)
-    ) {
-      setShowPopup(true);
+    const maybeShowPopup = async () => {
+      // Wait for the persisted settings to load. Reading them synchronously
+      // here races rehydration and yields the default preferred service
+      // ('SPOTIFY'), which shows a redirect prompt to users who never asked
+      // for one.
+      const settings = await getSettings();
 
-      sendAnalytic({
-        name: 'redirect_popup_shown',
-        params: {
-          musicService,
-          preferredMusicService: settings.preferredMusicService,
-          type: `${musicService}_${settings.preferredMusicService}`
-        }
-      });
-    }
+      if (cancelled) {
+        return;
+      }
+
+      if (
+        settings.preferredMusicService !== musicService &&
+        settings.redirectsEnabled &&
+        REDIRECT_ENABLED_SERVICES.has(settings.preferredMusicService)
+      ) {
+        setShowPopup(true);
+
+        sendAnalytic({
+          name: 'redirect_popup_shown',
+          params: {
+            musicService,
+            preferredMusicService: settings.preferredMusicService,
+            type: `${musicService}_${settings.preferredMusicService}`
+          }
+        });
+      }
+    };
+
+    maybeShowPopup();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setShowPopup(false);
 
     const parsedLink = parseLink(window.location.href);
@@ -95,8 +112,7 @@ const RedirectUi = ({ anchor }: PlasmoCSUIProps) => {
 
     const { musicService } = parsedLink;
 
-    const state = store.getState();
-    const settings = state.settings;
+    const settings = await getSettings();
 
     sendAnalytic({
       name: 'redirect_popup_dismissed',

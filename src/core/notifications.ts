@@ -1,11 +1,11 @@
-import { store } from '~store';
+import { getSettings } from '~store';
 import type { Track } from '~types';
 import { imageUrlToDataUrl } from '~util/imageUrlToDataUrl';
 
 export const createTrackNotification = async (track: Track) => {
-  const state = store.getState();
+  const settings = await getSettings();
 
-  if (!state.settings.notificationsEnabled) {
+  if (!settings.notificationsEnabled) {
     return;
   }
 
