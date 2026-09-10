@@ -17,6 +17,11 @@ import { findIndexes } from '~util/findIndexes';
 import { lengthTextToSeconds } from '~util/time';
 
 import { YouTubeMusicBackgroundController } from './YouTubeMusicBackgroundController';
+import {
+  getDislikeButtonTarget,
+  getLikeButtonTarget,
+  readLikeState
+} from './likeStatus';
 
 export enum YouTubeMusicPlayerState {
   UNSTARTED = -1,
@@ -68,20 +73,12 @@ export class YouTubeMusicContentController implements ContentController {
 
   public toggleLike(): void {
     // Simulate a click on the like button
-    (
-      document.querySelector(
-        '.ytmusic-player-bar #button-shape-like button'
-      ) as HTMLElement
-    ).click();
+    getLikeButtonTarget()?.click();
   }
 
   public toggleDislike(): void {
     // Simulate a click on the dislike button
-    (
-      document.querySelector(
-        '.ytmusic-player-bar #button-shape-dislike button'
-      ) as HTMLElement
-    ).click();
+    getDislikeButtonTarget()?.click();
   }
 
   public toggleMute(): void {
@@ -151,19 +148,8 @@ export class YouTubeMusicContentController implements ContentController {
     const name = videoData.title;
     const id = videoData.video_id;
 
-    const isLiked =
-      (
-        document.querySelector(
-          '.ytmusic-player-bar #button-shape-like'
-        ) as HTMLElement
-      )?.getAttribute('aria-pressed') === 'true';
+    const { isLiked, isDisliked } = readLikeState();
 
-    const isDisliked =
-      (
-        document.querySelector(
-          '.ytmusic-player-bar #button-shape-dislike'
-        ) as HTMLElement
-      )?.getAttribute('aria-pressed') === 'true';
     const durationText = document
       .getElementById('progress-bar')
       ?.getAttribute('aria-valuemax');
