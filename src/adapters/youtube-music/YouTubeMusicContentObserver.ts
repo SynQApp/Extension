@@ -2,6 +2,10 @@ import type { ContentObserver } from '~core/adapter';
 import { updateCurrentTrack, updatePlaybackState } from '~core/player';
 
 import type { YouTubeMusicContentController } from './YouTubeMusicContentController';
+import {
+  LIKE_STATE_ATTRIBUTE_FILTER,
+  getLikeStateObserverTargets
+} from './likeStatus';
 
 export class YouTubeMusicObserver implements ContentObserver {
   private _onStateChangeHandler!: () => void;
@@ -73,23 +77,18 @@ export class YouTubeMusicObserver implements ContentObserver {
       await this._handleTrackUpdated();
     });
 
-    const likeButton = document.querySelector(
-      '.ytmusic-player-bar #button-shape-like'
-    );
-    if (likeButton) {
-      songInfoObserver.observe(likeButton, {
-        attributeFilter: ['aria-pressed']
+    // `subtree` matters here: YouTube Music may carry `aria-pressed` on the
+    // wrapper or on the inner `<button>`, and observing only the wrapper means
+    // no mutations fire when it lives on the child. See likeStatus.ts.
+    for (const target of getLikeStateObserverTargets()) {
+      songInfoObserver.observe(target, {
+        attributes: true,
+        attributeFilter: LIKE_STATE_ATTRIBUTE_FILTER,
+        subtree: true
       });
     }
 
-    const dislikeButton = document.querySelector(
-      '.ytmusic-player-bar #button-shape-dislike'
-    );
-    if (dislikeButton) {
-      songInfoObserver.observe(dislikeButton, {
-        attributeFilter: ['aria-pressed']
-      });
-    }
+    this._mutationObservers.push(songInfoObserver);
   }
 
   private async _handleTrackUpdated(): Promise<void> {
