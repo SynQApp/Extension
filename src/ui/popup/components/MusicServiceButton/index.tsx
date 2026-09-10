@@ -1,6 +1,9 @@
 import { Button, Image, Text, token } from '@synqapp/ui';
 import styled, { css } from 'styled-components';
 
+import type { ActivateOrOpenTabBody } from '~background/messages/ACTIVATE_OR_OPEN_TAB';
+import { sendToBackground } from '~core/messaging/sendToBackground';
+
 interface MusicServiceButtonProps {
   name: string;
   urlMatch?: string;
@@ -27,12 +30,14 @@ const MusicServiceButton = ({
       return;
     }
 
-    chrome.tabs.query({ url: urlMatch }, (tabs) => {
-      if (tabs?.length) {
-        chrome.tabs.update(tabs[0]?.id!, { active: true });
-      } else {
-        chrome.tabs.create({ url });
-      }
+    // Delegated to the background worker: this button also renders inside the
+    // picture-in-picture player, which runs in a content script where
+    // `chrome.tabs` is undefined.
+    sendToBackground<ActivateOrOpenTabBody>({
+      name: 'ACTIVATE_OR_OPEN_TAB',
+      body: { urlMatch, url }
+    }).catch((error) => {
+      console.error('SynQ: Failed to open music service tab', error);
     });
   };
 
