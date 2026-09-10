@@ -1,11 +1,14 @@
 import { Button, Image, Stack, Text, token } from '@synqapp/ui';
 import WaveGraphicDark from 'data-base64:~assets/images/wave-graphic-dark.svg';
 import WaveGraphicLight from 'data-base64:~assets/images/wave-graphic-light.svg';
+import { useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { useAppSelector } from '~/store';
 import { useTabsQuery } from '~/ui/shared/hooks/useTabQuery';
 import adapters from '~adapters';
+import type { ReloadTabsBody } from '~background/messages/RELOAD_TABS';
+import { sendToBackground } from '~core/messaging/sendToBackground';
 import Layout from '~ui/popup/Layout';
 import MusicServiceButton from '~ui/popup/components/MusicServiceButton';
 
@@ -14,17 +17,45 @@ const SelectPlatformScreen = () => {
   const tabs = useAppSelector((state) => state.musicServiceTabs);
   const queriedMusicServiceTabs = useTabsQuery();
 
-  const missingTabsCount =
-    (queriedMusicServiceTabs?.length || 0) - (tabs?.length || 0);
+  /**
+   * Tabs we have already asked the browser to reload. Reloading a tab whose
+   * adapter fails to initialise leaves it exactly as unregistered as before, so
+   * offering the action again produces an endless "needs to be refreshed" loop.
+   * Remembering the attempt lets us offer the fix once and then be honest that
+   * it did not work.
+   */
+  const [reloadAttemptedTabIds, setReloadAttemptedTabIds] = useState<number[]>(
+    []
+  );
 
-  const handleRefreshTabs = () => {
-    const missingTabs = queriedMusicServiceTabs?.filter(
-      (tab) => !tabs?.find((t) => t.tabId === tab.id)
-    );
+  const missingTabs = (queriedMusicServiceTabs ?? []).filter(
+    (tab) => tab.id !== undefined && !tabs?.find((t) => t.tabId === tab.id)
+  );
 
-    missingTabs?.forEach((tab) => {
-      chrome.tabs.reload(tab.id!);
-    });
+  const reloadableTabs = missingTabs.filter(
+    (tab) => !reloadAttemptedTabIds.includes(tab.id!)
+  );
+
+  const reloadableTabsCount = reloadableTabs.length;
+  const unrecoverableTabsCount = missingTabs.length - reloadableTabsCount;
+
+  const handleRefreshTabs = async () => {
+    const tabIds = reloadableTabs.map((tab) => tab.id!);
+
+    if (!tabIds.length) {
+      return;
+    }
+
+    setReloadAttemptedTabIds((previous) => [...previous, ...tabIds]);
+
+    try {
+      await sendToBackground<ReloadTabsBody>({
+        name: 'RELOAD_TABS',
+        body: { tabIds }
+      });
+    } catch (error) {
+      console.error('SynQ: Failed to reload music service tabs', error);
+    }
   };
 
   return (
@@ -37,12 +68,13 @@ const SelectPlatformScreen = () => {
           <Description type="body" size="sm">
             Select your platform to start listening
           </Description>
-          {missingTabsCount > 0 && (
+          {reloadableTabsCount > 0 && (
             <AlertContainer>
               <AlertText type="body" size="sm" weight="semibold">
-                {missingTabsCount} tab{missingTabsCount !== 1 ? 's' : ''} need
-                {missingTabsCount !== 1 ? '' : 's'} to be refreshed to work with
-                SynQ. Refresh {missingTabsCount !== 1 ? 'them' : 'it'}?
+                {reloadableTabsCount} tab{reloadableTabsCount !== 1 ? 's' : ''}{' '}
+                need{reloadableTabsCount !== 1 ? '' : 's'} to be refreshed to
+                work with SynQ. Refresh{' '}
+                {reloadableTabsCount !== 1 ? 'them' : 'it'}?
               </AlertText>
               <Button
                 size="small"
@@ -51,6 +83,16 @@ const SelectPlatformScreen = () => {
               >
                 Refresh Tabs
               </Button>
+            </AlertContainer>
+          )}
+          {reloadableTabsCount === 0 && unrecoverableTabsCount > 0 && (
+            <AlertContainer>
+              <AlertText type="body" size="sm" weight="semibold">
+                SynQ still cannot control {unrecoverableTabsCount} open tab
+                {unrecoverableTabsCount !== 1 ? 's' : ''} after refreshing. That
+                music service may have changed its player, so the mini player
+                will not work there for now.
+              </AlertText>
             </AlertContainer>
           )}
           <MusicServiceButtons spacing="md" direction="column">
